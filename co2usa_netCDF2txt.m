@@ -18,11 +18,9 @@ else
     city = 'san_francisco_baaqmd';
 end
 
-
-%fni = 3;
-
-readFolder = fullfile(pwd,'synthesis_output',city);
-writeFolder = fullfile(pwd,'synthesis_output',city,'txt_formatted_files');
+currentFolder = pwd;
+readFolder = fullfile(currentFolder(1:regexp(currentFolder,'gcloud.utah.edu')+14),'data','co2-usa','synthesis_output',city);
+writeFolder = fullfile(currentFolder(1:regexp(currentFolder,'gcloud.utah.edu')+14),'data','co2-usa','synthesis_output',city,'txt_formatted_files');
 
 if ~exist(writeFolder,'dir'); mkdir(writeFolder); end
 

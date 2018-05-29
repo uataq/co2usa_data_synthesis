@@ -107,9 +107,8 @@ for i = 1:length(site.codes)
             netcdf.putAtt(n.id_site_Grp(grp,1),netcdf.getConstant('GLOBAL'),'site_elevation_unit','masl');
             netcdf.putAtt(n.id_site_Grp(grp,1),netcdf.getConstant('GLOBAL'),'site_inlet_height',num2str(site.(site.codes{i}).([sptxt,'_',intxt,'_inlet_height'])(end,1),fmt.inlet_height));
             netcdf.putAtt(n.id_site_Grp(grp,1),netcdf.getConstant('GLOBAL'),'site_inlet_height_unit','magl');
-            netcdf.putAtt(n.id_site_Grp(grp,1),netcdf.getConstant('GLOBAL'),'site_position_comment',['This is the nominal location of the site. The sampling location at some sites has changed over time, ',...
-                'and we report here the most recent nominal location. The actual sampling location for each observation is not necessarily the site location. The sampling locations for each observation ',...
-                'are reported in the latitude, longitude, and altitude variables.']);
+            netcdf.putAtt(n.id_site_Grp(grp,1),netcdf.getConstant('GLOBAL'),'site_position_comment',['This is the current location of the site. The sampling location may have changed over time ',...
+                'so the sampling location for each observation are reported in the latitude, longitude, and altitude variables.']);
             t1 = datetime(2017,1,1,1,1,1,'TimeZone',site.(site.codes{i}).time_zone); [dt,dst] = tzoffset(t1);
             netcdf.putAtt(n.id_site_Grp(grp,1),netcdf.getConstant('GLOBAL'),'site_utc2lst',num2str(hours(dt-dst))); clear('t1','dt','dst');
             netcdf.putAtt(n.id_site_Grp(grp,1),netcdf.getConstant('GLOBAL'),'site_utc2lst_comment','Add site_utc2lst hours to convert a time stamp in UTC (Coordinated Universal Time) to LST (Local Standard Time).');

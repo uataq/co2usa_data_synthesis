@@ -30,8 +30,10 @@ date_issued_now = datestr(now,'yyyy-mm-dd');
 date_issued = datetime(2017,05,17);
 date_issued_str = datestr(date_issued,'yyyy-mm-dd');
 
-% Output folder
-writeFolder = [pwd,'\synthesis_output\'];
+% Working folders
+currentFolder = pwd;
+readFolder = fullfile(currentFolder(1:regexp(currentFolder,'gcloud.utah.edu')+14),'data','co2-usa','data_input');
+writeFolder = fullfile(currentFolder(1:regexp(currentFolder,'gcloud.utah.edu')+14),'data','co2-usa','synthesis_output');
 
 %% City & provider information:
 
@@ -347,8 +349,6 @@ site.(site.codes{i}).date_issued_str = datestr(site.(site.codes{i}).date_issued,
 site.date_issued = max([site.date_issued,site.(site.codes{i}).date_issued]);
 
 % Loading the data
-
-readFolder = [pwd,'\data_input\'];
 
 for i = 1:length(site.codes)
     for sp = 1:length(site.(site.codes{i}).species) % only doing CO2 for now.
