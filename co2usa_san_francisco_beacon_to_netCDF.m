@@ -30,8 +30,9 @@ date_issued_now = datestr(now,'yyyy-mm-dd');
 date_issued = datetime(2017,05,17);
 date_issued_str = datestr(date_issued,'yyyy-mm-dd');
 
-% Output folder
+% Working folders
 currentFolder = pwd;
+readFolder = fullfile(currentFolder(1:regexp(currentFolder,'gcloud.utah.edu')+14),'data','co2-usa','data_input');
 writeFolder = fullfile(currentFolder(1:regexp(currentFolder,'gcloud.utah.edu')+14),'data','co2-usa','synthesis_output');
 
 %% City & provider information:
@@ -164,8 +165,6 @@ site.date_issued = max([site.date_issued,site.(site.codes{i}).date_issued]);
 
 %% Loading the data
 
-readFolder = [pwd,'\data_input\'];
-
 for i = 1:length(site.codes)
     for sp = 1:length(site.(site.codes{i}).species) % only doing CO2 for now.
         sptxt = site.(site.codes{i}).species{sp};
@@ -175,29 +174,18 @@ for i = 1:length(site.codes)
             site.(site.codes{i}).([sptxt,'_',intxt,'_std']) = [];
             site.(site.codes{i}).([sptxt,'_',intxt,'_n']) = [];
             site.(site.codes{i}).([sptxt,'_',intxt,'_time']) = [];
-            for yy = 1:length(site.(site.codes{i}).years)
-                yytxt = site.(site.codes{i}).years{yy};
-                folder = fullfile(readFolder,city,'in_situ',site.(site.codes{i}).name,[yytxt,'_Measurements']);
-                file = dir([folder,'\',site.(site.codes{i}).code,'-',yytxt,'*',sptxt,'-',intxt,'*.csv']);
-                if isempty(file) % The 'rooftop' sites don't include the intxt in the file name.
-                    file = dir([folder,'\',site.(site.codes{i}).code,'-',yytxt,'*',sptxt,'-','*.csv']);
-                end
-                
-                if isempty(file)
-                    fprintf('No file for %s in %s.\nContinuing onto the next file.\n',yytxt,folder)
-                    keyboard
-%                    continue
-                end
-                in_format = '%s%f%f%f%f%f%f%f%f%f%f%f%s';
-                fn = fullfile(file.folder,file.name);
-                fid = fopen(fn);
-                read_dat = textscan(fid,in_format,'HeaderLines',1,'Delimiter',',','CollectOutput',true,'TreatAsEmpty','NaN');
+            site.(site.codes{i}).files = dir(fullfile(readFolder,city,[site.(site.codes{i}).name,'*.csv']));
+            
+            for fn = 1:length(site.(site.codes{i}).files)
+                formatSpec = '%q%q%f%f%{M/d/yyyy HH:mm:ss a}D%f';
+                fid = fopen(fullfile(site.(site.codes{i}).files(fn).folder,site.(site.codes{i}).files(fn).name));
+                read_dat = textscan(fid,formatSpec,'HeaderLines',1,'Delimiter',',','CollectOutput',true,'TreatAsEmpty','NaN');
                 fclose(fid);
-                site.(site.codes{i}).([sptxt,'_',intxt]) = [site.(site.codes{i}).([sptxt,'_',intxt]); read_dat{1,2}(:,6)]; % CO2
-                site.(site.codes{i}).([sptxt,'_',intxt,'_std']) = [site.(site.codes{i}).([sptxt,'_',intxt,'_std']); read_dat{1,2}(:,7)]; % CO2 std
-                site.(site.codes{i}).([sptxt,'_',intxt,'_n']) = [site.(site.codes{i}).([sptxt,'_',intxt,'_n']); read_dat{1,2}(:,9)]; % CO2 n
-                site.(site.codes{i}).([sptxt,'_',intxt,'_time']) = [site.(site.codes{i}).([sptxt,'_',intxt,'_time']); datetime(read_dat{1,1},'InputFormat','dd-MMM-yyyy HH:mm:ss')]; % time
-                fprintf('File read: %s\n',file.name)
+                site.(site.codes{i}).([sptxt,'_',intxt]) = [site.(site.codes{i}).([sptxt,'_',intxt]); str2double(read_dat{1,1}(:,2))]; % CO2
+                site.(site.codes{i}).([sptxt,'_',intxt,'_std']) = [site.(site.codes{i}).([sptxt,'_',intxt,'_std']); nan(length(read_dat{1,1}),1)]; % CO2 std
+                site.(site.codes{i}).([sptxt,'_',intxt,'_n']) = [site.(site.codes{i}).([sptxt,'_',intxt,'_n']); nan(length(read_dat{1,1}),1)]; % CO2 n
+                site.(site.codes{i}).([sptxt,'_',intxt,'_time']) = [site.(site.codes{i}).([sptxt,'_',intxt,'_time']); read_dat{1,3}(:,:)+hours(read_dat{1,2}(:,2))]; % time
+                fprintf('File read: %s\n',site.(site.codes{i}).files(fn).name)
             end
             
             site.(site.codes{i}).([sptxt,'_',intxt,'_lat']) = repmat(site.(site.codes{i}).in_lat,length(site.(site.codes{i}).([sptxt,'_',intxt])),1);
@@ -220,7 +208,7 @@ for i = 1:length(site.codes)
     end
 end
 
-% Load background data, or leave it blank if it doesn't exist.
+%% Load background data, or leave it blank if it doesn't exist.
 
 site.codes = [site.codes,'background'];
 site.groups = [site.groups; 'background'];
@@ -231,10 +219,8 @@ site.(site.codes{i}).long_name = 'background';
 site.(site.codes{i}).code = '';
 site.(site.codes{i}).country = 'United States';
 site.(site.codes{i}).time_zone = 'America/Los_Angeles';
-%site.(site.codes{i}).url = 'https://megacities.jpl.nasa.gov/public/Los_Angeles/In_Situ/La_Jolla/';
 site.(site.codes{i}).inlet_height_long_name = {'background'};
 site.(site.codes{i}).inlet_height = {0};
-%site.(site.codes{i}).years = {'2015','2016'};
 site.(site.codes{i}).species = {'co2'};
 site.(site.codes{i}).species_long_name = {'carbon_dioxide'};
 site.(site.codes{i}).species_units = {'micromol mol-1'};
