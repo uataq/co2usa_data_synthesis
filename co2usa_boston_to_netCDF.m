@@ -36,11 +36,10 @@ date_issued_now = datestr(now,'yyyy-mm-dd');
 date_issued = datetime(2018,07,01);
 date_issued_str = datestr(date_issued,'yyyy-mm-dd');
 
-% Output folder
-writeFolder = [pwd,'\synthesis_output\'];
-
-readFolder = [pwd,'\data_input\'];
-
+% Working folders
+currentFolder = pwd;
+readFolder = fullfile(currentFolder(1:regexp(currentFolder,'gcloud.utah.edu')+14),'data','co2-usa','data_input');
+writeFolder = fullfile(currentFolder(1:regexp(currentFolder,'gcloud.utah.edu')+14),'data','co2-usa','synthesis_output');
 
 %% City & provider information:
 
