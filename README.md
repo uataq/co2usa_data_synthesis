@@ -1,4 +1,4 @@
-# CO_2 Urban Synthesis and Analysis (CO2-USA) Data Synthesis
+# CO2 Urban Synthesis and Analysis (CO2-USA) Data Synthesis
 Urban greenhouse gas network measurements for cities in the CO2 Urban Synthesis and Analysis network.
 
 More information about the CO2 Urban Synthesis and Analysis project can be found on our main project web page:
