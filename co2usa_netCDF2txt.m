@@ -181,9 +181,10 @@ end
 
 end
 
+fprintf('Zipping the text files...')
 txtfn = dir(fullfile(writeFolder,'*.txt'));
-
 zip(fullfile(writeFolder,[city,'_all_sites_1_hour_R0_txt_formatted_files_',date_issued_str,'.zip']),{txtfn.name},txtfn(1).folder)
+fprintf('Done.\n')
 
 fprintf('<--- Finished creating text files from the netCDF parent files --->\n')
 
