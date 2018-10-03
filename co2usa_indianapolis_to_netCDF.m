@@ -111,8 +111,8 @@ site.(site.codes{i}).files = dir(fullfile(readFolder,city,site.codes{1,i},'*.dat
 all_inlets = {};
 for j = 1:length(site.(site.codes{i}).files)
     underscores_ind = regexp(site.(site.codes{i}).files(j).name,'_');
-    dat_ind = regexp(site.(site.codes{i}).files(j).name,'.dat');
-    all_inlets{j,1} = site.(site.codes{i}).files(j).name(underscores_ind(end)+1:dat_ind-1);
+    %dat_ind = regexp(site.(site.codes{i}).files(j).name,'.dat');
+    all_inlets{j,1} = site.(site.codes{i}).files(j).name(underscores_ind(end-1)+1:underscores_ind(end)-1);
 end
 clear dat_ind underscores_ind
 site.(site.codes{i}).inlet_height_long_name = unique(all_inlets)';
@@ -209,13 +209,16 @@ while readNextLine==true
         end
     end
     
-    if ~isempty(regexp(tline,'PLEASE DO NOT DISTRIBUTE THESE DATA','once')); readNextLine = false; end
+    %if ~isempty(regexp(tline,'PLEASE DO NOT DISTRIBUTE THESE DATA','once')); readNextLine = false; end % This was the end of the first version of the data
+    if ~isempty(regexp(tline,'UNCERTAINTY:','once')); readNextLine = false; end
 end
 fclose(fid);
-site.(site.codes{i}).header_lines = header_lines+2;
+site.(site.codes{i}).header_lines = header_lines+6;
 site.(site.codes{i}).country = 'United States';
 site.(site.codes{i}).time_zone = 'America/Indianapolis'; % use timezones to find out the available time zone designations.
 end
+
+
 
 site.date_issued_str = datestr(site.date_issued,'yyyy-mm-dd');
 
@@ -244,7 +247,7 @@ for i = 1:length(site.codes)
 %                     formatSpec = [formatSpec,'%f%f%f']; %#ok<AGROW>
 %                 end
 %                 formatSpec = [formatSpec,'%f%f']; %#ok<AGROW>
-                formatSpec = '%s%s%f%f%f%f%f%f%f%f%f%f%f%f%f%f%f%f%f';
+                formatSpec = '%s%s%f%f%f%f%f%f%f%f%f%f%f%f%f%f%f%f%f%f';
 
                 % Read the data file after skipping the header lines.
                 fid = fopen(fullfile(site.(site.codes{i}).files(fn).folder,site.(site.codes{i}).files(fn).name));
@@ -257,12 +260,11 @@ for i = 1:length(site.codes)
                 if strcmp(sptxt,'co2'); col.species = 7; col.std = 8; end
                 if strcmp(sptxt,'ch4'); col.species = 10; col.std = 11; end
                 if strcmp(sptxt,'co'); col.species = 13; col.std = 14; end
+                col.n = 16; % n is common to all of the species.
                 
                 site.(site.codes{i}).([sptxt,'_',intxt]) = [site.(site.codes{i}).([sptxt,'_',intxt]); read_dat{1,2}(:,col.species)]; % species 
                 site.(site.codes{i}).([sptxt,'_',intxt,'_std']) = [site.(site.codes{i}).([sptxt,'_',intxt,'_std']); read_dat{1,2}(:,col.std)]; % species std
-                
-                % The input files do not have a 'n' currently, so this is entered below after all of the data is loaded. 
-                %site.(site.codes{i}).([sptxt,'_',intxt,'_n']) = [site.(site.codes{i}).([sptxt,'_',intxt,'_n']); read_dat{1,2}(:,9)]; % species n
+                site.(site.codes{i}).([sptxt,'_',intxt,'_n']) = [site.(site.codes{i}).([sptxt,'_',intxt,'_n']); read_dat{1,2}(:,col.n)]; % species n
                 
                 site.(site.codes{i}).([sptxt,'_',intxt,'_time']) = [site.(site.codes{i}).([sptxt,'_',intxt,'_time']); ...
                     datetime(read_dat{1,2}(:,4),ones(length(read_dat{1,2}),1),read_dat{1,2}(:,5),read_dat{1,2}(:,6),zeros(length(read_dat{1,2}),1),zeros(length(read_dat{1,2}),1))]; % time
@@ -274,12 +276,21 @@ for i = 1:length(site.codes)
             data_range_ind = find(~isnan(site.(site.codes{i}).([sptxt,'_',intxt])),1,'first'):find(~isnan(site.(site.codes{i}).([sptxt,'_',intxt])),1,'last');
             site.(site.codes{i}).([sptxt,'_',intxt]) = site.(site.codes{i}).([sptxt,'_',intxt])(data_range_ind);
             site.(site.codes{i}).([sptxt,'_',intxt,'_std']) = site.(site.codes{i}).([sptxt,'_',intxt,'_std'])(data_range_ind);
-            %site.(site.codes{i}).([sptxt,'_',intxt,'_n']) = site.(site.codes{i}).([sptxt,'_',intxt,'_n'])(data_range_ind);
+            site.(site.codes{i}).([sptxt,'_',intxt,'_n']) = site.(site.codes{i}).([sptxt,'_',intxt,'_n'])(data_range_ind);
             site.(site.codes{i}).([sptxt,'_',intxt,'_time']) = site.(site.codes{i}).([sptxt,'_',intxt,'_time'])(data_range_ind);
             clear data_range_ind
             
+            if isempty(site.(site.codes{i}).([sptxt,'_',intxt])) % If there is no data (ie if there is no CH4 data but there is CO2 & CO data), remove the site/inlet/species.
+                site.(site.codes{i}) = rmfield(site.(site.codes{i}),[sptxt,'_',intxt]);
+                site.(site.codes{i}) = rmfield(site.(site.codes{i}),[sptxt,'_',intxt,'_std']);
+                site.(site.codes{i}) = rmfield(site.(site.codes{i}),[sptxt,'_',intxt,'_n']);
+                site.(site.codes{i}) = rmfield(site.(site.codes{i}),[sptxt,'_',intxt,'_time']);
+                continue
+            end
+            
+            
             % Indianapolis does not currently have 'n' in their data files so this needs to be manually entered currently. 
-            site.(site.codes{i}).([sptxt,'_',intxt,'_n']) = nan(length(site.(site.codes{i}).([sptxt,'_',intxt])),1);
+            %site.(site.codes{i}).([sptxt,'_',intxt,'_n']) = nan(length(site.(site.codes{i}).([sptxt,'_',intxt])),1);
             
             % Lat, Lon, Elevation, and Inlet heights do not change, so they are all entered as a constant through the data set. 
             site.(site.codes{i}).([sptxt,'_',intxt,'_lat']) = repmat(site.(site.codes{i}).in_lat,length(site.(site.codes{i}).([sptxt,'_',intxt])),1);
