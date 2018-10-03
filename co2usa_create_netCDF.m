@@ -82,6 +82,10 @@ for i = 1:length(site.codes)
         for inlet = 1:length(site.(site.codes{i}).inlet_height_long_name)
             intxt = site.(site.codes{i}).inlet_height_long_name{inlet};
             
+            if ~isfield(site.(site.codes{i}),[sptxt,'_',intxt]) % There is no data for this site/species/inlet.
+                continue
+            end
+            
             if strcmp(site.(site.codes{i}).name,'background')
                 group_name = [site.(site.codes{i}).name,'_',sptxt];
             else
@@ -188,6 +192,11 @@ for i = 1:length(site.codes)
 
         for inlet = 1:length(site.(site.codes{i}).inlet_height_long_name)
             intxt = site.(site.codes{i}).inlet_height_long_name{inlet};
+            
+            if ~isfield(site.(site.codes{i}),[sptxt,'_',intxt]) % There is no data for this site/species/inlet.
+                continue
+            end
+            
             netcdf.putVar(n.id_site_Grp(grp,1),n.id_POSIX_time(grp,1),posixtime(site.(site.codes{i}).([sptxt,'_',intxt,'_time'])));
             netcdf.putVar(n.id_site_Grp(grp,1),n.id_time_string(grp,1),datestr(site.(site.codes{i}).([sptxt,'_',intxt,'_time']),'yyyy-mm-ddTHH:MM:SSZ'));
             netcdf.putVar(n.id_site_Grp(grp,1),n.id_obs(grp,1),site.(site.codes{i}).([sptxt,'_',intxt]));
