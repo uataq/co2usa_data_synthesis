@@ -255,7 +255,10 @@ for i = 1:length(site.codes)
             site.(site.codes{i}).([sptxt,'_',intxt,'_std']) = qhdataStd;
             site.(site.codes{i}).([sptxt,'_',intxt,'_n']) = qhdataCount;
             site.(site.codes{i}).([sptxt,'_',intxt,'_time']) = qht;
-
+            
+            % No uncertainty data yet.
+            site.(site.codes{i}).([sptxt,'_',intxt,'_unc']) = nan(length(site.(site.codes{i}).([sptxt,'_',intxt])),1);
+            
             % Lat, Lon, Elevation, and Inlet heights do not change, so they are all entered as a constant through the data set. 
             site.(site.codes{i}).([sptxt,'_',intxt,'_lat']) = repmat(site.(site.codes{i}).in_lat,length(site.(site.codes{i}).([sptxt,'_',intxt])),1);
             site.(site.codes{i}).([sptxt,'_',intxt,'_lon']) = repmat(site.(site.codes{i}).in_lon,length(site.(site.codes{i}).([sptxt,'_',intxt])),1);
@@ -266,6 +269,7 @@ for i = 1:length(site.codes)
             site.(site.codes{i}).([sptxt,'_',intxt])(isnan(site.(site.codes{i}).([sptxt,'_',intxt]))) = -1e34;
             site.(site.codes{i}).([sptxt,'_',intxt,'_std'])(isnan(site.(site.codes{i}).([sptxt,'_',intxt,'_std']))) = -1e34;
             site.(site.codes{i}).([sptxt,'_',intxt,'_n'])(isnan(site.(site.codes{i}).([sptxt,'_',intxt,'_n']))) = -1e34;
+            site.(site.codes{i}).([sptxt,'_',intxt,'_unc'])(isnan(site.(site.codes{i}).([sptxt,'_',intxt,'_unc']))) = -1e34;
             site.(site.codes{i}).([sptxt,'_',intxt,'_lat'])(isnan(site.(site.codes{i}).([sptxt,'_',intxt,'_lat']))) = -1e34;
             site.(site.codes{i}).([sptxt,'_',intxt,'_lon'])(isnan(site.(site.codes{i}).([sptxt,'_',intxt,'_lon']))) = -1e34;
             site.(site.codes{i}).([sptxt,'_',intxt,'_elevation'])(isnan(site.(site.codes{i}).([sptxt,'_',intxt,'_elevation']))) = -1e34;
@@ -311,6 +315,7 @@ site.(site.codes{i}).([sptxt,'_',intxt]) = [-1e34;-1e34];
 site.(site.codes{i}).([sptxt,'_',intxt,'_time']) = [datetime(2016,01,01);datetime(2016,01,02)];
 site.(site.codes{i}).([sptxt,'_',intxt,'_std']) = [-1e34;-1e34];
 site.(site.codes{i}).([sptxt,'_',intxt,'_n']) = [-1e34;-1e34];
+site.(site.codes{i}).([sptxt,'_',intxt,'_unc']) = [-1e34;-1e34];
 site.(site.codes{i}).([sptxt,'_',intxt,'_lat']) = [-1e34;-1e34];
 site.(site.codes{i}).([sptxt,'_',intxt,'_lon']) = [-1e34;-1e34];
 site.(site.codes{i}).([sptxt,'_',intxt,'_elevation']) = [-1e34;-1e34];

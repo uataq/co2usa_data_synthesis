@@ -2,6 +2,13 @@ clear all
 close all
 set(0,'DefaultFigureWindowStyle','docked')
 
+%% Outstanding questions:
+
+fprintf('Outstanding questions as of 10/11/2018:\n')
+fprintf('-City URL?\n')
+fprintf('-address?\n')
+fprintf('-One site (MSH) has CO, but readme doesnt. Do you want to include CO?\n')
+
 %% netCDF creation documentation
 
 % Following the Climate Forecasting conventions for netCDF files documented here:
@@ -37,35 +44,38 @@ writeFolder = fullfile(currentFolder(1:regexp(currentFolder,'gcloud.utah.edu')+1
 
 %% City & provider information:
 
-city = 'los_angeles';
-city_long_name = 'Los Angeles';
-city_url = 'https://megacities.jpl.nasa.gov/';
+city = 'northeast_corridor';
+city_long_name = 'North-East Corridor Baltimore-Washington DC';
+city_url = '';
 
-provider(1).name = 'Kristal Verhulst';
-provider(1).address1 = 'Jet Propulsion Laboratory M/S 233-300';
-provider(1).address2 = '4800 Oak Grove Drive';
-provider(1).address3 = 'Pasadena, CA 91109';
-provider(1).country = 'United States';
-provider(1).city = city_long_name;
-provider(1).affiliation = 'NASA Jet Propulsion Laboratory (JPL)';
-provider(1).email = 'Kristal.R.Verhulst@jpl.nasa.gov';
-provider(1).parameter = 'Provider has contributed measurements for: ';
+i = 1;
+provider(i).name = 'Anna Karion';
+provider(i).address1 = 'National Institute of Standards and Technology';
+provider(i).address2 = '100 Bureau Drive';
+provider(i).address3 = 'Gaithersburg, MD 20899';
+provider(i).country = 'United States';
+provider(i).city = city_long_name;
+provider(i).affiliation = 'National Institute of Standards and Technology (NIST)';
+provider(i).email = 'anna.karion@nist.gov';
+provider(i).parameter = 'Provider has contributed measurements for: ';
 
-provider(2).name = 'Riley Duren';
-provider(2).address1 = 'Jet Propulsion Laboratory';
-provider(2).address2 = '4800 Oak Grove Drive';
-provider(2).address3 = 'Pasadena, CA 91109';
-provider(2).country = 'United States';
-provider(2).city = city_long_name;
-provider(2).affiliation = 'NASA Jet Propulsion Laboratory (JPL)';
-provider(2).email = 'Riley.M.Duren@jpl.nasa.gov';
-provider(2).parameter = 'Provider has contributed measurements for: ';
+i = 2;
+provider(i).name = 'James Whetstone';
+provider(i).address1 = 'National Institute of Standards and Technology';
+provider(i).address2 = '100 Bureau Drive';
+provider(i).address3 = 'Gaithersburg, MD 20899';
+provider(i).country = 'United States';
+provider(i).city = city_long_name;
+provider(i).affiliation = 'National Institute of Standards and Technology (NIST)';
+provider(i).email = 'james.whetstone@nist.gov';
+provider(i).parameter = 'Provider has contributed measurements for: ';
+
 
 %% Site meta data
 
 clear site % start fresh
 
-site.reference = 'Verhulst, Kristal R., Anna Karion, Jooil Kim, Peter K. Salameh, Ralph F. Keeling, Sally Newman, John Miller, et al. “Carbon Dioxide and Methane Measurements from the Los Angeles Megacity Carbon Project – Part 1: Calibration, Urban Enhancements, and Uncertainty Estimates.” Atmospheric Chemistry and Physics 17, no. 13 (July 7, 2017): 8313–41. https://doi.org/10.5194/acp-17-8313-2017.';
+site.reference = 'A. Karion, J. Whetstone, In Situ Carbon Dioxide and Methane Measurements from a Tower Network in the North-East Corridor Baltimore/Washington, D.C. Urban Area. (in prep). DATA RELEASE VERSION: 2018-10-01.';
 
 site.groups = {}; % List of the site "code_species_inletHt"
 site.species = {}; % List of the "species"
@@ -73,36 +83,13 @@ site.date_issued = date_issued;
 site.date_issued_str = datestr(site.date_issued,'yyyy-mm-dd');
 
 i = 1;
-site.codes{1,i} = 'cit';
-site.(site.codes{i}).name = 'Caltech';
-site.(site.codes{i}).long_name = 'Caltech';
-site.(site.codes{i}).code = 'CIT';
+site.codes{1,i} = 'arl';
+site.(site.codes{i}).name = 'Arlington_VA';
+site.(site.codes{i}).long_name = 'Arlington VA';
+site.(site.codes{i}).code = 'ARL';
 site.(site.codes{i}).country = 'United States';
-site.(site.codes{i}).time_zone = 'America/Los_Angeles'; % use timezones to find out the available time zone designations.
-site.(site.codes{i}).inlet_height = {48};
-for j = 1:length(site.(site.codes{i}).inlet_height); site.(site.codes{i}).inlet_height_long_name{1,j} = [num2str(site.(site.codes{i}).inlet_height{1,j}),'m']; end
-site.(site.codes{i}).years = {'2016'};
-site.(site.codes{i}).species = {'co2','ch4','co'};
-site.(site.codes{i}).species_long_name = {'carbon_dioxide','methane','carbon_monoxide'};
-site.(site.codes{i}).species_units = {'micromol mol-1','nanomol mol-1','nanomol mol-1'};
-site.(site.codes{i}).species_units_long_name = {'ppm','ppb','ppb'};
-site.(site.codes{i}).instrument = {'Picarro G2401','Picarro G2401','Picarro G2401'};
-site.(site.codes{i}).calibration_scale = {'WMO CO2 X2007','WMO CH4 X2004A','WMO CO X2014A'};
-site.(site.codes{i}).in_lat = 34.14;
-site.(site.codes{i}).in_lon = -118.13;
-site.(site.codes{i}).in_elevation = 230;
-site.(site.codes{i}).date_issued = datetime(2017,05,17);
-site.(site.codes{i}).date_issued_str = datestr(site.(site.codes{i}).date_issued,'yyyy-mm-dd');
-site.date_issued = max([site.date_issued,site.(site.codes{i}).date_issued]);
-
-i = i+1;
-site.codes{1,i} = 'cnp';
-site.(site.codes{i}).name = 'Canoga_Park';
-site.(site.codes{i}).long_name = 'Canoga Park';
-site.(site.codes{i}).code = 'CNP';
-site.(site.codes{i}).country = 'United States';
-site.(site.codes{i}).time_zone = 'America/Los_Angeles'; % use timezones to find out the available time zone designations.
-site.(site.codes{i}).inlet_height = {15};
+site.(site.codes{i}).time_zone = 'America/New_York'; % use timezones to find out the available time zone designations.
+site.(site.codes{i}).inlet_height = {50,92};
 for j = 1:length(site.(site.codes{i}).inlet_height); site.(site.codes{i}).inlet_height_long_name{1,j} = [num2str(site.(site.codes{i}).inlet_height{1,j}),'m']; end
 site.(site.codes{i}).years = {'2016'};
 site.(site.codes{i}).species = {'co2','ch4'};
@@ -111,244 +98,175 @@ site.(site.codes{i}).species_units = {'micromol mol-1','nanomol mol-1'};
 site.(site.codes{i}).species_units_long_name = {'ppm','ppb'};
 site.(site.codes{i}).instrument = {'Picarro G2301','Picarro G2301'};
 site.(site.codes{i}).calibration_scale = {'WMO CO2 X2007','WMO CH4 X2004A'};
-site.(site.codes{i}).in_lat = 34.19;
-site.(site.codes{i}).in_lon = -118.60;
-site.(site.codes{i}).in_elevation = 245;
-site.(site.codes{i}).date_issued = datetime(2017,05,17);
+site.(site.codes{i}).in_lat = 38.891667;
+site.(site.codes{i}).in_lon = -77.131667;
+site.(site.codes{i}).in_elevation = 111;
+site.(site.codes{i}).date_issued = datetime(2018,10,01);
 site.(site.codes{i}).date_issued_str = datestr(site.(site.codes{i}).date_issued,'yyyy-mm-dd');
 site.date_issued = max([site.date_issued,site.(site.codes{i}).date_issued]);
 
 i = i+1;
-site.codes{1,i} = 'com';
-site.(site.codes{i}).name = 'Compton';
-site.(site.codes{i}).long_name = 'Compton';
-site.(site.codes{i}).code = 'COM';
+site.codes{1,i} = 'buc';
+site.(site.codes{i}).name = 'Bucktown_MD';
+site.(site.codes{i}).long_name = 'Bucktown MD';
+site.(site.codes{i}).code = 'BUC';
 site.(site.codes{i}).country = 'United States';
-site.(site.codes{i}).time_zone = 'America/Los_Angeles'; % use timezones to find out the available time zone designations.
-site.(site.codes{i}).inlet_height = {25,45};
+site.(site.codes{i}).time_zone = 'America/New_York'; % use timezones to find out the available time zone designations.
+site.(site.codes{i}).inlet_height = {46,75};
 for j = 1:length(site.(site.codes{i}).inlet_height); site.(site.codes{i}).inlet_height_long_name{1,j} = [num2str(site.(site.codes{i}).inlet_height{1,j}),'m']; end
-site.(site.codes{i}).years = {'2015','2016'};
+site.(site.codes{i}).years = {'2016'};
+site.(site.codes{i}).species = {'co2','ch4'};
+site.(site.codes{i}).species_long_name = {'carbon_dioxide','methane'};
+site.(site.codes{i}).species_units = {'micromol mol-1','nanomol mol-1'};
+site.(site.codes{i}).species_units_long_name = {'ppm','ppb'};
+site.(site.codes{i}).instrument = {'Picarro G2301','Picarro G2301'};
+site.(site.codes{i}).calibration_scale = {'WMO CO2 X2007','WMO CH4 X2004A'};
+site.(site.codes{i}).in_lat = 38.459699;
+site.(site.codes{i}).in_lon = -76.042970;
+site.(site.codes{i}).in_elevation = 3;
+site.(site.codes{i}).date_issued = datetime(2018,10,01);
+site.(site.codes{i}).date_issued_str = datestr(site.(site.codes{i}).date_issued,'yyyy-mm-dd');
+site.date_issued = max([site.date_issued,site.(site.codes{i}).date_issued]);
+
+i = i+1;
+site.codes{1,i} = 'hal';
+site.(site.codes{i}).name = 'Halethorpe_MD';
+site.(site.codes{i}).long_name = 'Halethorpe MD';
+site.(site.codes{i}).code = 'HAL';
+site.(site.codes{i}).country = 'United States';
+site.(site.codes{i}).time_zone = 'America/New_York'; % use timezones to find out the available time zone designations.
+site.(site.codes{i}).inlet_height = {29,58};
+for j = 1:length(site.(site.codes{i}).inlet_height); site.(site.codes{i}).inlet_height_long_name{1,j} = [num2str(site.(site.codes{i}).inlet_height{1,j}),'m']; end
+site.(site.codes{i}).years = {'2016'};
+site.(site.codes{i}).species = {'co2','ch4'};
+site.(site.codes{i}).species_long_name = {'carbon_dioxide','methane'};
+site.(site.codes{i}).species_units = {'micromol mol-1','nanomol mol-1'};
+site.(site.codes{i}).species_units_long_name = {'ppm','ppb'};
+site.(site.codes{i}).instrument = {'Picarro G2301','Picarro G2301'};
+site.(site.codes{i}).calibration_scale = {'WMO CO2 X2007','WMO CH4 X2004A'};
+site.(site.codes{i}).in_lat = 39.255194;
+site.(site.codes{i}).in_lon = -76.675278;
+site.(site.codes{i}).in_elevation = 70;
+site.(site.codes{i}).date_issued = datetime(2018,10,01);
+site.(site.codes{i}).date_issued_str = datestr(site.(site.codes{i}).date_issued,'yyyy-mm-dd');
+site.date_issued = max([site.date_issued,site.(site.codes{i}).date_issued]);
+
+i = i+1;
+site.codes{1,i} = 'jes';
+site.(site.codes{i}).name = 'Jessup_MD';
+site.(site.codes{i}).long_name = 'Jessup MD';
+site.(site.codes{i}).code = 'JES';
+site.(site.codes{i}).country = 'United States';
+site.(site.codes{i}).time_zone = 'America/New_York'; % use timezones to find out the available time zone designations.
+site.(site.codes{i}).inlet_height = {49,91};
+for j = 1:length(site.(site.codes{i}).inlet_height); site.(site.codes{i}).inlet_height_long_name{1,j} = [num2str(site.(site.codes{i}).inlet_height{1,j}),'m']; end
+site.(site.codes{i}).years = {'2016'};
+site.(site.codes{i}).species = {'co2','ch4'};
+site.(site.codes{i}).species_long_name = {'carbon_dioxide','methane'};
+site.(site.codes{i}).species_units = {'micromol mol-1','nanomol mol-1'};
+site.(site.codes{i}).species_units_long_name = {'ppm','ppb'};
+site.(site.codes{i}).instrument = {'Picarro G2301','Picarro G2301'};
+site.(site.codes{i}).calibration_scale = {'WMO CO2 X2007','WMO CH4 X2004A'};
+site.(site.codes{i}).in_lat = 39.172300;
+site.(site.codes{i}).in_lon = -76.776500;
+site.(site.codes{i}).in_elevation = 67;
+site.(site.codes{i}).date_issued = datetime(2018,10,01);
+site.(site.codes{i}).date_issued_str = datestr(site.(site.codes{i}).date_issued,'yyyy-mm-dd');
+site.date_issued = max([site.date_issued,site.(site.codes{i}).date_issued]);
+
+i = i+1;
+site.codes{1,i} = 'msh';
+site.(site.codes{i}).name = 'Mashpee_MA';
+site.(site.codes{i}).long_name = 'Mashpee MA';
+site.(site.codes{i}).code = 'MSH';
+site.(site.codes{i}).country = 'United States';
+site.(site.codes{i}).time_zone = 'America/New_York'; % use timezones to find out the available time zone designations.
+site.(site.codes{i}).inlet_height = {25,46};
+for j = 1:length(site.(site.codes{i}).inlet_height); site.(site.codes{i}).inlet_height_long_name{1,j} = [num2str(site.(site.codes{i}).inlet_height{1,j}),'m']; end
+site.(site.codes{i}).years = {'2016'};
 site.(site.codes{i}).species = {'co2','ch4','co'};
 site.(site.codes{i}).species_long_name = {'carbon_dioxide','methane','carbon_monoxide'};
 site.(site.codes{i}).species_units = {'micromol mol-1','nanomol mol-1','nanomol mol-1'};
 site.(site.codes{i}).species_units_long_name = {'ppm','ppb','ppb'};
 site.(site.codes{i}).instrument = {'Picarro G2401','Picarro G2401','Picarro G2401'};
 site.(site.codes{i}).calibration_scale = {'WMO CO2 X2007','WMO CH4 X2004A','WMO CO X2014A'};
-site.(site.codes{i}).in_lat = 33.87;
-site.(site.codes{i}).in_lon = -118.28;
-site.(site.codes{i}).in_elevation = 9;
-site.(site.codes{i}).date_issued = datetime(2017,05,17);
+site.(site.codes{i}).in_lat = 41.656694;
+site.(site.codes{i}).in_lon = -70.497500;
+site.(site.codes{i}).in_elevation = 32;
+site.(site.codes{i}).date_issued = datetime(2018,10,01);
 site.(site.codes{i}).date_issued_str = datestr(site.(site.codes{i}).date_issued,'yyyy-mm-dd');
 site.date_issued = max([site.date_issued,site.(site.codes{i}).date_issued]);
 
 i = i+1;
-site.codes{1,i} = 'ful';
-site.(site.codes{i}).name = 'CSU_Fullerton';
-site.(site.codes{i}).long_name = 'CSU Fullerton';
-site.(site.codes{i}).code = 'FUL';
+site.codes{1,i} = 'ndc';
+site.(site.codes{i}).name = 'Washington_DC';
+site.(site.codes{i}).long_name = 'Washington DC';
+site.(site.codes{i}).code = 'NDC';
 site.(site.codes{i}).country = 'United States';
-site.(site.codes{i}).time_zone = 'America/Los_Angeles'; % use timezones to find out the available time zone designations.
-site.(site.codes{i}).inlet_height = {50};
+site.(site.codes{i}).time_zone = 'America/New_York'; % use timezones to find out the available time zone designations.
+site.(site.codes{i}).inlet_height = {45,91};
 for j = 1:length(site.(site.codes{i}).inlet_height); site.(site.codes{i}).inlet_height_long_name{1,j} = [num2str(site.(site.codes{i}).inlet_height{1,j}),'m']; end
-site.(site.codes{i}).years = {'2015','2016'};
-site.(site.codes{i}).species = {'co2','ch4','co'};
-site.(site.codes{i}).species_long_name = {'carbon_dioxide','methane','carbon_monoxide'};
-site.(site.codes{i}).species_units = {'micromol mol-1','nanomol mol-1','nanomol mol-1'};
-site.(site.codes{i}).species_units_long_name = {'ppm','ppb','ppb'};
-site.(site.codes{i}).instrument = {'Picarro G2401','Picarro G2401','Picarro G2401'};
-site.(site.codes{i}).calibration_scale = {'WMO CO2 X2007','WMO CH4 X2004A','WMO CO X2014A'};
-site.(site.codes{i}).in_lat = 33.88;
-site.(site.codes{i}).in_lon = -117.88;
-site.(site.codes{i}).in_elevation = 75;
-site.(site.codes{i}).date_issued = datetime(2017,05,17);
-site.(site.codes{i}).date_issued_str = datestr(site.(site.codes{i}).date_issued,'yyyy-mm-dd');
-site.date_issued = max([site.date_issued,site.(site.codes{i}).date_issued]);
-
-i = i+1;
-site.codes{1,i} = 'gra';
-site.(site.codes{i}).name = 'Granada_Hills';
-site.(site.codes{i}).long_name = 'Granada Hills';
-site.(site.codes{i}).code = 'GRA';
-site.(site.codes{i}).country = 'United States';
-site.(site.codes{i}).time_zone = 'America/Los_Angeles'; % use timezones to find out the available time zone designations.
-site.(site.codes{i}).inlet_height = {31,51};
-for j = 1:length(site.(site.codes{i}).inlet_height); site.(site.codes{i}).inlet_height_long_name{1,j} = [num2str(site.(site.codes{i}).inlet_height{1,j}),'m']; end
-site.(site.codes{i}).years = {'2015','2016'};
-site.(site.codes{i}).species = {'co2','ch4','co'};
-site.(site.codes{i}).species_long_name = {'carbon_dioxide','methane','carbon_monoxide'};
-site.(site.codes{i}).species_units = {'micromol mol-1','nanomol mol-1','nanomol mol-1'};
-site.(site.codes{i}).species_units_long_name = {'ppm','ppb','ppb'};
-site.(site.codes{i}).instrument = {'Picarro G2401','Picarro G2401','Picarro G2401'};
-site.(site.codes{i}).calibration_scale = {'WMO CO2 X2007','WMO CH4 X2004A','WMO CO X2014A'};
-site.(site.codes{i}).in_lat = 34.28;
-site.(site.codes{i}).in_lon = -118.47;
-site.(site.codes{i}).in_elevation = 391;
-site.(site.codes{i}).date_issued = datetime(2017,05,17);
-site.(site.codes{i}).date_issued_str = datestr(site.(site.codes{i}).date_issued,'yyyy-mm-dd');
-site.date_issued = max([site.date_issued,site.(site.codes{i}).date_issued]);
-
-i = i+1;
-site.codes{1,i} = 'ljo';
-site.(site.codes{i}).name = 'La_Jolla';
-site.(site.codes{i}).long_name = 'La Jolla';
-site.(site.codes{i}).code = 'LJO';
-site.(site.codes{i}).country = 'United States';
-site.(site.codes{i}).time_zone = 'America/Los_Angeles';
-site.(site.codes{i}).inlet_height = {13};
-for j = 1:length(site.(site.codes{i}).inlet_height); site.(site.codes{i}).inlet_height_long_name{1,j} = [num2str(site.(site.codes{i}).inlet_height{1,j}),'m']; end
-site.(site.codes{i}).years = {'2015','2016'};
+site.(site.codes{i}).years = {'2016'};
 site.(site.codes{i}).species = {'co2','ch4'};
 site.(site.codes{i}).species_long_name = {'carbon_dioxide','methane'};
 site.(site.codes{i}).species_units = {'micromol mol-1','nanomol mol-1'};
 site.(site.codes{i}).species_units_long_name = {'ppm','ppb'};
-site.(site.codes{i}).instrument = {'Picarro G2301','Picarro G2301','Picarro G2301'};
+site.(site.codes{i}).instrument = {'Picarro G2301','Picarro G2301'};
 site.(site.codes{i}).calibration_scale = {'WMO CO2 X2007','WMO CH4 X2004A'};
-site.(site.codes{i}).in_lat = 32.87;
-site.(site.codes{i}).in_lon = -117.25;
-site.(site.codes{i}).in_elevation = 0;
-site.(site.codes{i}).date_issued = datetime(2017,05,17);
+site.(site.codes{i}).in_lat = 38.949944;
+site.(site.codes{i}).in_lon = -77.079639;
+site.(site.codes{i}).in_elevation = 128;
+site.(site.codes{i}).date_issued = datetime(2018,10,01);
 site.(site.codes{i}).date_issued_str = datestr(site.(site.codes{i}).date_issued,'yyyy-mm-dd');
 site.date_issued = max([site.date_issued,site.(site.codes{i}).date_issued]);
 
 i = i+1;
-site.codes{1,i} = 'ont';
-site.(site.codes{i}).name = 'Ontario';
-site.(site.codes{i}).long_name = 'Ontario';
-site.(site.codes{i}).code = 'ONT';
+site.codes{1,i} = 'neb';
+site.(site.codes{i}).name = 'NE_Baltimore_MD';
+site.(site.codes{i}).long_name = 'Northeast Baltimore MD';
+site.(site.codes{i}).code = 'NEB';
 site.(site.codes{i}).country = 'United States';
-site.(site.codes{i}).time_zone = 'America/Los_Angeles';
-site.(site.codes{i}).inlet_height = {25,41};
+site.(site.codes{i}).time_zone = 'America/New_York'; % use timezones to find out the available time zone designations.
+site.(site.codes{i}).inlet_height = {50,67};
 for j = 1:length(site.(site.codes{i}).inlet_height); site.(site.codes{i}).inlet_height_long_name{1,j} = [num2str(site.(site.codes{i}).inlet_height{1,j}),'m']; end
-site.(site.codes{i}).years = {'2015','2016'};
+site.(site.codes{i}).years = {'2016'};
 site.(site.codes{i}).species = {'co2','ch4'};
 site.(site.codes{i}).species_long_name = {'carbon_dioxide','methane'};
 site.(site.codes{i}).species_units = {'micromol mol-1','nanomol mol-1'};
 site.(site.codes{i}).species_units_long_name = {'ppm','ppb'};
-site.(site.codes{i}).instrument = {'Picarro G2301','Picarro G2301','Picarro G2301'};
+site.(site.codes{i}).instrument = {'Picarro G2301','Picarro G2301'};
 site.(site.codes{i}).calibration_scale = {'WMO CO2 X2007','WMO CH4 X2004A'};
-site.(site.codes{i}).in_lat = 34.06;
-site.(site.codes{i}).in_lon = -117.58;
-site.(site.codes{i}).in_elevation = 260;
-site.(site.codes{i}).date_issued = datetime(2017,05,17);
+site.(site.codes{i}).in_lat = 39.315417;
+site.(site.codes{i}).in_lon = -76.583000;
+site.(site.codes{i}).in_elevation = 44;
+site.(site.codes{i}).date_issued = datetime(2018,10,01);
 site.(site.codes{i}).date_issued_str = datestr(site.(site.codes{i}).date_issued,'yyyy-mm-dd');
 site.date_issued = max([site.date_issued,site.(site.codes{i}).date_issued]);
 
 i = i+1;
-site.codes{1,i} = 'sci';
-site.(site.codes{i}).name = 'San_Clemente_Island';
-site.(site.codes{i}).long_name = 'San Clemente Islan';
-site.(site.codes{i}).code = 'SCI';
+site.codes{1,i} = 'nwb';
+site.(site.codes{i}).name = 'NW_Baltimore_MD';
+site.(site.codes{i}).long_name = 'Northwest Baltimore MD';
+site.(site.codes{i}).code = 'NWB';
 site.(site.codes{i}).country = 'United States';
-site.(site.codes{i}).time_zone = 'America/Los_Angeles'; % use timezones to find out the available time zone designations.
-site.(site.codes{i}).inlet_height = {27};
+site.(site.codes{i}).time_zone = 'America/New_York'; % use timezones to find out the available time zone designations.
+site.(site.codes{i}).inlet_height = {27,55};
 for j = 1:length(site.(site.codes{i}).inlet_height); site.(site.codes{i}).inlet_height_long_name{1,j} = [num2str(site.(site.codes{i}).inlet_height{1,j}),'m']; end
-site.(site.codes{i}).years = {'2015','2016'};
-site.(site.codes{i}).species = {'co2','ch4','co'};
-site.(site.codes{i}).species_long_name = {'carbon_dioxide','methane','carbon_monoxide'};
-site.(site.codes{i}).species_units = {'micromol mol-1','nanomol mol-1','nanomol mol-1'};
-site.(site.codes{i}).species_units_long_name = {'ppm','ppb','ppb'};
-site.(site.codes{i}).instrument = {'Picarro G2401','Picarro G2401','Picarro G2401'};
-site.(site.codes{i}).calibration_scale = {'WMO CO2 X2007','WMO CH4 X2004A','WMO CO X2014A'};
-site.(site.codes{i}).in_lat = 32.92;
-site.(site.codes{i}).in_lon = -118.49;
-site.(site.codes{i}).in_elevation = 489;
-site.(site.codes{i}).date_issued = datetime(2017,05,17);
-site.(site.codes{i}).date_issued_str = datestr(site.(site.codes{i}).date_issued,'yyyy-mm-dd');
-site.date_issued = max([site.date_issued,site.(site.codes{i}).date_issued]);
-
-i = i+1;
-site.codes{1,i} = 'irv';
-site.(site.codes{i}).name = 'UC_Irvine';
-site.(site.codes{i}).long_name = 'UC Irvine';
-site.(site.codes{i}).code = 'IRV';
-site.(site.codes{i}).country = 'United States';
-site.(site.codes{i}).time_zone = 'America/Los_Angeles';
-site.(site.codes{i}).inlet_height = {20};
-for j = 1:length(site.(site.codes{i}).inlet_height); site.(site.codes{i}).inlet_height_long_name{1,j} = [num2str(site.(site.codes{i}).inlet_height{1,j}),'m']; end
-site.(site.codes{i}).years = {'2015','2016'};
+site.(site.codes{i}).years = {'2016'};
 site.(site.codes{i}).species = {'co2','ch4'};
 site.(site.codes{i}).species_long_name = {'carbon_dioxide','methane'};
 site.(site.codes{i}).species_units = {'micromol mol-1','nanomol mol-1'};
 site.(site.codes{i}).species_units_long_name = {'ppm','ppb'};
-site.(site.codes{i}).instrument = {'Picarro G2301','Picarro G2301','Picarro G2301'};
+site.(site.codes{i}).instrument = {'Picarro G2301','Picarro G2301'};
 site.(site.codes{i}).calibration_scale = {'WMO CO2 X2007','WMO CH4 X2004A'};
-site.(site.codes{i}).in_lat = 33.64;
-site.(site.codes{i}).in_lon = -117.84;
-site.(site.codes{i}).in_elevation = 10;
-site.(site.codes{i}).date_issued = datetime(2017,05,17);
+site.(site.codes{i}).in_lat = 39.344541;
+site.(site.codes{i}).in_lon = -76.685071;
+site.(site.codes{i}).in_elevation = 135;
+site.(site.codes{i}).date_issued = datetime(2018,10,01);
 site.(site.codes{i}).date_issued_str = datestr(site.(site.codes{i}).date_issued,'yyyy-mm-dd');
 site.date_issued = max([site.date_issued,site.(site.codes{i}).date_issued]);
 
-i = i+1;
-site.codes{1,i} = 'usc1';
-site.(site.codes{i}).name = 'USC1';
-site.(site.codes{i}).long_name = 'University of Southern California (downtown LA) 1';
-site.(site.codes{i}).code = 'USC1';
-site.(site.codes{i}).country = 'United States';
-site.(site.codes{i}).time_zone = 'America/Los_Angeles';
-site.(site.codes{i}).inlet_height = {50};
-for j = 1:length(site.(site.codes{i}).inlet_height); site.(site.codes{i}).inlet_height_long_name{1,j} = [num2str(site.(site.codes{i}).inlet_height{1,j}),'m']; end
-site.(site.codes{i}).years = {'2015','2016'};
-site.(site.codes{i}).species = {'co2','ch4'};
-site.(site.codes{i}).species_long_name = {'carbon_dioxide','methane'};
-site.(site.codes{i}).species_units = {'micromol mol-1','nanomol mol-1'};
-site.(site.codes{i}).species_units_long_name = {'ppm','ppb'};
-site.(site.codes{i}).instrument = {'Picarro G2301','Picarro G2301','Picarro G2301'};
-site.(site.codes{i}).calibration_scale = {'WMO CO2 X2007','WMO CH4 X2004A'};
-site.(site.codes{i}).in_lat = 34.02;
-site.(site.codes{i}).in_lon = -118.29;
-site.(site.codes{i}).in_elevation = 55;
-site.(site.codes{i}).date_issued = datetime(2017,05,17);
-site.(site.codes{i}).date_issued_str = datestr(site.(site.codes{i}).date_issued,'yyyy-mm-dd');
-site.date_issued = max([site.date_issued,site.(site.codes{i}).date_issued]);
-
-i = i+1;
-site.codes{1,i} = 'usc2';
-site.(site.codes{i}).name = 'USC2';
-site.(site.codes{i}).long_name = 'University of Southern California (downtown LA) 2';
-site.(site.codes{i}).code = 'USC2';
-site.(site.codes{i}).country = 'United States';
-site.(site.codes{i}).time_zone = 'America/Los_Angeles'; % use timezones to find out the available time zone designations.
-site.(site.codes{i}).inlet_height = {50};
-for j = 1:length(site.(site.codes{i}).inlet_height); site.(site.codes{i}).inlet_height_long_name{1,j} = [num2str(site.(site.codes{i}).inlet_height{1,j}),'m']; end
-site.(site.codes{i}).years = {'2015','2016'};
-site.(site.codes{i}).species = {'co2','ch4','co'};
-site.(site.codes{i}).species_long_name = {'carbon_dioxide','methane','carbon_monoxide'};
-site.(site.codes{i}).species_units = {'micromol mol-1','nanomol mol-1','nanomol mol-1'};
-site.(site.codes{i}).species_units_long_name = {'ppm','ppb','ppb'};
-site.(site.codes{i}).instrument = {'Picarro G2401','Picarro G2401','Picarro G2401'};
-site.(site.codes{i}).calibration_scale = {'WMO CO2 X2007','WMO CH4 X2004A','WMO CO X2014A'};
-site.(site.codes{i}).in_lat = 34.02;
-site.(site.codes{i}).in_lon = -118.29;
-site.(site.codes{i}).in_elevation = 55;
-site.(site.codes{i}).date_issued = datetime(2017,05,17);
-site.(site.codes{i}).date_issued_str = datestr(site.(site.codes{i}).date_issued,'yyyy-mm-dd');
-site.date_issued = max([site.date_issued,site.(site.codes{i}).date_issued]);
-
-i = i+1;
-site.codes{1,i} = 'vic';
-site.(site.codes{i}).name = 'Victorville';
-site.(site.codes{i}).long_name = 'Victorville';
-site.(site.codes{i}).code = 'VIC';
-site.(site.codes{i}).country = 'United States';
-site.(site.codes{i}).time_zone = 'America/Los_Angeles';
-site.(site.codes{i}).inlet_height = {50,100};
-for j = 1:length(site.(site.codes{i}).inlet_height); site.(site.codes{i}).inlet_height_long_name{1,j} = [num2str(site.(site.codes{i}).inlet_height{1,j}),'m']; end
-site.(site.codes{i}).years = {'2015','2016'};
-site.(site.codes{i}).species = {'co2','ch4'};
-site.(site.codes{i}).species_long_name = {'carbon_dioxide','methane'};
-site.(site.codes{i}).species_units = {'micromol mol-1','nanomol mol-1'};
-site.(site.codes{i}).species_units_long_name = {'ppm','ppb'};
-site.(site.codes{i}).instrument = {'Picarro G2301','Picarro G2301','Picarro G2301'};
-site.(site.codes{i}).calibration_scale = {'WMO CO2 X2007','WMO CH4 X2004A'};
-site.(site.codes{i}).in_lat = 34.61;
-site.(site.codes{i}).in_lon = -117.29;
-site.(site.codes{i}).in_elevation = 1370;
-site.(site.codes{i}).date_issued = datetime(2017,05,17);
-site.(site.codes{i}).date_issued_str = datestr(site.(site.codes{i}).date_issued,'yyyy-mm-dd');
-site.date_issued = max([site.date_issued,site.(site.codes{i}).date_issued]);
-
-% Loading the data
+%% Loading the data
 
 for i = 1:length(site.codes)
     for sp = 1:length(site.(site.codes{i}).species) % only doing CO2 for now.
@@ -362,12 +280,7 @@ for i = 1:length(site.codes)
             site.(site.codes{i}).([sptxt,'_',intxt,'_time']) = [];
             for yy = 1:length(site.(site.codes{i}).years)
                 yytxt = site.(site.codes{i}).years{yy};
-                folder = fullfile(readFolder,city,'in_situ',site.(site.codes{i}).name,[yytxt,'_Measurements']);
-                file = dir([folder,'\',site.(site.codes{i}).code,'-',yytxt,'*',sptxt,'-',intxt,'*.csv']);
-                if isempty(file) % The 'rooftop' sites don't include the intxt in the file name.
-                    file = dir([folder,'\',site.(site.codes{i}).code,'-',yytxt,'*',sptxt,'-','*.csv']);
-                end
-                
+                file = dir([fullfile(readFolder,city),'\',site.(site.codes{i}).code,'-',yytxt,'*',sptxt,'-',intxt,'*.csv']);
                 if isempty(file)
                     fprintf('No file for %s in %s.\nContinuing onto the next file.\n',yytxt,folder)
                     keyboard
@@ -380,9 +293,9 @@ for i = 1:length(site.codes)
                 fclose(fid);
                 site.(site.codes{i}).([sptxt,'_',intxt]) = [site.(site.codes{i}).([sptxt,'_',intxt]); read_dat{1,2}(:,6)]; % CO2
                 site.(site.codes{i}).([sptxt,'_',intxt,'_std']) = [site.(site.codes{i}).([sptxt,'_',intxt,'_std']); read_dat{1,2}(:,7)]; % CO2 std
-                site.(site.codes{i}).([sptxt,'_',intxt,'_n']) = [site.(site.codes{i}).([sptxt,'_',intxt,'_n']); read_dat{1,2}(:,9)]; % CO2 n
-                site.(site.codes{i}).([sptxt,'_',intxt,'_unc']) = [site.(site.codes{i}).([sptxt,'_',intxt,'_unc']); read_dat{1,2}(:,8)]; % CO2 uncertainty
-                site.(site.codes{i}).([sptxt,'_',intxt,'_time']) = [site.(site.codes{i}).([sptxt,'_',intxt,'_time']); datetime(read_dat{1,1},'InputFormat','dd-MMM-yyyy HH:mm:ss')]; % time
+                site.(site.codes{i}).([sptxt,'_',intxt,'_n']) = [site.(site.codes{i}).([sptxt,'_',intxt,'_n']); read_dat{1,2}(:,8)]; % CO2 n
+                site.(site.codes{i}).([sptxt,'_',intxt,'_unc']) = [site.(site.codes{i}).([sptxt,'_',intxt,'_unc']); read_dat{1,2}(:,11)]; % CO2 uncertainty
+                site.(site.codes{i}).([sptxt,'_',intxt,'_time']) = [site.(site.codes{i}).([sptxt,'_',intxt,'_time']); datetime(read_dat{1,1},'InputFormat','yyyy-MM-dd HH:mm:ss')]; % time
                 fprintf('File read: %s\n',file.name)
             end
             
@@ -394,7 +307,7 @@ for i = 1:length(site.codes)
             site.(site.codes{i}).([sptxt,'_',intxt,'_unc']) = site.(site.codes{i}).([sptxt,'_',intxt,'_unc'])(data_range_ind);
             site.(site.codes{i}).([sptxt,'_',intxt,'_time']) = site.(site.codes{i}).([sptxt,'_',intxt,'_time'])(data_range_ind);
             clear data_range_ind
-
+            
             site.(site.codes{i}).([sptxt,'_',intxt,'_lat']) = repmat(site.(site.codes{i}).in_lat,length(site.(site.codes{i}).([sptxt,'_',intxt])),1);
             site.(site.codes{i}).([sptxt,'_',intxt,'_lon']) = repmat(site.(site.codes{i}).in_lon,length(site.(site.codes{i}).([sptxt,'_',intxt])),1);
             site.(site.codes{i}).([sptxt,'_',intxt,'_elevation']) = repmat(site.(site.codes{i}).in_elevation,length(site.(site.codes{i}).([sptxt,'_',intxt])),1);

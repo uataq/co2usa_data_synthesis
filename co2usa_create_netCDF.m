@@ -87,7 +87,7 @@ for i = 1:length(site.codes)
             end
             
             if strcmp(site.(site.codes{i}).name,'background')
-                group_name = [site.(site.codes{i}).name,'_',sptxt];
+                group_name = [site.(site.codes{i}).name,'_',sptxt]; % no inlet text for the background.
             else
                 group_name = [site.(site.codes{i}).code,'_',sptxt,'_',intxt];
             end
@@ -150,6 +150,11 @@ for i = 1:length(site.codes)
             netcdf.putAtt(n.id_site_Grp(grp,1),n.id_n(grp,1),'units','count');
             netcdf.putAtt(n.id_site_Grp(grp,1),n.id_n(grp,1),'long_name',['Number of the ',sptxt,' mole fraction measurements in the hour.']);
             
+            n.id_unc(grp,1) = netcdf.defVar(n.id_site_Grp(grp,1),'uncertainty','NC_DOUBLE',n.id_time_Dim(grp,1));
+            netcdf.defVarFill(n.id_site_Grp(grp,1),n.id_unc(grp,1),false,-1e34);
+            netcdf.putAtt(n.id_site_Grp(grp,1),n.id_unc(grp,1),'units',site.(site.codes{i}).species_units{sp});
+            netcdf.putAtt(n.id_site_Grp(grp,1),n.id_unc(grp,1),'long_name','Measurement uncertainty determined by the data provider. See the Reference for more details.');
+            
             n.id_lat(grp,1) = netcdf.defVar(n.id_site_Grp(grp,1),'lat','NC_DOUBLE',n.id_time_Dim(grp,1));
             netcdf.defVarFill(n.id_site_Grp(grp,1),n.id_lat(grp,1),false,-1e34);
             netcdf.putAtt(n.id_site_Grp(grp,1),n.id_lat(grp,1),'units','degrees_north');
@@ -202,6 +207,7 @@ for i = 1:length(site.codes)
             netcdf.putVar(n.id_site_Grp(grp,1),n.id_obs(grp,1),site.(site.codes{i}).([sptxt,'_',intxt]));
             netcdf.putVar(n.id_site_Grp(grp,1),n.id_std(grp,1),site.(site.codes{i}).([sptxt,'_',intxt,'_std']));
             netcdf.putVar(n.id_site_Grp(grp,1),n.id_n(grp,1),site.(site.codes{i}).([sptxt,'_',intxt,'_n']));
+            netcdf.putVar(n.id_site_Grp(grp,1),n.id_unc(grp,1),site.(site.codes{i}).([sptxt,'_',intxt,'_unc']));
             netcdf.putVar(n.id_site_Grp(grp,1),n.id_lat(grp,1),site.(site.codes{i}).([sptxt,'_',intxt,'_lat']));
             netcdf.putVar(n.id_site_Grp(grp,1),n.id_lon(grp,1),site.(site.codes{i}).([sptxt,'_',intxt,'_lon']));
             netcdf.putVar(n.id_site_Grp(grp,1),n.id_elevation(grp,1),site.(site.codes{i}).([sptxt,'_',intxt,'_elevation']));

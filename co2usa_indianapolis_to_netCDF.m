@@ -234,6 +234,7 @@ for i = 1:length(site.codes)
             site.(site.codes{i}).([sptxt,'_',intxt]) = [];
             site.(site.codes{i}).([sptxt,'_',intxt,'_std']) = [];
             site.(site.codes{i}).([sptxt,'_',intxt,'_n']) = [];
+            site.(site.codes{i}).([sptxt,'_',intxt,'_unc']) = [];
             site.(site.codes{i}).([sptxt,'_',intxt,'_time']) = [];
             
             for fn = 1:length(site.(site.codes{i}).files)
@@ -257,14 +258,15 @@ for i = 1:length(site.codes)
                 % All of Indy's sites have columns for CO2, CH4, CO, even if there is no data in those columns! 
                 %col.species = 7+(sp-1)*3;
                 %col.std = 8+(sp-1)*3;
-                if strcmp(sptxt,'co2'); col.species = 7; col.std = 8; end
-                if strcmp(sptxt,'ch4'); col.species = 10; col.std = 11; end
-                if strcmp(sptxt,'co'); col.species = 13; col.std = 14; end
+                if strcmp(sptxt,'co2'); col.species = 7; col.std = 8; col.unc = 9; end
+                if strcmp(sptxt,'ch4'); col.species = 10; col.std = 11; col.unc = 12; end
+                if strcmp(sptxt,'co'); col.species = 13; col.std = 14; col.unc = 15; end
                 col.n = 16; % n is common to all of the species.
                 
                 site.(site.codes{i}).([sptxt,'_',intxt]) = [site.(site.codes{i}).([sptxt,'_',intxt]); read_dat{1,2}(:,col.species)]; % species 
                 site.(site.codes{i}).([sptxt,'_',intxt,'_std']) = [site.(site.codes{i}).([sptxt,'_',intxt,'_std']); read_dat{1,2}(:,col.std)]; % species std
                 site.(site.codes{i}).([sptxt,'_',intxt,'_n']) = [site.(site.codes{i}).([sptxt,'_',intxt,'_n']); read_dat{1,2}(:,col.n)]; % species n
+                site.(site.codes{i}).([sptxt,'_',intxt,'_unc']) = [site.(site.codes{i}).([sptxt,'_',intxt,'_unc']); read_dat{1,2}(:,col.unc)]; % species uncertainty
                 
                 site.(site.codes{i}).([sptxt,'_',intxt,'_time']) = [site.(site.codes{i}).([sptxt,'_',intxt,'_time']); ...
                     datetime(read_dat{1,2}(:,4),ones(length(read_dat{1,2}),1),read_dat{1,2}(:,5),read_dat{1,2}(:,6),zeros(length(read_dat{1,2}),1),zeros(length(read_dat{1,2}),1))]; % time
@@ -277,6 +279,7 @@ for i = 1:length(site.codes)
             site.(site.codes{i}).([sptxt,'_',intxt]) = site.(site.codes{i}).([sptxt,'_',intxt])(data_range_ind);
             site.(site.codes{i}).([sptxt,'_',intxt,'_std']) = site.(site.codes{i}).([sptxt,'_',intxt,'_std'])(data_range_ind);
             site.(site.codes{i}).([sptxt,'_',intxt,'_n']) = site.(site.codes{i}).([sptxt,'_',intxt,'_n'])(data_range_ind);
+            site.(site.codes{i}).([sptxt,'_',intxt,'_unc']) = site.(site.codes{i}).([sptxt,'_',intxt,'_unc'])(data_range_ind);
             site.(site.codes{i}).([sptxt,'_',intxt,'_time']) = site.(site.codes{i}).([sptxt,'_',intxt,'_time'])(data_range_ind);
             clear data_range_ind
             
@@ -302,6 +305,7 @@ for i = 1:length(site.codes)
             site.(site.codes{i}).([sptxt,'_',intxt])(isnan(site.(site.codes{i}).([sptxt,'_',intxt]))) = -1e34;
             site.(site.codes{i}).([sptxt,'_',intxt,'_std'])(isnan(site.(site.codes{i}).([sptxt,'_',intxt,'_std']))) = -1e34;
             site.(site.codes{i}).([sptxt,'_',intxt,'_n'])(isnan(site.(site.codes{i}).([sptxt,'_',intxt,'_n']))) = -1e34;
+            site.(site.codes{i}).([sptxt,'_',intxt,'_unc'])(isnan(site.(site.codes{i}).([sptxt,'_',intxt,'_unc']))) = -1e34;
             site.(site.codes{i}).([sptxt,'_',intxt,'_lat'])(isnan(site.(site.codes{i}).([sptxt,'_',intxt,'_lat']))) = -1e34;
             site.(site.codes{i}).([sptxt,'_',intxt,'_lon'])(isnan(site.(site.codes{i}).([sptxt,'_',intxt,'_lon']))) = -1e34;
             site.(site.codes{i}).([sptxt,'_',intxt,'_elevation'])(isnan(site.(site.codes{i}).([sptxt,'_',intxt,'_elevation']))) = -1e34;
@@ -317,9 +321,7 @@ end
 % Load background data, or leave it blank if it doesn't exist.
 
 i = length(site.codes)+1;
-
 site.codes{1,i} = 'background';
-site.groups = [site.groups; 'background'];
 
 site.(site.codes{i}).name = 'background';
 site.(site.codes{i}).long_name = 'background';
@@ -328,29 +330,47 @@ site.(site.codes{i}).country = 'United States';
 site.(site.codes{i}).time_zone = 'America/Indianapolis';
 site.(site.codes{i}).inlet_height_long_name = {'background'};
 site.(site.codes{i}).inlet_height = {0};
-site.(site.codes{i}).species = {'co2'};
-site.(site.codes{i}).species_long_name = {'carbon_dioxide'};
-site.(site.codes{i}).species_units = {'micromol mol-1'};
-site.(site.codes{i}).species_units_long_name = {'ppm'};
-site.(site.codes{i}).instrument = {'modeled'};
-site.(site.codes{i}).calibration_scale = {'WMO CO2 X2007'};
+site.(site.codes{i}).species = {'co2','ch4','co'};
+site.(site.codes{i}).species_long_name = {'carbon_dioxide','methane','carbon_monoxide'};
+site.(site.codes{i}).species_units = {'micromol mol-1','nanomol mol-1','nanomol mol-1'};
+site.(site.codes{i}).species_units_long_name = {'ppm','ppb','ppb'};
+site.(site.codes{i}).instrument = {'upwind_tower','upwind_tower','upwind_tower'};
+site.(site.codes{i}).calibration_scale = {'WMO CO2 X2007','WMO CH4 X2004A','WMO CO X2014A'};
 site.(site.codes{i}).in_lat = site.(site.codes{i-1}).in_lat;
 site.(site.codes{i}).in_lon = site.(site.codes{i-1}).in_lon;
 site.(site.codes{i}).in_elevation = 0;
 site.(site.codes{i}).date_issued = site.(site.codes{i-1}).date_issued;
 site.(site.codes{i}).date_issued_str = datestr(site.(site.codes{i}).date_issued,'yyyy-mm-dd');
 
-sp = 1; sptxt = site.(site.codes{i}).species{sp};
-inlet = 1; intxt = site.(site.codes{i}).inlet_height_long_name{inlet};
+fn = dir(fullfile(readFolder,city,'background','INFLUX_backgrounds_2013_2017.dat'));
 
-site.(site.codes{i}).([sptxt,'_',intxt]) = [-1e34;-1e34];
-site.(site.codes{i}).([sptxt,'_',intxt,'_time']) = [datetime(2016,01,01);datetime(2016,01,02)];
-site.(site.codes{i}).([sptxt,'_',intxt,'_std']) = [-1e34;-1e34];
-site.(site.codes{i}).([sptxt,'_',intxt,'_n']) = [-1e34;-1e34];
-site.(site.codes{i}).([sptxt,'_',intxt,'_lat']) = [-1e34;-1e34];
-site.(site.codes{i}).([sptxt,'_',intxt,'_lon']) = [-1e34;-1e34];
-site.(site.codes{i}).([sptxt,'_',intxt,'_elevation']) = [-1e34;-1e34];
-site.(site.codes{i}).([sptxt,'_',intxt,'_inlet_height']) = [-1e34;-1e34];
+fid = fopen(fullfile(fn.folder,fn.name));
+formatSpec = '%f%f%f%f%f%f%f%f'; % Yr,Mn,Dy,Hr,sp
+header_lines = 1;
+read_dat = textscan(fid,formatSpec,'HeaderLines',header_lines,'Delimiter',',\t','CollectOutput',true,'TreatAsEmpty','NaN');
+fclose(fid);
+
+for sp = 1:length(site.(site.codes{i}).species)
+    sptxt = site.(site.codes{i}).species{sp};
+    inlet = 1; intxt = site.(site.codes{i}).inlet_height_long_name{inlet};
+    if strcmp(sptxt,'co2'); col.species = 6; end
+    if strcmp(sptxt,'ch4'); col.species = 7; end
+    if strcmp(sptxt,'co'); col.species = 8; end
+                
+    site.(site.codes{i}).([sptxt,'_',intxt]) = read_dat{1,1}(:,col.species);
+    site.(site.codes{i}).([sptxt,'_',intxt])(isnan(site.(site.codes{i}).([sptxt,'_',intxt]))) = -1e34;
+    site.(site.codes{i}).([sptxt,'_',intxt,'_time']) = datetime(ones(length(read_dat{1,1}),1)*2013,ones(length(read_dat{1,1}),1),read_dat{1,1}(:,2),read_dat{1,1}(:,5),zeros(length(read_dat{1,1}),1),zeros(length(read_dat{1,1}),1));
+    site.(site.codes{i}).([sptxt,'_',intxt,'_std']) = ones(length(read_dat{1,1}),1)*-1e34;
+    site.(site.codes{i}).([sptxt,'_',intxt,'_n']) = ones(length(read_dat{1,1}),1)*-1e34;
+    site.(site.codes{i}).([sptxt,'_',intxt,'_unc']) = ones(length(read_dat{1,1}),1)*-1e34;
+    site.(site.codes{i}).([sptxt,'_',intxt,'_lat']) = ones(length(read_dat{1,1}),1)*-1e34;
+    site.(site.codes{i}).([sptxt,'_',intxt,'_lon']) = ones(length(read_dat{1,1}),1)*-1e34;
+    site.(site.codes{i}).([sptxt,'_',intxt,'_elevation']) = ones(length(read_dat{1,1}),1)*-1e34;
+    site.(site.codes{i}).([sptxt,'_',intxt,'_inlet_height']) = ones(length(read_dat{1,1}),1)*-1e34;
+    
+    site.groups = [site.groups; {[site.(site.codes{i}).name,'_',sptxt]}];
+    site.species = [site.species; {sptxt}];
+end
 
 fprintf('---- %-6s complete ----\n\n',site.codes{i})
 
