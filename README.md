@@ -15,4 +15,7 @@ The data files are in netCDF and text format.  NetCDF files can be viewed with t
 
 This synthesis data product is currently undergoing active revisions as of 2018-10-25 and until further notice. We expect that the first version will be completed in the winter of 2018/2019 and when it is completed it will be archived at the Oak Ridge National Labs DAAC (https://daac.ornl.gov/).  At that time this readme will be updated with a link to the data storage location and the DOI.
 
+Logan Mitchell gave a presentation about this Data Synthesis project at the CO2-USA workshop in Salt Lake City, UT on Oct 25, 2018.  It includes the scope of the project, many of the details about the data conventions used, and some initial cross-city data comparisons.  You can see a PDF of the presentation here:
+https://github.com/loganemitchell/co2usa_data_synthesis/blob/master/Mitchell_CO2-USA_2018_workshop_2_V1.pdf
+
 If you would like more information, please contact Logan Mitchell (logan.mitchell@utah.edu).
