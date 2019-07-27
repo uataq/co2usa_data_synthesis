@@ -19,6 +19,19 @@ set(0,'DefaultFigureWindowStyle','docked')
 % Data will be archived at the ORNL DAAC:
 % https://daac.ornl.gov/PI/
 % 
+%% OUTSTANDING ISSUES:
+
+% Latest node file is found here:
+% https://cohen-research.appspot.com/get_latest_nodes/csv/
+% Download the data with (in this example, this is from node 10)
+% https://cohen-research.appspot.com/node/10/measurements/csv/?interval=60&start=2001-01-01%2000:00:00&end=2018-12-01%2000:00:00
+
+
+% node 057 doesn't exist for download.
+% The latest nodes file has two entries for node 14.
+% Need site elevation and inlet heights.  Can this be integrated into the
+% latest node file?
+
 
 %% Creation date
 
@@ -74,93 +87,54 @@ site.species = {}; % List of the "species"
 site.date_issued = date_issued;
 site.date_issued_str = datestr(site.date_issued,'yyyy-mm-dd');
 
-i = 1;
-site.codes{1,i} = 'beale';
-site.(site.codes{i}).name = 'beale';
-site.(site.codes{i}).long_name = 'Bay Area Metro Center';
-site.(site.codes{i}).code = 'beale';
-site.(site.codes{i}).country = 'United States';
-site.(site.codes{i}).time_zone = 'America/Los_Angeles'; % use timezones to find out the available time zone designations.
-site.(site.codes{i}).inlet_height = {4}; % I don't actually know the inlet height for beale
-for j = 1:length(site.(site.codes{i}).inlet_height); site.(site.codes{i}).inlet_height_long_name{1,j} = [num2str(site.(site.codes{i}).inlet_height{1,j}),'m']; end
-site.(site.codes{i}).species = {'co2'};
-site.(site.codes{i}).species_long_name = {'carbon_dioxide'};
-site.(site.codes{i}).species_units = {'micromol mol-1'};
-site.(site.codes{i}).species_units_long_name = {'ppm'};
-site.(site.codes{i}).instrument = {'Vaisala CarboCap GMP343'};
-site.(site.codes{i}).calibration_scale = {'WMO CO2 X2007'};
-site.(site.codes{i}).in_lat = 37.7882;
-site.(site.codes{i}).in_lon = -122.391;
-site.(site.codes{i}).in_elevation = 34;
-site.(site.codes{i}).date_issued = datetime(2017,05,17);
-site.(site.codes{i}).date_issued_str = datestr(site.(site.codes{i}).date_issued,'yyyy-mm-dd');
-site.date_issued = max([site.date_issued,site.(site.codes{i}).date_issued]);
 
-i = i+1;
-site.codes{1,i} = 'chabot';
-site.(site.codes{i}).name = 'chabot';
-site.(site.codes{i}).long_name = 'Chabot Space & Science Center';
-site.(site.codes{i}).code = 'chabot';
-site.(site.codes{i}).country = 'United States';
-site.(site.codes{i}).time_zone = 'America/Los_Angeles'; % use timezones to find out the available time zone designations.
-site.(site.codes{i}).inlet_height = {11};
-for j = 1:length(site.(site.codes{i}).inlet_height); site.(site.codes{i}).inlet_height_long_name{1,j} = [num2str(site.(site.codes{i}).inlet_height{1,j}),'m']; end
-site.(site.codes{i}).species = {'co2'};
-site.(site.codes{i}).species_long_name = {'carbon_dioxide'};
-site.(site.codes{i}).species_units = {'micromol mol-1'};
-site.(site.codes{i}).species_units_long_name = {'ppm'};
-site.(site.codes{i}).instrument = {'Vaisala CarboCap GMP343'};
-site.(site.codes{i}).calibration_scale = {'WMO CO2 X2007'};
-site.(site.codes{i}).in_lat = 37.819;
-site.(site.codes{i}).in_lon = -122.181;
-site.(site.codes{i}).in_elevation = 476;
-site.(site.codes{i}).date_issued = datetime(2017,05,17);
-site.(site.codes{i}).date_issued_str = datestr(site.(site.codes{i}).date_issued,'yyyy-mm-dd');
-site.date_issued = max([site.date_issued,site.(site.codes{i}).date_issued]);
+% Latest node file is found here:
+% https://cohen-research.appspot.com/get_latest_nodes/csv/
 
-i = i+1;
-site.codes{1,i} = 'marina3';
-site.(site.codes{i}).name = 'marina3';
-site.(site.codes{i}).long_name = 'Berkeley Marina 3';
-site.(site.codes{i}).code = 'marina3';
-site.(site.codes{i}).country = 'United States';
-site.(site.codes{i}).time_zone = 'America/Los_Angeles'; % use timezones to find out the available time zone designations.
-site.(site.codes{i}).inlet_height = {2};
-for j = 1:length(site.(site.codes{i}).inlet_height); site.(site.codes{i}).inlet_height_long_name{1,j} = [num2str(site.(site.codes{i}).inlet_height{1,j}),'m']; end
-site.(site.codes{i}).species = {'co2'};
-site.(site.codes{i}).species_long_name = {'carbon_dioxide'};
-site.(site.codes{i}).species_units = {'micromol mol-1'};
-site.(site.codes{i}).species_units_long_name = {'ppm'};
-site.(site.codes{i}).instrument = {'Vaisala CarboCap GMP343'};
-site.(site.codes{i}).calibration_scale = {'WMO CO2 X2007'};
-site.(site.codes{i}).in_lat = 37.863;
-site.(site.codes{i}).in_lon = -122.314;
-site.(site.codes{i}).in_elevation = 6;
-site.(site.codes{i}).date_issued = datetime(2017,05,17);
-site.(site.codes{i}).date_issued_str = datestr(site.(site.codes{i}).date_issued,'yyyy-mm-dd');
-site.date_issued = max([site.date_issued,site.(site.codes{i}).date_issued]);
+% Read the latest node file and loop through it:
+[latest_nodes_num,latest_nodes_txt] = xlsread(fullfile(readFolder,city,'v_20190515','get_latest_nodes.csv'));
+latest_nodes_txt = latest_nodes_txt(2:end,:); % Removes the header line
 
-i = i+1;
-site.codes{1,i} = 'odowd';
-site.(site.codes{i}).name = 'odowd';
-site.(site.codes{i}).long_name = 'Bishop O''Dowd High School';
-site.(site.codes{i}).code = 'odowd';
-site.(site.codes{i}).country = 'United States';
-site.(site.codes{i}).time_zone = 'America/Los_Angeles'; % use timezones to find out the available time zone designations.
-site.(site.codes{i}).inlet_height = {8};
-for j = 1:length(site.(site.codes{i}).inlet_height); site.(site.codes{i}).inlet_height_long_name{1,j} = [num2str(site.(site.codes{i}).inlet_height{1,j}),'m']; end
-site.(site.codes{i}).species = {'co2'};
-site.(site.codes{i}).species_long_name = {'carbon_dioxide'};
-site.(site.codes{i}).species_units = {'micromol mol-1'};
-site.(site.codes{i}).species_units_long_name = {'ppm'};
-site.(site.codes{i}).instrument = {'Vaisala CarboCap GMP343'};
-site.(site.codes{i}).calibration_scale = {'WMO CO2 X2007'};
-site.(site.codes{i}).in_lat = 37.753;
-site.(site.codes{i}).in_lon = -122.155;
-site.(site.codes{i}).in_elevation = 82;
-site.(site.codes{i}).date_issued = datetime(2017,05,17);
-site.(site.codes{i}).date_issued_str = datestr(site.(site.codes{i}).date_issued,'yyyy-mm-dd');
-site.date_issued = max([site.date_issued,site.(site.codes{i}).date_issued]);
+% Download the data with (in this example, this is from node 10)
+% http://beacon.berkeley.edu/node/10/measurements/csv/?interval=60&start=2012-01-01%2000:00:00&end=2019-05-14%2000:00:00&quality_level=2
+
+for i = 1:size(latest_nodes_num,1)
+    site.codes{1,i} = ['node',num2str(latest_nodes_num(i,1),'%03.0f')];
+    site.(site.codes{i}).name = ['node',num2str(latest_nodes_num(i,1),'%03.0f')];
+    site.(site.codes{i}).long_name = latest_nodes_txt{i,2};
+    site.(site.codes{i}).code = ['node',num2str(latest_nodes_num(i,1),'%03.0f')];
+    site.(site.codes{i}).inlet_height = {1}; % I don't actually know the inlet height for any of these sites
+    site.(site.codes{i}).in_lat = latest_nodes_num(i,4);
+    site.(site.codes{i}).in_lon = latest_nodes_num(i,5);
+    site.(site.codes{i}).in_elevation = latest_nodes_num(i,6);
+end
+
+% The rest of the site info is the same across the sites.
+for i = 1:length(site.codes)
+    for j = 1:length(site.(site.codes{i}).inlet_height); site.(site.codes{i}).inlet_height_long_name{1,j} = [num2str(site.(site.codes{i}).inlet_height{1,j}),'m']; end
+    site.(site.codes{i}).species = {'co2'};
+    site.(site.codes{i}).species_long_name = {'carbon_dioxide'};
+    site.(site.codes{i}).species_units = {'micromol mol-1'};
+    site.(site.codes{i}).species_units_long_name = {'ppm'};
+    site.(site.codes{i}).instrument = {'Vaisala CarboCap GMP343'};
+    site.(site.codes{i}).calibration_scale = {'WMO CO2 X2007'};
+    site.(site.codes{i}).country = 'United States';
+    site.(site.codes{i}).time_zone = 'America/Los_Angeles'; % use timezones to find out the available time zone designations.
+    site.(site.codes{i}).date_issued = datetime(2017,05,17);
+    site.(site.codes{i}).date_issued_str = datestr(site.(site.codes{i}).date_issued,'yyyy-mm-dd');
+    site.date_issued = max([site.date_issued,site.(site.codes{i}).date_issued]);
+end
+
+% i = 1;
+% site.codes{1,i} = 'node001';
+% site.(site.codes{i}).name = 'node001';
+% site.(site.codes{i}).long_name = 'Stone Edge Farms (Vineyard)';
+% site.(site.codes{i}).code = 'node001';
+% site.(site.codes{i}).inlet_height = {1}; % I don't actually know the inlet height for beale
+% site.(site.codes{i}).in_lat = 38.29069;
+% site.(site.codes{i}).in_lon = -122.50575;
+% site.(site.codes{i}).in_elevation = 1;
+% 
 
 
 %% Loading the data
@@ -175,20 +149,24 @@ for i = 1:length(site.codes)
             site.(site.codes{i}).([sptxt,'_',intxt,'_n']) = [];
             site.(site.codes{i}).([sptxt,'_',intxt,'_unc']) = [];
             site.(site.codes{i}).([sptxt,'_',intxt,'_time']) = [];
-            site.(site.codes{i}).files = dir(fullfile(readFolder,city,[site.(site.codes{i}).name,'*.csv']));
+            site.(site.codes{i}).files = dir(fullfile(readFolder,city,'v_20190515',[site.(site.codes{i}).name,'*.csv']));
             
             for fn = 1:length(site.(site.codes{i}).files)
-                formatSpec = '%q%q%f%f%{M/d/yyyy HH:mm:ss a}D%f';
+                %formatSpec = '%q%q%f%f%{M/d/yyyy HH:mm:ss a}D%f';
+                formatSpec = '%{yyyy-MM-dd HH:mm:ss}D%{yyyy-MM-dd HH:mm:ss}D%f%f%f%f%f%f';
                 fid = fopen(fullfile(site.(site.codes{i}).files(fn).folder,site.(site.codes{i}).files(fn).name));
                 read_dat = textscan(fid,formatSpec,'HeaderLines',1,'Delimiter',',','CollectOutput',true,'TreatAsEmpty','NaN');
                 fclose(fid);
-                site.(site.codes{i}).([sptxt,'_',intxt]) = [site.(site.codes{i}).([sptxt,'_',intxt]); str2double(read_dat{1,1}(:,2))]; % CO2
+                site.(site.codes{i}).([sptxt,'_',intxt]) = [site.(site.codes{i}).([sptxt,'_',intxt]); read_dat{1,3}(:,6)]; % CO2
                 site.(site.codes{i}).([sptxt,'_',intxt,'_std']) = [site.(site.codes{i}).([sptxt,'_',intxt,'_std']); nan(length(read_dat{1,1}),1)]; % CO2 std
                 site.(site.codes{i}).([sptxt,'_',intxt,'_n']) = [site.(site.codes{i}).([sptxt,'_',intxt,'_n']); nan(length(read_dat{1,1}),1)]; % CO2 n
-                site.(site.codes{i}).([sptxt,'_',intxt,'_time']) = [site.(site.codes{i}).([sptxt,'_',intxt,'_time']); read_dat{1,3}(:,:)+hours(read_dat{1,2}(:,2))]; % time
+                site.(site.codes{i}).([sptxt,'_',intxt,'_time']) = [site.(site.codes{i}).([sptxt,'_',intxt,'_time']); read_dat{1,2}]; % time
                 fprintf('File read: %s\n',site.(site.codes{i}).files(fn).name)
             end
             
+            % Change -999 values to NaNs.
+            site.(site.codes{i}).([sptxt,'_',intxt])(site.(site.codes{i}).([sptxt,'_',intxt])==-999) = nan;
+           
             % No uncertainty data yet.
             site.(site.codes{i}).([sptxt,'_',intxt,'_unc']) = nan(length(site.(site.codes{i}).([sptxt,'_',intxt])),1);
             
@@ -222,43 +200,76 @@ for i = 1:length(site.codes)
     end
 end
 
+
+%%
+
+% If there is no QCed data from this site, remove it from the list of sites.
+% Loop through.
+site_group_index = true(length(site.groups),1);
+for i = 1:length(site.codes)
+    any_site_data = [];
+    for sp = 1:length(site.(site.codes{i}).species) % only doing CO2 for now.
+        sptxt = site.(site.codes{i}).species{sp};
+        for inlet = 1:length(site.(site.codes{i}).inlet_height_long_name)
+            % If there is no data, or if its all NaNs, remove that species/inlet.
+            if or(sum(isnan(site.(site.codes{i}).([sptxt,'_',intxt])))==length(site.(site.codes{i}).([sptxt,'_',intxt])),isempty(site.(site.codes{i}).([sptxt,'_',intxt])))
+                site.(site.codes{i}) = rmfield(site.(site.codes{i}),{[sptxt,'_',intxt],[sptxt,'_',intxt,'_std'],[sptxt,'_',intxt,'_n'],[sptxt,'_',intxt,'_unc'],...
+                    [sptxt,'_',intxt,'_time'],[sptxt,'_',intxt,'_lat'],[sptxt,'_',intxt,'_lon'],[sptxt,'_',intxt,'_elevation'],[sptxt,'_',intxt,'_inlet_height']});
+            else
+                any_site_data = [any_site_data,true];
+            end
+        end
+    end
+    if ~any(any_site_data) % If there is no data, remove the site, species, groups using the logical index.
+        site = rmfield(site,site.codes{i});
+        site_group_index(i) = false;
+    end
+end
+
+site.groups = site.groups(site_group_index);
+site.codes = site.codes(site_group_index);
+site.species = site.species(site_group_index);
+
+clear('any_site_data','site_group_index')
+
+
 %% Load background data, or leave it blank if it doesn't exist.
 
-site.codes = [site.codes,'background'];
-site.groups = [site.groups; 'background'];
-
-i = length(site.codes);
-site.(site.codes{i}).name = 'background';
-site.(site.codes{i}).long_name = 'background';
-site.(site.codes{i}).code = '';
-site.(site.codes{i}).country = 'United States';
-site.(site.codes{i}).time_zone = 'America/Los_Angeles';
-site.(site.codes{i}).inlet_height_long_name = {'background'};
-site.(site.codes{i}).inlet_height = {0};
-site.(site.codes{i}).species = {'co2'};
-site.(site.codes{i}).species_long_name = {'carbon_dioxide'};
-site.(site.codes{i}).species_units = {'micromol mol-1'};
-site.(site.codes{i}).species_units_long_name = {'ppm'};
-site.(site.codes{i}).instrument = {'modeled'};
-site.(site.codes{i}).calibration_scale = {'WMO CO2 X2007'};
-site.(site.codes{i}).in_lat = 32.87;
-site.(site.codes{i}).in_lon = -117.25;
-site.(site.codes{i}).in_elevation = 0;
-site.(site.codes{i}).date_issued = datetime(2017,05,17);
-site.(site.codes{i}).date_issued_str = datestr(site.(site.codes{i}).date_issued,'yyyy-mm-dd');
-
-sp = 1; sptxt = site.(site.codes{i}).species{sp};
-inlet = 1; intxt = site.(site.codes{i}).inlet_height_long_name{inlet};
-
-site.(site.codes{i}).([sptxt,'_',intxt]) = [-1e34;-1e34];
-site.(site.codes{i}).([sptxt,'_',intxt,'_time']) = [datetime(2016,01,01);datetime(2016,01,02)];
-site.(site.codes{i}).([sptxt,'_',intxt,'_std']) = [-1e34;-1e34];
-site.(site.codes{i}).([sptxt,'_',intxt,'_n']) = [-1e34;-1e34];
-site.(site.codes{i}).([sptxt,'_',intxt,'_unc']) = [-1e34;-1e34];
-site.(site.codes{i}).([sptxt,'_',intxt,'_lat']) = [-1e34;-1e34];
-site.(site.codes{i}).([sptxt,'_',intxt,'_lon']) = [-1e34;-1e34];
-site.(site.codes{i}).([sptxt,'_',intxt,'_elevation']) = [-1e34;-1e34];
-site.(site.codes{i}).([sptxt,'_',intxt,'_inlet_height']) = [-1e34;-1e34];
+% site.codes = [site.codes,'background'];
+% site.groups = [site.groups; 'background'];
+% 
+% i = length(site.codes);
+% site.(site.codes{i}).name = 'background';
+% site.(site.codes{i}).long_name = 'background';
+% site.(site.codes{i}).code = '';
+% site.(site.codes{i}).country = 'United States';
+% site.(site.codes{i}).time_zone = 'America/Los_Angeles';
+% site.(site.codes{i}).inlet_height_long_name = {'background'};
+% site.(site.codes{i}).inlet_height = {0};
+% site.(site.codes{i}).species = {'co2'};
+% site.(site.codes{i}).species_long_name = {'carbon_dioxide'};
+% site.(site.codes{i}).species_units = {'micromol mol-1'};
+% site.(site.codes{i}).species_units_long_name = {'ppm'};
+% site.(site.codes{i}).instrument = {'modeled'};
+% site.(site.codes{i}).calibration_scale = {'WMO CO2 X2007'};
+% site.(site.codes{i}).in_lat = 32.87;
+% site.(site.codes{i}).in_lon = -117.25;
+% site.(site.codes{i}).in_elevation = 0;
+% site.(site.codes{i}).date_issued = datetime(2017,05,17);
+% site.(site.codes{i}).date_issued_str = datestr(site.(site.codes{i}).date_issued,'yyyy-mm-dd');
+% 
+% sp = 1; sptxt = site.(site.codes{i}).species{sp};
+% inlet = 1; intxt = site.(site.codes{i}).inlet_height_long_name{inlet};
+% 
+% site.(site.codes{i}).([sptxt,'_',intxt]) = [-1e34;-1e34];
+% site.(site.codes{i}).([sptxt,'_',intxt,'_time']) = [datetime(2016,01,01);datetime(2016,01,02)];
+% site.(site.codes{i}).([sptxt,'_',intxt,'_std']) = [-1e34;-1e34];
+% site.(site.codes{i}).([sptxt,'_',intxt,'_n']) = [-1e34;-1e34];
+% site.(site.codes{i}).([sptxt,'_',intxt,'_unc']) = [-1e34;-1e34];
+% site.(site.codes{i}).([sptxt,'_',intxt,'_lat']) = [-1e34;-1e34];
+% site.(site.codes{i}).([sptxt,'_',intxt,'_lon']) = [-1e34;-1e34];
+% site.(site.codes{i}).([sptxt,'_',intxt,'_elevation']) = [-1e34;-1e34];
+% site.(site.codes{i}).([sptxt,'_',intxt,'_inlet_height']) = [-1e34;-1e34];
 
 % Identify the netCDF files to create based on species.
 
@@ -286,5 +297,6 @@ eval('co2usa_create_netCDF')
 %% Convert the netCDF data to text files.
 
 fprintf('Now creating the text files from the netCDF files.\n')
+netCDF2txt_group = 'all_sites'; % 'all_sites' or 'background'
 eval('co2usa_netCDF2txt')
 

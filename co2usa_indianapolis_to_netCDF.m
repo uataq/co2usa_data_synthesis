@@ -94,8 +94,8 @@ site.species = {}; % List of the "species"
 
 site_names = dir(fullfile(readFolder,city,'site*'));
 
-site.date_issued = datetime(1970,1,1); % This date will be updated with the most recent date in the files below.
-site.date_issued_str = datestr(site.date_issued,'yyyy-mm-dd'); % This date will be updated with the most recent date in the files below.
+site.date_issued = date_issued; % This date will be updated with the most recent date in the files below.
+site.date_issued_str = date_issued_str; % This date will be updated with the most recent date in the files below.
 
 for i = 1:length(site_names)
 
@@ -319,60 +319,60 @@ for i = 1:length(site.codes)
 end
 
 % Load background data, or leave it blank if it doesn't exist.
-
-i = length(site.codes)+1;
-site.codes{1,i} = 'background';
-
-site.(site.codes{i}).name = 'background';
-site.(site.codes{i}).long_name = 'background';
-site.(site.codes{i}).code = '';
-site.(site.codes{i}).country = 'United States';
-site.(site.codes{i}).time_zone = 'America/Indianapolis';
-site.(site.codes{i}).inlet_height_long_name = {'background'};
-site.(site.codes{i}).inlet_height = {0};
-site.(site.codes{i}).species = {'co2','ch4','co'};
-site.(site.codes{i}).species_long_name = {'carbon_dioxide','methane','carbon_monoxide'};
-site.(site.codes{i}).species_units = {'micromol mol-1','nanomol mol-1','nanomol mol-1'};
-site.(site.codes{i}).species_units_long_name = {'ppm','ppb','ppb'};
-site.(site.codes{i}).instrument = {'upwind_tower','upwind_tower','upwind_tower'};
-site.(site.codes{i}).calibration_scale = {'WMO CO2 X2007','WMO CH4 X2004A','WMO CO X2014A'};
-site.(site.codes{i}).in_lat = site.(site.codes{i-1}).in_lat;
-site.(site.codes{i}).in_lon = site.(site.codes{i-1}).in_lon;
-site.(site.codes{i}).in_elevation = 0;
-site.(site.codes{i}).date_issued = site.(site.codes{i-1}).date_issued;
-site.(site.codes{i}).date_issued_str = datestr(site.(site.codes{i}).date_issued,'yyyy-mm-dd');
-
-fn = dir(fullfile(readFolder,city,'background','INFLUX_backgrounds_2013_2017.dat'));
-
-fid = fopen(fullfile(fn.folder,fn.name));
-formatSpec = '%f%f%f%f%f%f%f%f'; % Yr,Mn,Dy,Hr,sp
-header_lines = 1;
-read_dat = textscan(fid,formatSpec,'HeaderLines',header_lines,'Delimiter',',\t','CollectOutput',true,'TreatAsEmpty','NaN');
-fclose(fid);
-
-for sp = 1:length(site.(site.codes{i}).species)
-    sptxt = site.(site.codes{i}).species{sp};
-    inlet = 1; intxt = site.(site.codes{i}).inlet_height_long_name{inlet};
-    if strcmp(sptxt,'co2'); col.species = 6; end
-    if strcmp(sptxt,'ch4'); col.species = 7; end
-    if strcmp(sptxt,'co'); col.species = 8; end
-                
-    site.(site.codes{i}).([sptxt,'_',intxt]) = read_dat{1,1}(:,col.species);
-    site.(site.codes{i}).([sptxt,'_',intxt])(isnan(site.(site.codes{i}).([sptxt,'_',intxt]))) = -1e34;
-    site.(site.codes{i}).([sptxt,'_',intxt,'_time']) = datetime(ones(length(read_dat{1,1}),1)*2013,ones(length(read_dat{1,1}),1),read_dat{1,1}(:,2),read_dat{1,1}(:,5),zeros(length(read_dat{1,1}),1),zeros(length(read_dat{1,1}),1));
-    site.(site.codes{i}).([sptxt,'_',intxt,'_std']) = ones(length(read_dat{1,1}),1)*-1e34;
-    site.(site.codes{i}).([sptxt,'_',intxt,'_n']) = ones(length(read_dat{1,1}),1)*-1e34;
-    site.(site.codes{i}).([sptxt,'_',intxt,'_unc']) = ones(length(read_dat{1,1}),1)*-1e34;
-    site.(site.codes{i}).([sptxt,'_',intxt,'_lat']) = ones(length(read_dat{1,1}),1)*-1e34;
-    site.(site.codes{i}).([sptxt,'_',intxt,'_lon']) = ones(length(read_dat{1,1}),1)*-1e34;
-    site.(site.codes{i}).([sptxt,'_',intxt,'_elevation']) = ones(length(read_dat{1,1}),1)*-1e34;
-    site.(site.codes{i}).([sptxt,'_',intxt,'_inlet_height']) = ones(length(read_dat{1,1}),1)*-1e34;
-    
-    site.groups = [site.groups; {[site.(site.codes{i}).name,'_',sptxt]}];
-    site.species = [site.species; {sptxt}];
-end
-
-fprintf('---- %-6s complete ----\n\n',site.codes{i})
+% 
+% i = length(site.codes)+1;
+% site.codes{1,i} = 'background';
+% 
+% site.(site.codes{i}).name = 'background';
+% site.(site.codes{i}).long_name = 'background';
+% site.(site.codes{i}).code = '';
+% site.(site.codes{i}).country = 'United States';
+% site.(site.codes{i}).time_zone = 'America/Indianapolis';
+% site.(site.codes{i}).inlet_height_long_name = {'background'};
+% site.(site.codes{i}).inlet_height = {0};
+% site.(site.codes{i}).species = {'co2','ch4','co'};
+% site.(site.codes{i}).species_long_name = {'carbon_dioxide','methane','carbon_monoxide'};
+% site.(site.codes{i}).species_units = {'micromol mol-1','nanomol mol-1','nanomol mol-1'};
+% site.(site.codes{i}).species_units_long_name = {'ppm','ppb','ppb'};
+% site.(site.codes{i}).instrument = {'upwind_tower','upwind_tower','upwind_tower'};
+% site.(site.codes{i}).calibration_scale = {'WMO CO2 X2007','WMO CH4 X2004A','WMO CO X2014A'};
+% site.(site.codes{i}).in_lat = site.(site.codes{i-1}).in_lat;
+% site.(site.codes{i}).in_lon = site.(site.codes{i-1}).in_lon;
+% site.(site.codes{i}).in_elevation = 0;
+% site.(site.codes{i}).date_issued = site.(site.codes{i-1}).date_issued;
+% site.(site.codes{i}).date_issued_str = datestr(site.(site.codes{i}).date_issued,'yyyy-mm-dd');
+% 
+% fn = dir(fullfile(readFolder,city,'background','INFLUX_backgrounds_2013_2017.dat'));
+% 
+% fid = fopen(fullfile(fn.folder,fn.name));
+% formatSpec = '%f%f%f%f%f%f%f%f'; % Yr,Mn,Dy,Hr,sp
+% header_lines = 1;
+% read_dat = textscan(fid,formatSpec,'HeaderLines',header_lines,'Delimiter',',\t','CollectOutput',true,'TreatAsEmpty','NaN');
+% fclose(fid);
+% 
+% for sp = 1:length(site.(site.codes{i}).species)
+%     sptxt = site.(site.codes{i}).species{sp};
+%     inlet = 1; intxt = site.(site.codes{i}).inlet_height_long_name{inlet};
+%     if strcmp(sptxt,'co2'); col.species = 6; end
+%     if strcmp(sptxt,'ch4'); col.species = 7; end
+%     if strcmp(sptxt,'co'); col.species = 8; end
+%                 
+%     site.(site.codes{i}).([sptxt,'_',intxt]) = read_dat{1,1}(:,col.species);
+%     site.(site.codes{i}).([sptxt,'_',intxt])(isnan(site.(site.codes{i}).([sptxt,'_',intxt]))) = -1e34;
+%     site.(site.codes{i}).([sptxt,'_',intxt,'_time']) = datetime(ones(length(read_dat{1,1}),1)*2013,ones(length(read_dat{1,1}),1),read_dat{1,1}(:,2),read_dat{1,1}(:,5),zeros(length(read_dat{1,1}),1),zeros(length(read_dat{1,1}),1));
+%     site.(site.codes{i}).([sptxt,'_',intxt,'_std']) = ones(length(read_dat{1,1}),1)*-1e34;
+%     site.(site.codes{i}).([sptxt,'_',intxt,'_n']) = ones(length(read_dat{1,1}),1)*-1e34;
+%     site.(site.codes{i}).([sptxt,'_',intxt,'_unc']) = ones(length(read_dat{1,1}),1)*-1e34;
+%     site.(site.codes{i}).([sptxt,'_',intxt,'_lat']) = ones(length(read_dat{1,1}),1)*-1e34;
+%     site.(site.codes{i}).([sptxt,'_',intxt,'_lon']) = ones(length(read_dat{1,1}),1)*-1e34;
+%     site.(site.codes{i}).([sptxt,'_',intxt,'_elevation']) = ones(length(read_dat{1,1}),1)*-1e34;
+%     site.(site.codes{i}).([sptxt,'_',intxt,'_inlet_height']) = ones(length(read_dat{1,1}),1)*-1e34;
+%     
+%     site.groups = [site.groups; {[site.(site.codes{i}).name,'_',sptxt]}];
+%     site.species = [site.species; {sptxt}];
+% end
+% 
+% fprintf('---- %-6s complete ----\n\n',site.codes{i})
 
 % Identify the netCDF files to create based on species.
 
@@ -400,6 +400,7 @@ eval('co2usa_create_netCDF')
 %% Convert the netCDF data to text files.
 
 fprintf('Now creating the text files from the netCDF files.\n')
+netCDF2txt_group = 'all_sites';
 eval('co2usa_netCDF2txt')
 
 

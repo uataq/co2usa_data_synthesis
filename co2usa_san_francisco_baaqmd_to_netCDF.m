@@ -284,44 +284,44 @@ end
 
 %% Load background data, or leave it blank if it doesn't exist.
 
-i = length(site.codes)+1;
-
-site.codes{1,i} = 'background';
-site.groups = [site.groups; 'background'];
-
-site.(site.codes{i}).name = 'background';
-site.(site.codes{i}).long_name = 'background';
-site.(site.codes{i}).code = '';
-site.(site.codes{i}).country = 'United States';
-site.(site.codes{i}).time_zone = 'America/Los_Angeles';
-site.(site.codes{i}).inlet_height_long_name = {'background'};
-site.(site.codes{i}).inlet_height = {0};
-site.(site.codes{i}).species = {'co2'};
-site.(site.codes{i}).species_long_name = {'carbon_dioxide'};
-site.(site.codes{i}).species_units = {'micromol mol-1'};
-site.(site.codes{i}).species_units_long_name = {'ppm'};
-site.(site.codes{i}).instrument = {'modeled'};
-site.(site.codes{i}).calibration_scale = {'WMO CO2 X2007'};
-site.(site.codes{i}).in_lat = site.(site.codes{i-1}).in_lat;
-site.(site.codes{i}).in_lon = site.(site.codes{i-1}).in_lon;
-site.(site.codes{i}).in_elevation = 0;
-site.(site.codes{i}).date_issued = site.(site.codes{i-1}).date_issued;
-site.(site.codes{i}).date_issued_str = datestr(site.(site.codes{i}).date_issued,'yyyy-mm-dd');
-
-sp = 1; sptxt = site.(site.codes{i}).species{sp};
-inlet = 1; intxt = site.(site.codes{i}).inlet_height_long_name{inlet};
-
-site.(site.codes{i}).([sptxt,'_',intxt]) = [-1e34;-1e34];
-site.(site.codes{i}).([sptxt,'_',intxt,'_time']) = [datetime(2016,01,01);datetime(2016,01,02)];
-site.(site.codes{i}).([sptxt,'_',intxt,'_std']) = [-1e34;-1e34];
-site.(site.codes{i}).([sptxt,'_',intxt,'_n']) = [-1e34;-1e34];
-site.(site.codes{i}).([sptxt,'_',intxt,'_unc']) = [-1e34;-1e34];
-site.(site.codes{i}).([sptxt,'_',intxt,'_lat']) = [-1e34;-1e34];
-site.(site.codes{i}).([sptxt,'_',intxt,'_lon']) = [-1e34;-1e34];
-site.(site.codes{i}).([sptxt,'_',intxt,'_elevation']) = [-1e34;-1e34];
-site.(site.codes{i}).([sptxt,'_',intxt,'_inlet_height']) = [-1e34;-1e34];
-
-fprintf('---- %-6s complete ----\n\n',site.codes{i})
+% i = length(site.codes)+1;
+% 
+% site.codes{1,i} = 'background';
+% site.groups = [site.groups; 'background'];
+% 
+% site.(site.codes{i}).name = 'background';
+% site.(site.codes{i}).long_name = 'background';
+% site.(site.codes{i}).code = '';
+% site.(site.codes{i}).country = 'United States';
+% site.(site.codes{i}).time_zone = 'America/Los_Angeles';
+% site.(site.codes{i}).inlet_height_long_name = {'background'};
+% site.(site.codes{i}).inlet_height = {0};
+% site.(site.codes{i}).species = {'co2'};
+% site.(site.codes{i}).species_long_name = {'carbon_dioxide'};
+% site.(site.codes{i}).species_units = {'micromol mol-1'};
+% site.(site.codes{i}).species_units_long_name = {'ppm'};
+% site.(site.codes{i}).instrument = {'modeled'};
+% site.(site.codes{i}).calibration_scale = {'WMO CO2 X2007'};
+% site.(site.codes{i}).in_lat = site.(site.codes{i-1}).in_lat;
+% site.(site.codes{i}).in_lon = site.(site.codes{i-1}).in_lon;
+% site.(site.codes{i}).in_elevation = 0;
+% site.(site.codes{i}).date_issued = site.(site.codes{i-1}).date_issued;
+% site.(site.codes{i}).date_issued_str = datestr(site.(site.codes{i}).date_issued,'yyyy-mm-dd');
+% 
+% sp = 1; sptxt = site.(site.codes{i}).species{sp};
+% inlet = 1; intxt = site.(site.codes{i}).inlet_height_long_name{inlet};
+% 
+% site.(site.codes{i}).([sptxt,'_',intxt]) = [-1e34;-1e34];
+% site.(site.codes{i}).([sptxt,'_',intxt,'_time']) = [datetime(2016,01,01);datetime(2016,01,02)];
+% site.(site.codes{i}).([sptxt,'_',intxt,'_std']) = [-1e34;-1e34];
+% site.(site.codes{i}).([sptxt,'_',intxt,'_n']) = [-1e34;-1e34];
+% site.(site.codes{i}).([sptxt,'_',intxt,'_unc']) = [-1e34;-1e34];
+% site.(site.codes{i}).([sptxt,'_',intxt,'_lat']) = [-1e34;-1e34];
+% site.(site.codes{i}).([sptxt,'_',intxt,'_lon']) = [-1e34;-1e34];
+% site.(site.codes{i}).([sptxt,'_',intxt,'_elevation']) = [-1e34;-1e34];
+% site.(site.codes{i}).([sptxt,'_',intxt,'_inlet_height']) = [-1e34;-1e34];
+% 
+% fprintf('---- %-6s complete ----\n\n',site.codes{i})
 
 % Identify the netCDF files to create based on species.
 
@@ -349,5 +349,6 @@ eval('co2usa_create_netCDF')
 %% Convert the netCDF data to text files.
 
 fprintf('Now creating the text files from the netCDF files.\n')
+netCDF2txt_group = 'all_sites'; % 'all_sites' or 'background'
 eval('co2usa_netCDF2txt')
 

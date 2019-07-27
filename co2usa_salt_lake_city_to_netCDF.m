@@ -98,8 +98,8 @@ site.(site.codes{i}).calibration_scale = {'WMO CO2 X2007'};
 site.(site.codes{i}).in_lat = 40.7663;
 site.(site.codes{i}).in_lon = -111.8478;
 site.(site.codes{i}).in_elevation = 1436;
-site.(site.codes{i}).date_issued = datetime(2017,05,17);
-site.(site.codes{i}).date_issued_str = datestr(site.(site.codes{i}).date_issued,'yyyy-mm-dd');
+site.(site.codes{i}).date_issued = date_issued;
+site.(site.codes{i}).date_issued_str = date_issued_str;
 site.date_issued = max([site.date_issued,site.(site.codes{i}).date_issued]);
 
 i = i+1;
@@ -120,8 +120,8 @@ site.(site.codes{i}).calibration_scale = {'WMO CO2 X2007'};
 site.(site.codes{i}).in_lat = 40.5383;
 site.(site.codes{i}).in_lon = -112.0697;
 site.(site.codes{i}).in_elevation = 1582;
-site.(site.codes{i}).date_issued = datetime(2017,05,17);
-site.(site.codes{i}).date_issued_str = datestr(site.(site.codes{i}).date_issued,'yyyy-mm-dd');
+site.(site.codes{i}).date_issued = date_issued;
+site.(site.codes{i}).date_issued_str = date_issued_str;
 site.date_issued = max([site.date_issued,site.(site.codes{i}).date_issued]);
 
 i = i+1;
@@ -142,8 +142,8 @@ site.(site.codes{i}).calibration_scale = {'WMO CO2 X2007'};
 site.(site.codes{i}).in_lat = 40.7398;
 site.(site.codes{i}).in_lon = -111.8580;
 site.(site.codes{i}).in_elevation = 1328;
-site.(site.codes{i}).date_issued = datetime(2017,05,17);
-site.(site.codes{i}).date_issued_str = datestr(site.(site.codes{i}).date_issued,'yyyy-mm-dd');
+site.(site.codes{i}).date_issued = date_issued;
+site.(site.codes{i}).date_issued_str = date_issued_str;
 site.date_issued = max([site.date_issued,site.(site.codes{i}).date_issued]);
 
 i = i+1;
@@ -164,8 +164,8 @@ site.(site.codes{i}).calibration_scale = {'WMO CO2 X2007'};
 site.(site.codes{i}).in_lat = 40.6539;
 site.(site.codes{i}).in_lon = -111.8878;
 site.(site.codes{i}).in_elevation = 1322;
-site.(site.codes{i}).date_issued = datetime(2017,05,17);
-site.(site.codes{i}).date_issued_str = datestr(site.(site.codes{i}).date_issued,'yyyy-mm-dd');
+site.(site.codes{i}).date_issued = date_issued;
+site.(site.codes{i}).date_issued_str = date_issued_str;
 site.date_issued = max([site.date_issued,site.(site.codes{i}).date_issued]);
 
 i = i+1;
@@ -186,8 +186,8 @@ site.(site.codes{i}).calibration_scale = {'WMO CO2 X2007'};
 site.(site.codes{i}).in_lat = 40.7944;
 site.(site.codes{i}).in_lon = -111.9319;
 site.(site.codes{i}).in_elevation = 1289;
-site.(site.codes{i}).date_issued = datetime(2017,05,17);
-site.(site.codes{i}).date_issued_str = datestr(site.(site.codes{i}).date_issued,'yyyy-mm-dd');
+site.(site.codes{i}).date_issued = date_issued;
+site.(site.codes{i}).date_issued_str = date_issued_str;
 site.date_issued = max([site.date_issued,site.(site.codes{i}).date_issued]);
 
 
@@ -257,52 +257,52 @@ end
 
 %% Load background data, or leave it blank if it doesn't exist.
 
-site.codes = [site.codes,'background'];
-site.groups = [site.groups; 'background'];
+% site.codes = [site.codes,'background'];
+% site.groups = [site.groups; 'background'];
+% 
+% i = length(site.codes);
+% site.(site.codes{i}).name = 'background';
+% site.(site.codes{i}).long_name = 'background';
+% site.(site.codes{i}).code = '';
+% site.(site.codes{i}).country = 'United States';
+% site.(site.codes{i}).time_zone = 'America/Denver';
+% site.(site.codes{i}).inlet_height_long_name = {'background'};
+% site.(site.codes{i}).inlet_height = {0};
+% site.(site.codes{i}).species = {'co2'};
+% site.(site.codes{i}).species_long_name = {'carbon_dioxide'};
+% site.(site.codes{i}).species_units = {'micromol mol-1'};
+% site.(site.codes{i}).species_units_long_name = {'ppm'};
+% site.(site.codes{i}).instrument = {'modeled'};
+% site.(site.codes{i}).calibration_scale = {'WMO CO2 X2007'};
+% site.(site.codes{i}).in_lat = site.(site.codes{i-1}).in_lat;
+% site.(site.codes{i}).in_lon = site.(site.codes{i-1}).in_lon;
+% site.(site.codes{i}).in_elevation = 0;
+% site.(site.codes{i}).date_issued = datetime(2017,05,17);
+% site.(site.codes{i}).date_issued_str = datestr(site.(site.codes{i}).date_issued,'yyyy-mm-dd');
+% 
+% sp = 1; sptxt = site.(site.codes{i}).species{sp};
+% inlet = 1; intxt = site.(site.codes{i}).inlet_height_long_name{inlet};
+% 
+% load(fullfile(currentFolder(1:regexp(currentFolder,'gcloud.utah.edu')+14),'code','SLC CO2','Data','data_background.mat'))
+% 
+% site.(site.codes{i}).([sptxt,'_',intxt]) = bg.co2; % species mixing ratio
+% site.(site.codes{i}).([sptxt,'_',intxt,'_time']) = datetime(bg.t,'ConvertFrom','datenum'); ...
+% 
+% % Removes the leading and trailing NaNs
+% data_range_ind = find(site.(site.codes{i}).([sptxt,'_',intxt])~=-1e34,1,'first'):find(site.(site.codes{i}).([sptxt,'_',intxt])~=-1e34,1,'last');
+% site.(site.codes{i}).([sptxt,'_',intxt]) = site.(site.codes{i}).([sptxt,'_',intxt])(data_range_ind);
+% site.(site.codes{i}).([sptxt,'_',intxt,'_time']) = site.(site.codes{i}).([sptxt,'_',intxt,'_time'])(data_range_ind);
+% clear data_range_ind
+% site.(site.codes{i}).([sptxt,'_',intxt,'_std']) = ones(length(site.(site.codes{i}).([sptxt,'_',intxt])),1)*-1e34;
+% site.(site.codes{i}).([sptxt,'_',intxt,'_unc']) = ones(length(site.(site.codes{i}).([sptxt,'_',intxt])),1)*-1e34;
+% site.(site.codes{i}).([sptxt,'_',intxt,'_n']) = ones(length(site.(site.codes{i}).([sptxt,'_',intxt])),1)*-1e34;
+% site.(site.codes{i}).([sptxt,'_',intxt,'_lat']) = ones(length(site.(site.codes{i}).([sptxt,'_',intxt])),1)*-1e34;
+% site.(site.codes{i}).([sptxt,'_',intxt,'_lon']) = ones(length(site.(site.codes{i}).([sptxt,'_',intxt])),1)*-1e34;
+% site.(site.codes{i}).([sptxt,'_',intxt,'_elevation']) = ones(length(site.(site.codes{i}).([sptxt,'_',intxt])),1)*-1e34;
+% site.(site.codes{i}).([sptxt,'_',intxt,'_inlet_height']) = ones(length(site.(site.codes{i}).([sptxt,'_',intxt])),1)*-1e34;
+% 
 
-i = length(site.codes);
-site.(site.codes{i}).name = 'background';
-site.(site.codes{i}).long_name = 'background';
-site.(site.codes{i}).code = '';
-site.(site.codes{i}).country = 'United States';
-site.(site.codes{i}).time_zone = 'America/Denver';
-site.(site.codes{i}).inlet_height_long_name = {'background'};
-site.(site.codes{i}).inlet_height = {0};
-site.(site.codes{i}).species = {'co2'};
-site.(site.codes{i}).species_long_name = {'carbon_dioxide'};
-site.(site.codes{i}).species_units = {'micromol mol-1'};
-site.(site.codes{i}).species_units_long_name = {'ppm'};
-site.(site.codes{i}).instrument = {'modeled'};
-site.(site.codes{i}).calibration_scale = {'WMO CO2 X2007'};
-site.(site.codes{i}).in_lat = site.(site.codes{i-1}).in_lat;
-site.(site.codes{i}).in_lon = site.(site.codes{i-1}).in_lon;
-site.(site.codes{i}).in_elevation = 0;
-site.(site.codes{i}).date_issued = datetime(2017,05,17);
-site.(site.codes{i}).date_issued_str = datestr(site.(site.codes{i}).date_issued,'yyyy-mm-dd');
-
-sp = 1; sptxt = site.(site.codes{i}).species{sp};
-inlet = 1; intxt = site.(site.codes{i}).inlet_height_long_name{inlet};
-
-load(fullfile(currentFolder(1:regexp(currentFolder,'gcloud.utah.edu')+14),'code','SLC CO2','Data','data_background.mat'))
-
-site.(site.codes{i}).([sptxt,'_',intxt]) = bg.co2; % species mixing ratio
-site.(site.codes{i}).([sptxt,'_',intxt,'_time']) = datetime(bg.t,'ConvertFrom','datenum'); ...
-
-% Removes the leading and trailing NaNs
-data_range_ind = find(site.(site.codes{i}).([sptxt,'_',intxt])~=-1e34,1,'first'):find(site.(site.codes{i}).([sptxt,'_',intxt])~=-1e34,1,'last');
-site.(site.codes{i}).([sptxt,'_',intxt]) = site.(site.codes{i}).([sptxt,'_',intxt])(data_range_ind);
-site.(site.codes{i}).([sptxt,'_',intxt,'_time']) = site.(site.codes{i}).([sptxt,'_',intxt,'_time'])(data_range_ind);
-clear data_range_ind
-site.(site.codes{i}).([sptxt,'_',intxt,'_std']) = ones(length(site.(site.codes{i}).([sptxt,'_',intxt])),1)*-1e34;
-site.(site.codes{i}).([sptxt,'_',intxt,'_unc']) = ones(length(site.(site.codes{i}).([sptxt,'_',intxt])),1)*-1e34;
-site.(site.codes{i}).([sptxt,'_',intxt,'_n']) = ones(length(site.(site.codes{i}).([sptxt,'_',intxt])),1)*-1e34;
-site.(site.codes{i}).([sptxt,'_',intxt,'_lat']) = ones(length(site.(site.codes{i}).([sptxt,'_',intxt])),1)*-1e34;
-site.(site.codes{i}).([sptxt,'_',intxt,'_lon']) = ones(length(site.(site.codes{i}).([sptxt,'_',intxt])),1)*-1e34;
-site.(site.codes{i}).([sptxt,'_',intxt,'_elevation']) = ones(length(site.(site.codes{i}).([sptxt,'_',intxt])),1)*-1e34;
-site.(site.codes{i}).([sptxt,'_',intxt,'_inlet_height']) = ones(length(site.(site.codes{i}).([sptxt,'_',intxt])),1)*-1e34;
-
-
-%% Identify the netCDF files to create based on species.
+% Identify the netCDF files to create based on species.
 
 site.unique_species = unique(site.species);
 site.species_list = [];
@@ -328,5 +328,6 @@ eval('co2usa_create_netCDF')
 %% Convert the netCDF data to text files.
 
 fprintf('Now creating the text files from the netCDF files.\n')
+netCDF2txt_group = 'all_sites'; % 'all_sites' or 'background'
 eval('co2usa_netCDF2txt')
 
