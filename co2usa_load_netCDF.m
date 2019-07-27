@@ -8,7 +8,7 @@ currentFolder = pwd;
 readFolder = fullfile(currentFolder(1:regexp(currentFolder,'gcloud.utah.edu')+14),'data','co2-usa','synthesis_output');
 t_overall = tic;
 if ~exist('species','var')
-    species = 'co';
+    species = 'co2';
 end
 fprintf('Loading the %s city data...\n',species)
 
