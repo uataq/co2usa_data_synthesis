@@ -36,10 +36,10 @@ for i = 1:length(provider)
     varid = netcdf.getConstant('GLOBAL'); netcdf.putAtt(n.ncid,varid,['provider_',num2str(i),'_address2'],provider(i).address2);
     varid = netcdf.getConstant('GLOBAL'); netcdf.putAtt(n.ncid,varid,['provider_',num2str(i),'_address3'],provider(i).address3);
     varid = netcdf.getConstant('GLOBAL'); netcdf.putAtt(n.ncid,varid,['provider_',num2str(i),'_country'],provider(i).country);
-    varid = netcdf.getConstant('GLOBAL'); netcdf.putAtt(n.ncid,varid,['provider_',num2str(i),'_city'],provider(i).city);
+    %varid = netcdf.getConstant('GLOBAL'); netcdf.putAtt(n.ncid,varid,['provider_',num2str(i),'_city'],provider(i).city); % this is redundant to the netcdf file. 
     varid = netcdf.getConstant('GLOBAL'); netcdf.putAtt(n.ncid,varid,['provider_',num2str(i),'_affiliation'],provider(i).affiliation);
     varid = netcdf.getConstant('GLOBAL'); netcdf.putAtt(n.ncid,varid,['provider_',num2str(i),'_email'],provider(i).email);
-    varid = netcdf.getConstant('GLOBAL'); netcdf.putAtt(n.ncid,varid,['provider_',num2str(i),'_parameter'],[provider(i).parameter,site.species_list]);
+    if isfield(provider,'parameter'); varid = netcdf.getConstant('GLOBAL'); netcdf.putAtt(n.ncid,varid,['provider_',num2str(i),'_parameter'],[provider(i).parameter,site.species_list]); end
 end
 
 varid = netcdf.getConstant('GLOBAL'); netcdf.putAtt(n.ncid,varid,'compilation_originator_name','Logan Mitchell');
