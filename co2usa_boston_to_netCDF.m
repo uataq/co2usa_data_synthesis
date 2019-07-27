@@ -4,8 +4,7 @@ set(0,'DefaultFigureWindowStyle','docked')
 
 %% Outstanding questions:
 
-fprintf('Outstanding questions as of 5/27/2018:\n')
-fprintf('-Site CA: should I use the EN 1 point calibration or the Harvard 2 point calibration?\n')
+fprintf('No Outstanding questions.\n')
 
 
 %% netCDF creation documentation
@@ -29,11 +28,11 @@ fprintf('-Site CA: should I use the EN 1 point calibration or the Harvard 2 poin
 %% Creation date
 
 date_created_now = datestr(now,'yyyy-mm-dd');
-date_created_str = datestr(datenum(2018,07,01),'yyyy-mm-dd');
+date_created_str = datestr(datenum(2019,07,09),'yyyy-mm-dd');
 %date_created_SLC_CO2 = datestr(datenum(2017,07,11),'yyyy-mm-dd');
 
 date_issued_now = datestr(now,'yyyy-mm-dd');
-date_issued = datetime(2018,07,01);
+date_issued = datetime(2019,07,09);
 date_issued_str = datestr(date_issued,'yyyy-mm-dd');
 
 % Working folders
@@ -90,8 +89,8 @@ for i = 1:length(site_names)
 end
 clear count tmp_site_code
 
-site.date_issued = datetime(1970,1,1); % This date will be updated with the most recent date in the files below.
-site.date_issued_str = datestr(site.date_issued,'yyyy-mm-dd'); % This date will be updated with the most recent date in the files below.
+site.date_issued = date_issued; % This date will be updated with the most recent date in the files below.
+site.date_issued_str = date_issued_str; % This date will be updated with the most recent date in the files below.
 
 for i = 1:length(site.codes)
 fprintf('Reading header info for site %s.\n',site.codes{1,i})
@@ -196,11 +195,20 @@ site.reference = ['McKain K, Down A, Racit S M, Budney J, Hutyra L R, Floerching
 
 
 % Notes:
-% site CA has two inlet heights, 100m and 50m.  As far as I can tell that
-% is the only site with two inlet heights.
-
+% Site CA has two inlet heights, 100m and 50m.  As far as I can tell that is the only site with two inlet heights.
 % Most sites have 4 cols per species, but MVY only has 2.
 
+% I got updated data for sites BU, HF, NHT, and COP (aka PRU) on 20190428. I'll load the original data (esp because the updated files don't have site info in them)
+% but then update it with the updated data in the loop below.
+
+[boston_update.num,boston_update.txt] = xlsread(fullfile(readFolder,city,'v_20190428','Boston_Network_CO2_CH4_CO_20190428.csv'));
+boston_update.txt(1,:) = replace(boston_update.txt(1,:),'PRU','COP'); % the site PRU should be labeled COP.
+boston_update.dtUTC =  datetime([num2str(boston_update.num(:,5)),num2str(boston_update.num(:,6),'%02.0f')],'InputFormat','yyyyMMddHH');
+% The CH4 and CO in the update is in ppm, but I need it to be ppb:
+col.update = find(and(contains(boston_update.txt(1,:),'CH4.'),~contains(boston_update.txt(1,:),'CH4.n')));
+boston_update.num(:,col.update) = boston_update.num(:,col.update)*1000;
+col.update = find(and(contains(boston_update.txt(1,:),'CO.'),~contains(boston_update.txt(1,:),'CO.n')));
+boston_update.num(:,col.update) = boston_update.num(:,col.update)*1000;
 
 for i = 1:length(site.codes)
     site.(site.codes{i}).files_header_lines = nan(1,length(site.(site.codes{i}).files));
@@ -235,7 +243,9 @@ for i = 1:length(site.codes)
                         end
                         if and(or(~isempty(regexp(tline,['# ',upper(sptxt),'.HvdCal.mn:'],'once')),~isempty(regexp(tline,['# ',upper(sptxt),'_',innum,'.HvdCal.mn:'],'once'))),...
                                 isempty(regexp(tline,'_FillValue','once'))) 
-                            % This only exists for the CO2 100m CA site!!!!  I'm currently ignoring it, but I need to count the column it for an accurate column number
+                            % This only exists for the CO2 100m CA site, which is an Earth Network site!  
+                            % I'm currently ignoring it, because the Harvard 2 point calibration doesn't exist for the full record (e.g 2016_08 has no data).
+                            % But I need to count the column it for an accurate column number
                             %col.(['species_',intxt]){1,sp} = tmp_column;
                             formatSpec = [formatSpec,'%f']; %#ok<AGROW>
                             tmp_column = tmp_column+1;
@@ -321,6 +331,29 @@ for i = 1:length(site.codes)
             end
         end
     end % End of the loop reading all of the data files for a site.
+    
+    % If a site has updated data, do that here:
+    if any(cell2mat(strfind(boston_update.txt(1,:),site.(site.codes{i}).code)))
+        for inlet = 1:length(site.(site.codes{i}).inlet_height_long_name)
+            intxt = site.(site.codes{i}).inlet_height_long_name{inlet};
+            for sp = 1:length(site.(site.codes{i}).species)
+                sptxt = site.(site.codes{i}).species{sp};
+                col.update = find(strcmpi(boston_update.txt(1,:),[site.(site.codes{i}).code,'.',sptxt,'.mn']),1,'first');
+                % Option figure showing the original & updated data.
+%                 figure(99); clf; hold on;
+%                 plot(boston_update.dtUTC,boston_update.num(:,col.update))
+%                 plot(site.(site.codes{i}).([sptxt,'_',intxt,'_time']),site.(site.codes{i}).([sptxt,'_',intxt]))
+%                 legend('v20190428','v20180309');hold off
+                
+                site.(site.codes{i}).([sptxt,'_',intxt]) = boston_update.num(:,col.update);
+                site.(site.codes{i}).([sptxt,'_',intxt,'_std']) = boston_update.num(:,col.update+2);
+                site.(site.codes{i}).([sptxt,'_',intxt,'_n']) = boston_update.num(:,col.update+3);
+                %site.(site.codes{i}).([sptxt,'_',intxt,'_unc']) = []; % no uncertainty data yet.
+                site.(site.codes{i}).([sptxt,'_',intxt,'_time']) = boston_update.dtUTC;
+            end
+        end
+    end
+    
     %fprintf('%-3s files read from %s to %s\n',sptxt,site.(site.codes{i}).files(1).name,site.(site.codes{i}).files(fn).name)
     fprintf('%-3s files read from %s to %s\n',cell2mat(site.(site.codes{i}).species),site.(site.codes{i}).files(1).name,site.(site.codes{i}).files(fn).name)
 
@@ -361,120 +394,119 @@ for i = 1:length(site.codes)
         end
     end
     fprintf('---- %-0s complete ----\n\n',site.codes{i})
-    
 end
 
 %%
 % Load background data, or leave it blank if it doesn't exist.
-i = length(site.codes)+1;
-site.codes{1,i} = 'background';
-site.groups = [site.groups; 'background'];
-
-site.(site.codes{i}).name = 'background';
-site.(site.codes{i}).long_name = 'background';
-site.(site.codes{i}).code = '';
-site.(site.codes{i}).country = 'United States';
-site.(site.codes{i}).time_zone = 'America/New_York';
-site.(site.codes{i}).inlet_height_long_name = {'background'};
-site.(site.codes{i}).inlet_height = {0};
-site.(site.codes{i}).species = {'co2','ch4'};
-site.(site.codes{i}).species_long_name = {'carbon_dioxide','methane'};
-site.(site.codes{i}).species_units = {'micromol mol-1','nanomol mol-1'};
-site.(site.codes{i}).species_units_long_name = {'ppm','ppb'};
-site.(site.codes{i}).instrument = {'modeled','modeled'};
-site.(site.codes{i}).calibration_scale = {'WMO CO2 X2007','WMO CH4 X2004A'};
-site.(site.codes{i}).in_lat = site.(site.codes{i-1}).in_lat;
-site.(site.codes{i}).in_lon = site.(site.codes{i-1}).in_lon;
-site.(site.codes{i}).in_elevation = 0;
-site.(site.codes{i}).date_issued = site.(site.codes{i-1}).date_issued;
-site.(site.codes{i}).date_issued_str = datestr(site.(site.codes{i}).date_issued,'yyyy-mm-dd');
-
-% CO2 background:
-sp = 1; sptxt = site.(site.codes{i}).species{sp};
-inlet = 1; intxt = site.(site.codes{i}).inlet_height_long_name{inlet};
-site.(site.codes{i}).files = dir(fullfile(readFolder,city,'background','bound_*.txt'));
-site.(site.codes{i}).files_header_lines = nan(1,length(site.(site.codes{i}).files));
-site.(site.codes{i}).([sptxt,'_',intxt]) = [];
-site.(site.codes{i}).([sptxt,'_',intxt,'_time']) = [];
-for fn = 1:length(site.(site.codes{i}).files)
-        fid = fopen(fullfile(site.(site.codes{i}).files(fn).folder,site.(site.codes{i}).files(fn).name));
-        formatSpec = '%f%f%f%f%f'; % Yr,Mn,Dy,Hr,sp
-        header_lines = 0;
-        readNextLine = true;
-        while readNextLine==true
-            tline = fgets(fid);
-            header_lines = header_lines+1;
-            if isempty(regexp(tline,'[#]','once')); readNextLine = false; end % stop reading the header.
-        end
-        frewind(fid) % start back at the beginning of the file to look for the next species, or continue on to the next step.
-        site.(site.codes{i}).files_header_lines(1,fn) = header_lines-1;
-        
-        % Read the data file after skipping the header lines.
-        read_dat = textscan(fid,formatSpec,'HeaderLines',site.(site.codes{i}).files_header_lines(1,fn),'Delimiter',',','CollectOutput',true,'TreatAsEmpty','NA');
-        fclose(fid);
-        
-        site.(site.codes{i}).([sptxt,'_',intxt]) = [site.(site.codes{i}).([sptxt,'_',intxt]); read_dat{1,1}(:,5)]; % species mixing ratio
-        
-        site.(site.codes{i}).([sptxt,'_',intxt,'_time']) = [site.(site.codes{i}).([sptxt,'_',intxt,'_time']); ...
-            datetime(read_dat{1,1}(:,1),read_dat{1,1}(:,2),read_dat{1,1}(:,3),read_dat{1,1}(:,4),zeros(length(read_dat{1,1}),1),zeros(length(read_dat{1,1}),1))]; % time
-end
-% Removes the leading and trailing NaNs
-data_range_ind = find(site.(site.codes{i}).([sptxt,'_',intxt])~=-1e34,1,'first'):find(site.(site.codes{i}).([sptxt,'_',intxt])~=-1e34,1,'last');
-site.(site.codes{i}).([sptxt,'_',intxt]) = site.(site.codes{i}).([sptxt,'_',intxt])(data_range_ind);
-site.(site.codes{i}).([sptxt,'_',intxt,'_time']) = site.(site.codes{i}).([sptxt,'_',intxt,'_time'])(data_range_ind);
-clear data_range_ind
-site.(site.codes{i}).([sptxt,'_',intxt,'_std']) = ones(length(site.(site.codes{i}).([sptxt,'_',intxt])),1)*-1e34;
-site.(site.codes{i}).([sptxt,'_',intxt,'_unc']) = ones(length(site.(site.codes{i}).([sptxt,'_',intxt])),1)*-1e34;
-site.(site.codes{i}).([sptxt,'_',intxt,'_n']) = ones(length(site.(site.codes{i}).([sptxt,'_',intxt])),1)*-1e34;
-site.(site.codes{i}).([sptxt,'_',intxt,'_lat']) = ones(length(site.(site.codes{i}).([sptxt,'_',intxt])),1)*-1e34;
-site.(site.codes{i}).([sptxt,'_',intxt,'_lon']) = ones(length(site.(site.codes{i}).([sptxt,'_',intxt])),1)*-1e34;
-site.(site.codes{i}).([sptxt,'_',intxt,'_elevation']) = ones(length(site.(site.codes{i}).([sptxt,'_',intxt])),1)*-1e34;
-site.(site.codes{i}).([sptxt,'_',intxt,'_inlet_height']) = ones(length(site.(site.codes{i}).([sptxt,'_',intxt])),1)*-1e34;
-
-% CH4 background:
-sp = 2; sptxt = site.(site.codes{i}).species{sp};
-inlet = 1; intxt = site.(site.codes{i}).inlet_height_long_name{inlet};
-site.(site.codes{i}).files = dir(fullfile(readFolder,city,'background','ch4_bg.txt'));
-site.(site.codes{i}).files_header_lines = nan(1,length(site.(site.codes{i}).files));
-site.(site.codes{i}).([sptxt,'_',intxt]) = [];
-site.(site.codes{i}).([sptxt,'_',intxt,'_time']) = [];
-for fn = 1:length(site.(site.codes{i}).files)
-        fid = fopen(fullfile(site.(site.codes{i}).files(fn).folder,site.(site.codes{i}).files(fn).name));
-        formatSpec = '%f%f%f%f%f'; % Yr,Mn,Dy,Hr,sp
-        header_lines = 0;
-        readNextLine = true;
-        while readNextLine==true
-            tline = fgets(fid);
-            header_lines = header_lines+1;
-            if isempty(regexp(tline,'[#]','once')); readNextLine = false; end % stop reading the header.
-        end
-        frewind(fid) % start back at the beginning of the file to look for the next species, or continue on to the next step.
-        site.(site.codes{i}).files_header_lines(1,fn) = header_lines-1;
-        
-        % Read the data file after skipping the header lines.
-        read_dat = textscan(fid,formatSpec,'HeaderLines',site.(site.codes{i}).files_header_lines(1,fn),'Delimiter',', ','CollectOutput',true,'TreatAsEmpty','NA');
-        fclose(fid);
-        
-        site.(site.codes{i}).([sptxt,'_',intxt]) = [site.(site.codes{i}).([sptxt,'_',intxt]); read_dat{1,1}(:,5)]; % species mixing ratio
-        
-        site.(site.codes{i}).([sptxt,'_',intxt,'_time']) = [site.(site.codes{i}).([sptxt,'_',intxt,'_time']); ...
-            datetime(read_dat{1,1}(:,1),read_dat{1,1}(:,2),read_dat{1,1}(:,3),read_dat{1,1}(:,4),zeros(length(read_dat{1,1}),1),zeros(length(read_dat{1,1}),1))]; % time
-end
-% Removes the leading and trailing NaNs
-data_range_ind = find(site.(site.codes{i}).([sptxt,'_',intxt])~=-1e34,1,'first'):find(site.(site.codes{i}).([sptxt,'_',intxt])~=-1e34,1,'last');
-site.(site.codes{i}).([sptxt,'_',intxt]) = site.(site.codes{i}).([sptxt,'_',intxt])(data_range_ind);
-site.(site.codes{i}).([sptxt,'_',intxt,'_time']) = site.(site.codes{i}).([sptxt,'_',intxt,'_time'])(data_range_ind);
-clear data_range_ind
-            
-site.(site.codes{i}).([sptxt,'_',intxt,'_std']) = ones(length(site.(site.codes{i}).([sptxt,'_',intxt])),1)*-1e34;
-site.(site.codes{i}).([sptxt,'_',intxt,'_unc']) = ones(length(site.(site.codes{i}).([sptxt,'_',intxt])),1)*-1e34;
-site.(site.codes{i}).([sptxt,'_',intxt,'_n']) = ones(length(site.(site.codes{i}).([sptxt,'_',intxt])),1)*-1e34;
-site.(site.codes{i}).([sptxt,'_',intxt,'_lat']) = ones(length(site.(site.codes{i}).([sptxt,'_',intxt])),1)*-1e34;
-site.(site.codes{i}).([sptxt,'_',intxt,'_lon']) = ones(length(site.(site.codes{i}).([sptxt,'_',intxt])),1)*-1e34;
-site.(site.codes{i}).([sptxt,'_',intxt,'_elevation']) = ones(length(site.(site.codes{i}).([sptxt,'_',intxt])),1)*-1e34;
-site.(site.codes{i}).([sptxt,'_',intxt,'_inlet_height']) = ones(length(site.(site.codes{i}).([sptxt,'_',intxt])),1)*-1e34;
-
-fprintf('---- %-6s complete ----\n\n',site.codes{i})
+% i = length(site.codes)+1;
+% site.codes{1,i} = 'background';
+% site.groups = [site.groups; 'background'];
+% 
+% site.(site.codes{i}).name = 'background';
+% site.(site.codes{i}).long_name = 'background';
+% site.(site.codes{i}).code = '';
+% site.(site.codes{i}).country = 'United States';
+% site.(site.codes{i}).time_zone = 'America/New_York';
+% site.(site.codes{i}).inlet_height_long_name = {'background'};
+% site.(site.codes{i}).inlet_height = {0};
+% site.(site.codes{i}).species = {'co2','ch4'};
+% site.(site.codes{i}).species_long_name = {'carbon_dioxide','methane'};
+% site.(site.codes{i}).species_units = {'micromol mol-1','nanomol mol-1'};
+% site.(site.codes{i}).species_units_long_name = {'ppm','ppb'};
+% site.(site.codes{i}).instrument = {'modeled','modeled'};
+% site.(site.codes{i}).calibration_scale = {'WMO CO2 X2007','WMO CH4 X2004A'};
+% site.(site.codes{i}).in_lat = site.(site.codes{i-1}).in_lat;
+% site.(site.codes{i}).in_lon = site.(site.codes{i-1}).in_lon;
+% site.(site.codes{i}).in_elevation = 0;
+% site.(site.codes{i}).date_issued = site.(site.codes{i-1}).date_issued;
+% site.(site.codes{i}).date_issued_str = datestr(site.(site.codes{i}).date_issued,'yyyy-mm-dd');
+% 
+% % CO2 background:
+% sp = 1; sptxt = site.(site.codes{i}).species{sp};
+% inlet = 1; intxt = site.(site.codes{i}).inlet_height_long_name{inlet};
+% site.(site.codes{i}).files = dir(fullfile(readFolder,city,'background','bound_*.txt'));
+% site.(site.codes{i}).files_header_lines = nan(1,length(site.(site.codes{i}).files));
+% site.(site.codes{i}).([sptxt,'_',intxt]) = [];
+% site.(site.codes{i}).([sptxt,'_',intxt,'_time']) = [];
+% for fn = 1:length(site.(site.codes{i}).files)
+%         fid = fopen(fullfile(site.(site.codes{i}).files(fn).folder,site.(site.codes{i}).files(fn).name));
+%         formatSpec = '%f%f%f%f%f'; % Yr,Mn,Dy,Hr,sp
+%         header_lines = 0;
+%         readNextLine = true;
+%         while readNextLine==true
+%             tline = fgets(fid);
+%             header_lines = header_lines+1;
+%             if isempty(regexp(tline,'[#]','once')); readNextLine = false; end % stop reading the header.
+%         end
+%         frewind(fid) % start back at the beginning of the file to look for the next species, or continue on to the next step.
+%         site.(site.codes{i}).files_header_lines(1,fn) = header_lines-1;
+%         
+%         % Read the data file after skipping the header lines.
+%         read_dat = textscan(fid,formatSpec,'HeaderLines',site.(site.codes{i}).files_header_lines(1,fn),'Delimiter',',','CollectOutput',true,'TreatAsEmpty','NA');
+%         fclose(fid);
+%         
+%         site.(site.codes{i}).([sptxt,'_',intxt]) = [site.(site.codes{i}).([sptxt,'_',intxt]); read_dat{1,1}(:,5)]; % species mixing ratio
+%         
+%         site.(site.codes{i}).([sptxt,'_',intxt,'_time']) = [site.(site.codes{i}).([sptxt,'_',intxt,'_time']); ...
+%             datetime(read_dat{1,1}(:,1),read_dat{1,1}(:,2),read_dat{1,1}(:,3),read_dat{1,1}(:,4),zeros(length(read_dat{1,1}),1),zeros(length(read_dat{1,1}),1))]; % time
+% end
+% % Removes the leading and trailing NaNs
+% data_range_ind = find(site.(site.codes{i}).([sptxt,'_',intxt])~=-1e34,1,'first'):find(site.(site.codes{i}).([sptxt,'_',intxt])~=-1e34,1,'last');
+% site.(site.codes{i}).([sptxt,'_',intxt]) = site.(site.codes{i}).([sptxt,'_',intxt])(data_range_ind);
+% site.(site.codes{i}).([sptxt,'_',intxt,'_time']) = site.(site.codes{i}).([sptxt,'_',intxt,'_time'])(data_range_ind);
+% clear data_range_ind
+% site.(site.codes{i}).([sptxt,'_',intxt,'_std']) = ones(length(site.(site.codes{i}).([sptxt,'_',intxt])),1)*-1e34;
+% site.(site.codes{i}).([sptxt,'_',intxt,'_unc']) = ones(length(site.(site.codes{i}).([sptxt,'_',intxt])),1)*-1e34;
+% site.(site.codes{i}).([sptxt,'_',intxt,'_n']) = ones(length(site.(site.codes{i}).([sptxt,'_',intxt])),1)*-1e34;
+% site.(site.codes{i}).([sptxt,'_',intxt,'_lat']) = ones(length(site.(site.codes{i}).([sptxt,'_',intxt])),1)*-1e34;
+% site.(site.codes{i}).([sptxt,'_',intxt,'_lon']) = ones(length(site.(site.codes{i}).([sptxt,'_',intxt])),1)*-1e34;
+% site.(site.codes{i}).([sptxt,'_',intxt,'_elevation']) = ones(length(site.(site.codes{i}).([sptxt,'_',intxt])),1)*-1e34;
+% site.(site.codes{i}).([sptxt,'_',intxt,'_inlet_height']) = ones(length(site.(site.codes{i}).([sptxt,'_',intxt])),1)*-1e34;
+% 
+% % CH4 background:
+% sp = 2; sptxt = site.(site.codes{i}).species{sp};
+% inlet = 1; intxt = site.(site.codes{i}).inlet_height_long_name{inlet};
+% site.(site.codes{i}).files = dir(fullfile(readFolder,city,'background','ch4_bg.txt'));
+% site.(site.codes{i}).files_header_lines = nan(1,length(site.(site.codes{i}).files));
+% site.(site.codes{i}).([sptxt,'_',intxt]) = [];
+% site.(site.codes{i}).([sptxt,'_',intxt,'_time']) = [];
+% for fn = 1:length(site.(site.codes{i}).files)
+%         fid = fopen(fullfile(site.(site.codes{i}).files(fn).folder,site.(site.codes{i}).files(fn).name));
+%         formatSpec = '%f%f%f%f%f'; % Yr,Mn,Dy,Hr,sp
+%         header_lines = 0;
+%         readNextLine = true;
+%         while readNextLine==true
+%             tline = fgets(fid);
+%             header_lines = header_lines+1;
+%             if isempty(regexp(tline,'[#]','once')); readNextLine = false; end % stop reading the header.
+%         end
+%         frewind(fid) % start back at the beginning of the file to look for the next species, or continue on to the next step.
+%         site.(site.codes{i}).files_header_lines(1,fn) = header_lines-1;
+%         
+%         % Read the data file after skipping the header lines.
+%         read_dat = textscan(fid,formatSpec,'HeaderLines',site.(site.codes{i}).files_header_lines(1,fn),'Delimiter',', ','CollectOutput',true,'TreatAsEmpty','NA');
+%         fclose(fid);
+%         
+%         site.(site.codes{i}).([sptxt,'_',intxt]) = [site.(site.codes{i}).([sptxt,'_',intxt]); read_dat{1,1}(:,5)]; % species mixing ratio
+%         
+%         site.(site.codes{i}).([sptxt,'_',intxt,'_time']) = [site.(site.codes{i}).([sptxt,'_',intxt,'_time']); ...
+%             datetime(read_dat{1,1}(:,1),read_dat{1,1}(:,2),read_dat{1,1}(:,3),read_dat{1,1}(:,4),zeros(length(read_dat{1,1}),1),zeros(length(read_dat{1,1}),1))]; % time
+% end
+% % Removes the leading and trailing NaNs
+% data_range_ind = find(site.(site.codes{i}).([sptxt,'_',intxt])~=-1e34,1,'first'):find(site.(site.codes{i}).([sptxt,'_',intxt])~=-1e34,1,'last');
+% site.(site.codes{i}).([sptxt,'_',intxt]) = site.(site.codes{i}).([sptxt,'_',intxt])(data_range_ind);
+% site.(site.codes{i}).([sptxt,'_',intxt,'_time']) = site.(site.codes{i}).([sptxt,'_',intxt,'_time'])(data_range_ind);
+% clear data_range_ind
+%             
+% site.(site.codes{i}).([sptxt,'_',intxt,'_std']) = ones(length(site.(site.codes{i}).([sptxt,'_',intxt])),1)*-1e34;
+% site.(site.codes{i}).([sptxt,'_',intxt,'_unc']) = ones(length(site.(site.codes{i}).([sptxt,'_',intxt])),1)*-1e34;
+% site.(site.codes{i}).([sptxt,'_',intxt,'_n']) = ones(length(site.(site.codes{i}).([sptxt,'_',intxt])),1)*-1e34;
+% site.(site.codes{i}).([sptxt,'_',intxt,'_lat']) = ones(length(site.(site.codes{i}).([sptxt,'_',intxt])),1)*-1e34;
+% site.(site.codes{i}).([sptxt,'_',intxt,'_lon']) = ones(length(site.(site.codes{i}).([sptxt,'_',intxt])),1)*-1e34;
+% site.(site.codes{i}).([sptxt,'_',intxt,'_elevation']) = ones(length(site.(site.codes{i}).([sptxt,'_',intxt])),1)*-1e34;
+% site.(site.codes{i}).([sptxt,'_',intxt,'_inlet_height']) = ones(length(site.(site.codes{i}).([sptxt,'_',intxt])),1)*-1e34;
+% 
+% fprintf('---- %-6s complete ----\n\n',site.codes{i})
 
 % Identify the netCDF files to create based on species.
 
@@ -502,6 +534,7 @@ eval('co2usa_create_netCDF')
 %% Convert the netCDF data to text files.
 
 fprintf('Now creating the text files from the netCDF files.\n')
+netCDF2txt_group = 'all_sites'; % 'all_sites' or 'background'
 eval('co2usa_netCDF2txt')
 
 
