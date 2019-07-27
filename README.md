@@ -26,6 +26,8 @@ https://github.com/loganemitchell/co2usa_data_synthesis/blob/master/Mitchell_CO2
 If you would like more information, please contact Logan Mitchell (logan.mitchell@utah.edu).
 
 Additional greenhouse gas measurement data can be found at:
+
 1.) The NOAA ObsPack archive: https://www.esrl.noaa.gov/gmd/ccgg/obspack/
+
 2.) The World Data Center for Greenhouse Gases: https://gaw.kishou.go.jp/
 
