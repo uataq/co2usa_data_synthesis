@@ -1,6 +1,6 @@
-# Load CO2-USA Data Synthesis files from netCDF
+# Load the CO2-USA Data Synthesis files from netCDF
 #
-# Usage:
+# USAGE:
 #
 # The CO2-USA data should be saved in a directory structure as follows:
 # /synthesis_output/[city]/[netCDF_file.nc]
@@ -9,9 +9,12 @@
 # /synthesis_output/boston/boston_all_sites_co2_1_hour_R0_2019-07-09.nc
 #
 # Update the cities you want to extract, the species, and choose if you want to create plots.
+# After running the script, the CO2_USA greenhouse gas data will all be contained within the
+# 'co2_usa' list variable.
 #
-# Written by Logan Mitchell and Ben Fasoli
-# Last updated: 2019-07-26
+# Written by Logan Mitchell (logan.mitchell@utah.edu) and Ben Fasoli
+# University of Utah
+# Last updated: 2019-07-29
 
 if (!'tidyverse' %in% installed.packages()) install.packages('tidyverse', repos='http://cran.us.r-project.org')
 if (!'ncdf4' %in% installed.packages()) install.packages('ncdf4', repos='http://cran.us.r-project.org')
@@ -27,19 +30,25 @@ library(plotly)
 # Clear the workspace
 rm(list = ls())
 
-cities = c('san_francisco_beacon','indianapolis')#,'salt_lake_city')#,'boston') # options: 'boston', 'indianapolis', 'los_angeles', 'northeast_corridor', 'portland', 'salt_lake_city', 'san_francisco_baaqmd', 'san_francisco_beacon'
-#cities = c('boston')
 
-species = 'co2' # options: 'co2', 'ch4', or 'co'
+######## Set the following options:  ########
+
+# City options: 'boston', 'indianapolis', 'los_angeles', 'northeast_corridor', 'portland', 'salt_lake_city', 'san_francisco_baaqmd', 'san_francisco_beacon'
+# Note: multiple cities may be selected.
+cities = c('boston','indianapolis','salt_lake_city') 
+
+# Greenhouse gas species options: 'co2', 'ch4', or 'co'
+species = 'co2'
 
 # Produce figures for each city? The script runs faster if no figures are produced.
 make_co2_usa_plots = 'y' # Options: 'y' or 'n'
-
 
 #currentFolder = getwd()
 readFolder = file.path('C:/Users','logan','gcloud.utah.edu','data','co2-usa','synthesis_output')
 if (!dir.exists(readFolder)) stop('Cannot find the specified read folder. Check the file path to make sure it is correct.')
 setwd(readFolder)
+
+##############################################
 
 # Create the data structures
 co2_usa = list()
@@ -53,7 +62,7 @@ for (ii in 1:length(cities)) {
                   pattern=paste(city,'_all_sites_',species,'_','.*nc$',sep = ''),
                   include.dirs = TRUE)
   if (is_empty(fn)) {
-    warning(paste('File for ',city,' doesnt exist. Check the path and file names. Skipping it for now.',sep=''))
+    warning(paste('File for ',city,' doesnt exist or is in the wrong location. Check the path and file names. Skipping it for now.',sep=''))
     next()
   }
   
