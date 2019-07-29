@@ -43,10 +43,16 @@ species = 'co2'
 # Produce figures for each city? The script runs faster if no figures are produced.
 make_co2_usa_plots = 'y' # Options: 'y' or 'n'
 
-#currentFolder = getwd()
-readFolder = file.path('C:/Users','logan','gcloud.utah.edu','data','co2-usa','synthesis_output')
-if (!dir.exists(readFolder)) stop('Cannot find the specified read folder. Check the file path to make sure it is correct.')
-setwd(readFolder)
+# Choose the path to the location on your computer where the CO2-USA Synthesis data files have been saved.
+# Within the 'synthesis_output' folder the data should be saved in subfolders as follows:
+# /synthesis_output/[city]/[netCDF_file.nc]
+#
+# For example, for Boston it would be:
+# /synthesis_output/boston/boston_all_sites_co2_1_hour_R0_2019-07-09.nc
+  
+read_folder = file.path('C:/Users','logan_000','gcloud.utah.edu','data','co2-usa','synthesis_output')
+if (!dir.exists(read_folder)) stop('Cannot find the specified read folder. Check the file path to make sure it is correct.')
+setwd(read_folder)
 
 ##############################################
 
@@ -58,7 +64,7 @@ for (ii in 1:length(cities)) {
   city = cities[ii]
   
   # netCDF file name
-  fn = list.files(path=file.path(readFolder,city),
+  fn = list.files(path=file.path(read_folder,city),
                   pattern=paste(city,'_all_sites_',species,'_','.*nc$',sep = ''),
                   include.dirs = TRUE)
   if (is_empty(fn)) {
@@ -67,7 +73,7 @@ for (ii in 1:length(cities)) {
   }
   
   # Opens the netCDF file for reading
-  info = nc_open(file.path(readFolder,city,fn))
+  info = nc_open(file.path(read_folder,city,fn))
   
   # Global attributes for that city
   co2_usa[[city]][['Attributes']] = list('global' = ncatt_get(info,varid=0))
@@ -104,12 +110,12 @@ for (ii in 1:length(cities)) {
   }
   
   # Check to see if that city has a background:
-  fn = list.files(path=file.path(readFolder,city),
+  fn = list.files(path=file.path(read_folder,city),
                   pattern=paste(city,'_background_',species,'_','.*nc$',sep = ''),
                   include.dirs = TRUE)
   if (!is_empty(fn)) {
     # Opens the background netCDF file for reading
-    info = nc_open(file.path(readFolder,city,fn))
+    info = nc_open(file.path(read_folder,city,fn))
     
     jj = 2
     # site/inlet/species name
