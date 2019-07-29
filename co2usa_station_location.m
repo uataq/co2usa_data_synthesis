@@ -24,12 +24,12 @@ for ii = 1:size(cities,1)
     % Uppercase city name:
     city_long_name = replace(city,'_',' '); city_long_name([1,regexp(city_long_name,' ')+1]) = upper(city_long_name([1,regexp(city_long_name,' ')+1]));
     
-    unique_site_codes = unique(d.(city).site_codes(~strcmp(d.(city).site_codes,'')));
+    unique_site_codes = unique(co2_usa.(city).site_codes(~strcmp(co2_usa.(city).site_codes,'')));
     city_lats = nan(size(unique_site_codes,1),1);
     city_lons = nan(size(unique_site_codes,1),1);
     
     for usc_i = 1:length(unique_site_codes) % Loops through each site
-        site_i = regexpi(d.(city).site_names,unique_site_codes{usc_i}); % Array of all of the inlets at each site.
+        site_i = regexpi(co2_usa.(city).site_names,unique_site_codes{usc_i}); % Array of all of the inlets at each site.
         for jj = 1:length(site_i); if isempty(site_i{jj}); site_i{jj} = 0; end; end % Replaces all the empty values with 0.
         site_i = logical(cell2mat(site_i));
         
@@ -37,12 +37,12 @@ for ii = 1:size(cities,1)
         site_i = find(site_i,1,'first');
         
         % Location of city sites
-        site = d.(city).site_names{site_i,1};
-        i_lat = strcmp({d.(city).(site).Attributes.Name},'site_latitude');
-        i_lon = strcmp({d.(city).(site).Attributes.Name},'site_longitude');
+        site = co2_usa.(city).site_names{site_i,1};
+        i_lat = strcmp({co2_usa.(city).(site).Attributes.Name},'site_latitude');
+        i_lon = strcmp({co2_usa.(city).(site).Attributes.Name},'site_longitude');
         
-        city_lats(usc_i,1) = str2double(d.(city).(site).Attributes(i_lat).Value);
-        city_lons(usc_i,1) = str2double(d.(city).(site).Attributes(i_lon).Value);
+        city_lats(usc_i,1) = str2double(co2_usa.(city).(site).Attributes(i_lat).Value);
+        city_lons(usc_i,1) = str2double(co2_usa.(city).(site).Attributes(i_lon).Value);
         fprintf('%s-%s: %0.4f %0.4f\n',city,site,city_lats(usc_i,1),city_lons(usc_i,1))
     end
     fprintf('%s overall average:\n%0.4f %0.4f\n',city,mean(city_lats),mean(city_lons))

@@ -29,18 +29,18 @@ for ii = 1:size(cities,1)
     city = cities{ii,1};
     t_city = tic;
     fprintf('Working on %s...',city)
-    unique_site_codes = unique(d.(city).site_codes(~strcmp(d.(city).site_codes,'')));
+    unique_site_codes = unique(co2_usa.(city).site_codes(~strcmp(co2_usa.(city).site_codes,'')));
     for mm_i = 2:length(mm) % scans each month
         site_count_temp = 0;
         for usc_i = 1:length(unique_site_codes) % Loops through each site
-            site_inlet_i = regexp(d.(city).site_names,unique_site_codes{usc_i}); % Array of all of the inlets at each site.
+            site_inlet_i = regexp(co2_usa.(city).site_names,unique_site_codes{usc_i}); % Array of all of the inlets at each site.
             site_inlet_flag = 0;
-            for jj = 1:length(d.(city).site_names) % Loop through all of the site/inlet combos
+            for jj = 1:length(co2_usa.(city).site_names) % Loop through all of the site/inlet combos
                 if isempty(site_inlet_i{jj}); continue; end % Skip if its the wrong site.
-                site = d.(city).site_names{jj,1};
+                site = co2_usa.(city).site_names{jj,1};
                 %if ~isempty(regexp(site,'background','once')); continue; end
-                i_time = strcmp({d.(city).(site).Variables.Name},'time');
-                if any(and(d.(city).(site).Variables(i_time).Data>mm(mm_i-1),d.(city).(site).Variables(i_time).Data<mm(mm_i)))
+                i_time = strcmp({co2_usa.(city).(site).Variables.Name},'time');
+                if any(and(co2_usa.(city).(site).Variables(i_time).Data>mm(mm_i-1),co2_usa.(city).(site).Variables(i_time).Data<mm(mm_i)))
                     site_inlet_flag = 1; % If there is data at any of the inlets, set this site flag to 1
                 end
             end

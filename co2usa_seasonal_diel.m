@@ -18,20 +18,20 @@ plt.save_all_figures = 'n';
 % Uppercase city name:
 city_long_name = replace(city,'_',' '); city_long_name([1,regexp(city_long_name,' ')+1]) = upper(city_long_name([1,regexp(city_long_name,' ')+1]));
 
-site_utc2lst = str2double(d.(city).(d.(city).site_names{1,1}).Attributes(11).Value);
+site_utc2lst = str2double(co2_usa.(city).(co2_usa.(city).site_names{1,1}).Attributes(11).Value);
 
-if isfield(d.(city),'background_co2')
-    c.sp = d.(city).background_co2.Variables(3).Data;
-    c.t = d.(city).background_co2.Variables(1).Data;
+if isfield(co2_usa.(city),'background_co2')
+    c.sp = co2_usa.(city).background_co2.Variables(3).Data;
+    c.t = co2_usa.(city).background_co2.Variables(1).Data;
 else
     fprintf('No background data.\n')
-    d.(city).background_co2.Variables(1).Name = 'time';
-    d.(city).background_co2.Variables(1).Data = [NaT,NaT];
-    d.(city).background_co2.Variables(3).Name = 'co2';
-    d.(city).background_co2.Variables(3).Data = [NaN,NaN];
+    co2_usa.(city).background_co2.Variables(1).Name = 'time';
+    co2_usa.(city).background_co2.Variables(1).Data = [NaT,NaT];
+    co2_usa.(city).background_co2.Variables(3).Name = 'co2';
+    co2_usa.(city).background_co2.Variables(3).Data = [NaN,NaN];
     
-    c.sp = d.(city).background_co2.Variables(3).Data;
-    c.t = d.(city).background_co2.Variables(1).Data;
+    c.sp = co2_usa.(city).background_co2.Variables(3).Data;
+    c.t = co2_usa.(city).background_co2.Variables(1).Data;
 end
 
 if length(c.t)>10 % If there is a background for this site, calculate a smoothed version of it.
@@ -55,7 +55,7 @@ clear('foo_time','stilt_bg_raw')
 
 %%
 
-%site_min_height_index = false(length(d.(city).site_names),1);
+%site_min_height_index = false(length(co2_usa.(city).site_names),1);
 %site_min_height_index([1,4,7,11,12]
 
 %% Load CT data:
@@ -69,12 +69,12 @@ load(fullfile(currentFolder(1:regexp(currentFolder,'gcloud.utah.edu')+14),'data'
 load(fullfile(currentFolder(1:regexp(currentFolder,'gcloud.utah.edu')+14),'data','CarbonTracker','CT2017','CT2017_latlon.mat'))
 
 % Location of city with CT
-site = d.(city).site_names{1,1};
-i_lat = strcmp({d.(city).(site).Attributes.Name},'site_latitude');
-i_lon = strcmp({d.(city).(site).Attributes.Name},'site_longitude');
+site = co2_usa.(city).site_names{1,1};
+i_lat = strcmp({co2_usa.(city).(site).Attributes.Name},'site_latitude');
+i_lon = strcmp({co2_usa.(city).(site).Attributes.Name},'site_longitude');
 
-ctCityLat = find(ctLat>str2double(d.(city).(site).Attributes(i_lat).Value),1,'first')-1;
-ctCityLon = find(ctLon>str2double(d.(city).(site).Attributes(i_lon).Value),1,'first')-1;
+ctCityLat = find(ctLat>str2double(co2_usa.(city).(site).Attributes(i_lat).Value),1,'first')-1;
+ctCityLon = find(ctLon>str2double(co2_usa.(city).(site).Attributes(i_lon).Value),1,'first')-1;
 
 
 
@@ -98,32 +98,32 @@ surfm(ctLat,ctLon,squeeze(co2l3(:,:,1))')
 geoshow(ax, states,'FaceColor',[1,1,1],'facealpha',0,'linewidth',1,'EdgeColor',[0 0 0])
 set(get(cx,'ylabel'),'String', 'CO_2 (ppm)');
 
-plotm(str2double(d.(city).(site).Attributes(i_lat).Value),str2double(d.(city).(site).Attributes(i_lon).Value),'r.','MarkerSize',20) % City location
-textm(str2double(d.(city).(site).Attributes(i_lat).Value)+0.1,str2double(d.(city).(site).Attributes(i_lon).Value)+0.4,[upper(city(1)),city(2:end)])
+plotm(str2double(co2_usa.(city).(site).Attributes(i_lat).Value),str2double(co2_usa.(city).(site).Attributes(i_lon).Value),'r.','MarkerSize',20) % City location
+textm(str2double(co2_usa.(city).(site).Attributes(i_lat).Value)+0.1,str2double(co2_usa.(city).(site).Attributes(i_lon).Value)+0.4,[upper(city(1)),city(2:end)])
 
 %% Calculate lower percentile of all sites.
 
 % Find overall city start/end date:
 
-site = d.(city).site_names{1};
-t_start = d.(city).(site).Variables(strcmp({d.(city).(site).Variables.Name},'time')).Data(1);
-t_end = d.(city).(site).Variables(strcmp({d.(city).(site).Variables.Name},'time')).Data(end);
+site = co2_usa.(city).site_names{1};
+t_start = co2_usa.(city).(site).Variables(strcmp({co2_usa.(city).(site).Variables.Name},'time')).Data(1);
+t_end = co2_usa.(city).(site).Variables(strcmp({co2_usa.(city).(site).Variables.Name},'time')).Data(end);
 
-for jj = 1:length(d.(city).site_names)
-    site = d.(city).site_names{jj,1}; if ~isempty(regexp(site,'background','once')); continue; end
-    i_species = strcmp({d.(city).(site).Variables.Name},species); i_time = strcmp({d.(city).(site).Variables.Name},'time');
-    t_start = min([t_start,d.(city).(site).Variables(i_time).Data(1)]);
-    t_end = max([t_end,d.(city).(site).Variables(i_time).Data(end)]);
+for jj = 1:length(co2_usa.(city).site_names)
+    site = co2_usa.(city).site_names{jj,1}; if ~isempty(regexp(site,'background','once')); continue; end
+    i_species = strcmp({co2_usa.(city).(site).Variables.Name},species); i_time = strcmp({co2_usa.(city).(site).Variables.Name},'time');
+    t_start = min([t_start,co2_usa.(city).(site).Variables(i_time).Data(1)]);
+    t_end = max([t_end,co2_usa.(city).(site).Variables(i_time).Data(end)]);
 end
 
 % Flat file of all of the sites in a city:
 bg.dtUTC = (t_start:1/24:t_end)';
-bg.co2_all = nan(length(bg.dtUTC),length(d.(city).site_names)-1);
-for jj = 1:length(d.(city).site_names)
-    site = d.(city).site_names{jj,1}; if ~isempty(regexp(site,'background','once')); continue; end
-    i_species = strcmp({d.(city).(site).Variables.Name},species); i_time = strcmp({d.(city).(site).Variables.Name},'time');
-    [~,ia,ib] = intersect(datenum(bg.dtUTC),datenum(d.(city).(site).Variables(i_time).Data));
-    bg.co2_all(ia,jj) = d.(city).(site).Variables(i_species).Data(ib);
+bg.co2_all = nan(length(bg.dtUTC),length(co2_usa.(city).site_names)-1);
+for jj = 1:length(co2_usa.(city).site_names)
+    site = co2_usa.(city).site_names{jj,1}; if ~isempty(regexp(site,'background','once')); continue; end
+    i_species = strcmp({co2_usa.(city).(site).Variables.Name},species); i_time = strcmp({co2_usa.(city).(site).Variables.Name},'time');
+    [~,ia,ib] = intersect(datenum(bg.dtUTC),datenum(co2_usa.(city).(site).Variables(i_time).Data));
+    bg.co2_all(ia,jj) = co2_usa.(city).(site).Variables(i_species).Data(ib);
 end
 
 %%
@@ -162,8 +162,8 @@ toc
 % Comparison of various background calculations
 
 site = 'background_co2';
-i_species = strcmp({d.(city).(site).Variables.Name},species);
-i_time = strcmp({d.(city).(site).Variables.Name},'time');
+i_species = strcmp({co2_usa.(city).(site).Variables.Name},species);
+i_time = strcmp({co2_usa.(city).(site).Variables.Name},'time');
 
 fx = figure(100); fx.Color = [1 1 1]; clf; hold on
 
@@ -174,7 +174,7 @@ plt.f100.ctl3 = plot(tUTC,reshape(co2l3(ctCityLon,ctCityLat,:),size(tUTC,1),1),'
 %plot(tUTC,reshape(co2l5(ctCityLon,ctCityLat,:),size(tUTC,1),1),'c-')
 %plot(tUTC,reshape(co2l10(ctCityLon,ctCityLat,:),size(tUTC,1),1),'y-')
 
-plt.f100.city_bg = plot(d.(city).(site).Variables(i_time).Data,d.(city).(site).Variables(i_species).Data,'-','Color',[.5,.5,1],'LineWidth',1);
+plt.f100.city_bg = plot(co2_usa.(city).(site).Variables(i_time).Data,co2_usa.(city).(site).Variables(i_species).Data,'-','Color',[.5,.5,1],'LineWidth',1);
 plt.f100.city_bg_th = plot(c.th_t,c.th_sp,'-','LineWidth',3,'Color',[0,0,.8]);
 plt.f100.ct_th = plot(c.ct_th_t,c.ct_th_sp,'-','LineWidth',3,'Color',[.8,0,0]); % Thoning curve of CT lvl 4
 
@@ -193,7 +193,7 @@ plt.f100.n = {[city_long_name ' bg'],'CT2017-lvl3','STILT','STILT-spline',[num2s
 % plt.marker_options = {'o','+','*','x','s','d','^','v','>','<','p'};
 % for ind = 1:size(bg.co2_all,2); plt.f100.bg_pct_ID(ind) = plot(bg.dtUTC(bg.co2_min_ind(:,ind)),bg.co2_pct(bg.co2_min_ind(:,ind),1),plt.marker_options{rem(ind-1,length(plt.marker_options))+1},'LineWidth',2); end
 % plt.f100.l = [plt.f100.l, plt.f100.bg_pct_ID];
-% plt.f100.n = [plt.f100.n, replace(d.(city).site_names(1:size(bg.co2_all,2))','_',' ')];
+% plt.f100.n = [plt.f100.n, replace(co2_usa.(city).site_names(1:size(bg.co2_all,2))','_',' ')];
 
 % plt.f100.vic = plot(bgla.dtUTC,bgla.vic,'LineWidth',3);
 % plt.f100.ljo = plot(bgla.dtUTC,bgla.ljo,'LineWidth',3);
@@ -222,7 +222,7 @@ end
 
 %%
 fx = figure(102); fx.Color = [1 1 1]; clf
-bar(categorical(replace(d.(city).site_names(1:size(bg.co2_all,2))','_',' ')),nansum(bg.co2_min_ind,1))
+bar(categorical(replace(co2_usa.(city).site_names(1:size(bg.co2_all,2))','_',' ')),nansum(bg.co2_min_ind,1))
 set(gca,'FontSize',16,'FontWeight','bold')
 title(['Site contributions to the hourly min values at ',city_long_name],'FontSize',20)
 ylabel('Count of hourly obs')
@@ -258,15 +258,15 @@ end
 
 fx = figure(1); fx.Color = [1 1 1]; clf; hold on
 title([city_long_name,' ',upper(species),' - All sites'],'FontSize',35,'FontWeight','Bold')
-for jj = 1:length(d.(city).site_names)
+for jj = 1:length(co2_usa.(city).site_names)
     %site = 'COM_co2_45m';
-    site = d.(city).site_names{jj,1};
-    i_species = strcmp({d.(city).(site).Variables.Name},species);
-    i_time = strcmp({d.(city).(site).Variables.Name},'time');
+    site = co2_usa.(city).site_names{jj,1};
+    i_species = strcmp({co2_usa.(city).(site).Variables.Name},species);
+    i_time = strcmp({co2_usa.(city).(site).Variables.Name},'time');
     if ~isempty(regexp(site,'background','once'))
-        plot(d.(city).(site).Variables(i_time).Data,d.(city).(site).Variables(i_species).Data,'k-','LineWidth',2)
+        plot(co2_usa.(city).(site).Variables(i_time).Data,co2_usa.(city).(site).Variables(i_species).Data,'k-','LineWidth',2)
     else
-        plot(d.(city).(site).Variables(i_time).Data,d.(city).(site).Variables(i_species).Data)
+        plot(co2_usa.(city).(site).Variables(i_time).Data,co2_usa.(city).(site).Variables(i_species).Data)
     end
 end
 plot(c.th_t,c.th_sp,'b-','LineWidth',2)
@@ -284,8 +284,8 @@ ylim([350,750])
 if strcmp(city,'salt_lake_city'); xlim([datetime(2002,1,1),datetime(2018,1,1)]); end
 if strcmp(city,'indianapolis'); xlim([datetime(2013,1,1),datetime(2019,1,1)]); end
 hold off; grid on;ylabel([upper(species),' (ppm)']);
-%legend([replace(d.(city).site_names,'_',' ');'bg smooth';'CT2017 lvl4 sm'],'Location','NorthWest')
-legend([replace(d.(city).site_names,'_',' ');'bg smooth';[num2str(pct),'th% of ',num2str(winDay),'day city min']],'Location','NorthWest')
+%legend([replace(co2_usa.(city).site_names,'_',' ');'bg smooth';'CT2017 lvl4 sm'],'Location','NorthWest')
+legend([replace(co2_usa.(city).site_names,'_',' ');'bg smooth';[num2str(pct),'th% of ',num2str(winDay),'day city min']],'Location','NorthWest')
 xl = get(gca,'XLabel'); xlFontSize = get(xl,'FontSize'); xAX = get(gca,'XAxis'); yl = get(gca,'YLabel'); ylFontSize = get(yl,'FontSize'); yAX = get(gca,'YAxis');
 xAX.FontSize = 25; yAX.FontSize = 25; yl.FontSize = 30; yl.FontWeight = 'Bold'; xl.FontWeight = 'Bold';
 %datetick('x','yyyy','keepticks')
@@ -312,14 +312,14 @@ if all(isnan(c.bg_sp)) % If there is no bg data, use the percent method backgrou
 end
 
 
-for jj = 1:length(d.(city).site_names)
-    site = d.(city).site_names{jj,1};
+for jj = 1:length(co2_usa.(city).site_names)
+    site = co2_usa.(city).site_names{jj,1};
     if ~isempty(regexp(site,'background','once')); continue; end
-    i_species = strcmp({d.(city).(site).Variables.Name},species);
-    i_time = strcmp({d.(city).(site).Variables.Name},'time');
+    i_species = strcmp({co2_usa.(city).(site).Variables.Name},species);
+    i_time = strcmp({co2_usa.(city).(site).Variables.Name},'time');
     
-    t = d.(city).(site).Variables(i_time).Data;
-    data = d.(city).(site).Variables(i_species).Data;
+    t = co2_usa.(city).(site).Variables(i_time).Data;
+    data = co2_usa.(city).(site).Variables(i_species).Data;
     
     c.(site).data = data(and(t>c.bg_t(1),t<c.bg_t(end))); % trimming so that the data only covers the background.
     c.(site).t = t(and(t>c.bg_t(1),t<c.bg_t(end)));
@@ -329,14 +329,14 @@ end
 %%
 fx = figure(2); fx.Color = [1 1 1]; clf; hold on
 title([city_long_name,' ',upper(species),' excess - All sites'],'FontSize',35,'FontWeight','Bold')
-for jj = 1:length(d.(city).site_names)
-    site = d.(city).site_names{jj,1};
+for jj = 1:length(co2_usa.(city).site_names)
+    site = co2_usa.(city).site_names{jj,1};
     if ~isempty(regexp(site,'background','once')); continue; end
     plot(c.(site).t,c.(site).excess) % Excess CO2
 end
 %plot(c.th_t,c.th_sp,'b-','LineWidth',2)
 hold off; grid on;ylabel([upper(species),' (ppm)']);
-legend(replace(d.(city).site_names,'_',' '),'Location','NorthWest')
+legend(replace(co2_usa.(city).site_names,'_',' '),'Location','NorthWest')
 xl = get(gca,'XLabel'); xlFontSize = get(xl,'FontSize'); xAX = get(gca,'XAxis'); yl = get(gca,'YLabel'); ylFontSize = get(yl,'FontSize'); yAX = get(gca,'YAxis');
 xAX.FontSize = 25; yAX.FontSize = 25; yl.FontSize = 30; yl.FontWeight = 'Bold'; xl.FontWeight = 'Bold';
 if strcmp(city,'indianapolis'); xlim([datetime(2013,1,1),datetime(2017,1,1)]); end
@@ -349,8 +349,8 @@ end
 
 %% Diel averages
 
-for jj = 1:length(d.(city).site_names)
-    site = d.(city).site_names{jj,1};
+for jj = 1:length(co2_usa.(city).site_names)
+    site = co2_usa.(city).site_names{jj,1};
     if ~isempty(regexp(site,'background','once')); continue; end
     c.(site).diel = nan(24,1);
     for hh = 1:24
@@ -363,10 +363,10 @@ fx = figure(3); fx.Color = [1 1 1]; clf; hold on
 %title([city_long_name,' ',upper(species),' diel - All sites'],'FontSize',35,'FontWeight','Bold')
 title([city_long_name,' ',upper(species),' diel - 10m sites'],'FontSize',35,'FontWeight','Bold')
 plotted_cities = {};
-for jj = 1:length(d.(city).site_names)
-    site = d.(city).site_names{jj,1};
+for jj = 1:length(co2_usa.(city).site_names)
+    site = co2_usa.(city).site_names{jj,1};
     if ~isempty(regexp(site,'background','once')); continue; end
-    if str2double(d.(city).(site).Attributes(8).Value)>15; continue; end % only the 10m sites
+    if str2double(co2_usa.(city).(site).Attributes(8).Value)>15; continue; end % only the 10m sites
     plotted_cities = [plotted_cities;site];
     plot((0:23)',c.(site).diel,'.-','LineWidth',3,'MarkerSize',35) % Excess CO2
 end
@@ -375,7 +375,7 @@ ylabel(['Excess ',upper(species),' (ppm)']); xlabel('Hour')
 xl = get(gca,'XLabel'); xlFontSize = get(xl,'FontSize'); xAX = get(gca,'XAxis'); yl = get(gca,'YLabel'); ylFontSize = get(yl,'FontSize'); yAX = get(gca,'YAxis');
 xAX.FontSize = 25; yAX.FontSize = 25; yl.FontSize = 30; yl.FontWeight = 'Bold'; xl.FontWeight = 'Bold';
 legend(replace(plotted_cities,'_',' '),'Location','NorthWest')
-%legend(replace(d.(city).site_names,'_',' '),'Location','NorthWest')
+%legend(replace(co2_usa.(city).site_names,'_',' '),'Location','NorthWest')
 if strcmp(city,'indianapolis'); ylim([-3,40]); end
 
 plt.save_diel_excess = 'n';
@@ -386,8 +386,8 @@ end
 
 
 %% Seasonal excess
-for jj = 1:length(d.(city).site_names)
-    site = d.(city).site_names{jj,1};
+for jj = 1:length(co2_usa.(city).site_names)
+    site = co2_usa.(city).site_names{jj,1};
     if ~isempty(regexp(site,'background','once')); continue; end
     c.(site).monthly = nan(12,1);
     for mm = 1:12
@@ -400,8 +400,8 @@ end
 fx = figure(4); fx.Color = [1 1 1]; clf; hold on
 title([city_long_name,' ',upper(species),' excess monthly average - All sites'],'FontSize',35,'FontWeight','Bold')
 plotted_cities = {};
-for jj = 1:length(d.(city).site_names)
-    site = d.(city).site_names{jj,1};
+for jj = 1:length(co2_usa.(city).site_names)
+    site = co2_usa.(city).site_names{jj,1};
     if ~isempty(regexp(site,'background','once')); continue; end
     if any(isnan(c.(site).monthly)); continue; end
     plotted_cities = [plotted_cities;site];
@@ -411,7 +411,7 @@ ylabel(['Excess ',upper(species),' (ppm)']); xlabel('Month')
 xlim([1,12])
 hold off; grid on;
 legend(replace(plotted_cities,'_',' '),'Location','NorthWest')
-%legend(replace(d.(city).site_names,'_',' '),'Location','NorthWest')
+%legend(replace(co2_usa.(city).site_names,'_',' '),'Location','NorthWest')
 xl = get(gca,'XLabel'); xlFontSize = get(xl,'FontSize'); xAX = get(gca,'XAxis'); yl = get(gca,'YLabel'); ylFontSize = get(yl,'FontSize'); yAX = get(gca,'YAxis');
 xAX.FontSize = 25; yAX.FontSize = 25; yl.FontSize = 30; yl.FontWeight = 'Bold'; xl.FontWeight = 'Bold';
 
@@ -425,8 +425,8 @@ end
 fx = figure(5); fx.Color = [1 1 1]; clf; hold on
 title([city_long_name,' ',upper(species),' excess monthly mid-afternoon (12-17 LST)'],'FontSize',35,'FontWeight','Bold')
 plotted_cities = {};
-for jj = 1:length(d.(city).site_names)
-    site = d.(city).site_names{jj,1};
+for jj = 1:length(co2_usa.(city).site_names)
+    site = co2_usa.(city).site_names{jj,1};
     if ~isempty(regexp(site,'background','once')); continue; end
     if any(isnan(c.(site).monthly_midafternoon)); continue; end
     plotted_cities = [plotted_cities;site];
@@ -436,7 +436,7 @@ ylabel(['Excess ',upper(species),' (ppm)']); xlabel('Month')
 xlim([1,12])
 hold off; grid on;
 legend(replace(plotted_cities,'_',' '),'Location','NorthWest')
-%legend(replace(d.(city).site_names,'_',' '),'Location','NorthWest')
+%legend(replace(co2_usa.(city).site_names,'_',' '),'Location','NorthWest')
 xl = get(gca,'XLabel'); xlFontSize = get(xl,'FontSize'); xAX = get(gca,'XAxis'); yl = get(gca,'YLabel'); ylFontSize = get(yl,'FontSize'); yAX = get(gca,'YAxis');
 xAX.FontSize = 25; yAX.FontSize = 25; yl.FontSize = 30; yl.FontWeight = 'Bold'; xl.FontWeight = 'Bold';
 ylim([-5,40])

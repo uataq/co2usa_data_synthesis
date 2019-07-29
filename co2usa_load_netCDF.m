@@ -41,29 +41,29 @@ for ii = 1:size(cities,1)
     info = ncinfo(fullfile(fn.folder,fn.name));
     
     for jj = 1:length(info.Attributes)
-        d.(city).Attributes(jj).Name = info.Attributes(jj).Name;
-        d.(city).Attributes(jj).Value = info.Attributes(jj).Value;
+        co2_usa.(city).Attributes(jj).Name = info.Attributes(jj).Name;
+        co2_usa.(city).Attributes(jj).Value = info.Attributes(jj).Value;
     end
-    d.(city).site_codes = cell(length(info.Groups),1);
-    d.(city).site_names = cell(length(info.Groups),1);
+    co2_usa.(city).site_codes = cell(length(info.Groups),1);
+    co2_usa.(city).site_names = cell(length(info.Groups),1);
     for group = 1:length(info.Groups)
-        d.(city).site_names{group,1} = info.Groups(group).Name;
+        co2_usa.(city).site_names{group,1} = info.Groups(group).Name;
         for jj = 1:length(info.Groups(group).Attributes)
-            d.(city).(info.Groups(group).Name).Attributes(jj).Name = info.Groups(group).Attributes(jj).Name;
-            d.(city).(info.Groups(group).Name).Attributes(jj).Value = info.Groups(group).Attributes(jj).Value;
-            if strcmp(d.(city).(info.Groups(group).Name).Attributes(jj).Name,'site_code')
-                d.(city).site_codes{group,1} = d.(city).(info.Groups(group).Name).Attributes(jj).Value;
+            co2_usa.(city).(info.Groups(group).Name).Attributes(jj).Name = info.Groups(group).Attributes(jj).Name;
+            co2_usa.(city).(info.Groups(group).Name).Attributes(jj).Value = info.Groups(group).Attributes(jj).Value;
+            if strcmp(co2_usa.(city).(info.Groups(group).Name).Attributes(jj).Name,'site_code')
+                co2_usa.(city).site_codes{group,1} = co2_usa.(city).(info.Groups(group).Name).Attributes(jj).Value;
             end
         end
         for var = 1:length(info.Groups(group).Variables)
-            d.(city).(info.Groups(group).Name).Variables(var).Name = info.Groups(group).Variables(var).Name;
-            d.(city).(info.Groups(group).Name).Variables(var).Data = ncread(fullfile(fn.folder,fn.name),[info.Groups(group).Name,'/',info.Groups(group).Variables(var).Name]);
-            if strcmp('time',d.(city).(info.Groups(group).Name).Variables(var).Name)
-                d.(city).(info.Groups(group).Name).Variables(var).Data = datetime(d.(city).(info.Groups(group).Name).Variables(var).Data,'ConvertFrom','posixtime');
+            co2_usa.(city).(info.Groups(group).Name).Variables(var).Name = info.Groups(group).Variables(var).Name;
+            co2_usa.(city).(info.Groups(group).Name).Variables(var).Data = ncread(fullfile(fn.folder,fn.name),[info.Groups(group).Name,'/',info.Groups(group).Variables(var).Name]);
+            if strcmp('time',co2_usa.(city).(info.Groups(group).Name).Variables(var).Name)
+                co2_usa.(city).(info.Groups(group).Name).Variables(var).Data = datetime(co2_usa.(city).(info.Groups(group).Name).Variables(var).Data,'ConvertFrom','posixtime');
             end            
             for jj = 1:length(info.Groups(group).Variables(var).Attributes)
-                d.(city).(info.Groups(group).Name).Variables(var).Attributes(jj).Name = info.Groups(group).Variables(var).Attributes(jj).Name;
-                d.(city).(info.Groups(group).Name).Variables(var).Attributes(jj).Value = info.Groups(group).Variables(var).Attributes(jj).Value;
+                co2_usa.(city).(info.Groups(group).Name).Variables(var).Attributes(jj).Name = info.Groups(group).Variables(var).Attributes(jj).Name;
+                co2_usa.(city).(info.Groups(group).Name).Variables(var).Attributes(jj).Value = info.Groups(group).Variables(var).Attributes(jj).Value;
             end
         end
     end
@@ -78,31 +78,31 @@ for ii = 1:size(cities,1)
 
         % Attributes are the same as the city.
 %         for jj = 1:length(info.Attributes)
-%             d.(city).Attributes(jj).Name = info.Attributes(jj).Name;
-%             d.(city).Attributes(jj).Value = info.Attributes(jj).Value;
+%             co2_usa.(city).Attributes(jj).Name = info.Attributes(jj).Name;
+%             co2_usa.(city).Attributes(jj).Value = info.Attributes(jj).Value;
 %         end
-%        d.(city).site_codes = cell(length(info.Groups),1);
-%        d.(city).site_names = cell(length(info.Groups),1);
+%        co2_usa.(city).site_codes = cell(length(info.Groups),1);
+%        co2_usa.(city).site_names = cell(length(info.Groups),1);
         
-        group_num = length(d.(city).site_codes);
+        group_num = length(co2_usa.(city).site_codes);
         for group = 1:length(info.Groups)
-            d.(city).site_names{group+group_num,1} = info.Groups(group).Name;
+            co2_usa.(city).site_names{group+group_num,1} = info.Groups(group).Name;
             for jj = 1:length(info.Groups(group).Attributes)
-                d.(city).(info.Groups(group).Name).Attributes(jj).Name = info.Groups(group).Attributes(jj).Name;
-                d.(city).(info.Groups(group).Name).Attributes(jj).Value = info.Groups(group).Attributes(jj).Value;
-                if strcmp(d.(city).(info.Groups(group).Name).Attributes(jj).Name,'site_code')
-                    d.(city).site_codes{group+group_num,1} = d.(city).(info.Groups(group).Name).Attributes(jj).Value;
+                co2_usa.(city).(info.Groups(group).Name).Attributes(jj).Name = info.Groups(group).Attributes(jj).Name;
+                co2_usa.(city).(info.Groups(group).Name).Attributes(jj).Value = info.Groups(group).Attributes(jj).Value;
+                if strcmp(co2_usa.(city).(info.Groups(group).Name).Attributes(jj).Name,'site_code')
+                    co2_usa.(city).site_codes{group+group_num,1} = co2_usa.(city).(info.Groups(group).Name).Attributes(jj).Value;
                 end
             end
             for var = 1:length(info.Groups(group).Variables)
-                d.(city).(info.Groups(group).Name).Variables(var).Name = info.Groups(group).Variables(var).Name;
-                d.(city).(info.Groups(group).Name).Variables(var).Data = ncread(fullfile(fn.folder,fn.name),[info.Groups(group).Name,'/',info.Groups(group).Variables(var).Name]);
-                if strcmp('time',d.(city).(info.Groups(group).Name).Variables(var).Name)
-                    d.(city).(info.Groups(group).Name).Variables(var).Data = datetime(d.(city).(info.Groups(group).Name).Variables(var).Data,'ConvertFrom','posixtime');
+                co2_usa.(city).(info.Groups(group).Name).Variables(var).Name = info.Groups(group).Variables(var).Name;
+                co2_usa.(city).(info.Groups(group).Name).Variables(var).Data = ncread(fullfile(fn.folder,fn.name),[info.Groups(group).Name,'/',info.Groups(group).Variables(var).Name]);
+                if strcmp('time',co2_usa.(city).(info.Groups(group).Name).Variables(var).Name)
+                    co2_usa.(city).(info.Groups(group).Name).Variables(var).Data = datetime(co2_usa.(city).(info.Groups(group).Name).Variables(var).Data,'ConvertFrom','posixtime');
                 end
                 for jj = 1:length(info.Groups(group).Variables(var).Attributes)
-                    d.(city).(info.Groups(group).Name).Variables(var).Attributes(jj).Name = info.Groups(group).Variables(var).Attributes(jj).Name;
-                    d.(city).(info.Groups(group).Name).Variables(var).Attributes(jj).Value = info.Groups(group).Variables(var).Attributes(jj).Value;
+                    co2_usa.(city).(info.Groups(group).Name).Variables(var).Attributes(jj).Name = info.Groups(group).Variables(var).Attributes(jj).Name;
+                    co2_usa.(city).(info.Groups(group).Name).Variables(var).Attributes(jj).Value = info.Groups(group).Variables(var).Attributes(jj).Value;
                 end
             end
         end
@@ -118,14 +118,14 @@ fprintf('Done loading city %s data. Overall time elapsed: %4.0f seconds.\n',spec
 % %site = 'SITE02_co2_136M';
 % %site = 'SITE10_co2_40M';
 % site = 'SITE09_co2_130M';
-% i_species = strcmp({d.(city).(site).Variables.Name},species);
-% i_time = strcmp({d.(city).(site).Variables.Name},'time');
+% i_species = strcmp({co2_usa.(city).(site).Variables.Name},species);
+% i_time = strcmp({co2_usa.(city).(site).Variables.Name},'time');
 % 
-% foo = d.(city).(site).Variables(i_time).Data(cursor_info.DataIndex)
+% foo = co2_usa.(city).(site).Variables(i_time).Data(cursor_info.DataIndex)
 % days(duration(foo-datetime(year(foo),1,1)))
 
 % If there are duplicate times, this finds the index of the duplicate times:
-%[ia,ib,ic] = unique(d.(city).(site).Variables(i_time).Data);
+%[ia,ib,ic] = unique(co2_usa.(city).(site).Variables(i_time).Data);
 %id = setdiff(ic,ib);
 
 %% Plot of the city data:
@@ -138,20 +138,20 @@ city_long_name = replace(city,'_',' '); city_long_name([1,regexp(city_long_name,
 
 fx(ii) = figure(ii); fx(ii).Color = [1 1 1]; clf; hold on
 title([city_long_name,' ',upper(species),' - All sites'],'FontSize',35,'FontWeight','Bold')
-for jj = 1:length(d.(city).site_names)
-    site = d.(city).site_names{jj,1};
-    i_species = strcmp({d.(city).(site).Variables.Name},species);
-    i_time = strcmp({d.(city).(site).Variables.Name},'time');
+for jj = 1:length(co2_usa.(city).site_names)
+    site = co2_usa.(city).site_names{jj,1};
+    i_species = strcmp({co2_usa.(city).(site).Variables.Name},species);
+    i_time = strcmp({co2_usa.(city).(site).Variables.Name},'time');
     if ~isempty(regexp(site,'background','once'))
-        plot(d.(city).(site).Variables(i_time).Data,d.(city).(site).Variables(i_species).Data,'k-','LineWidth',2)
+        plot(co2_usa.(city).(site).Variables(i_time).Data,co2_usa.(city).(site).Variables(i_species).Data,'k-','LineWidth',2)
     else
-        plot(d.(city).(site).Variables(i_time).Data,d.(city).(site).Variables(i_species).Data)
+        plot(co2_usa.(city).(site).Variables(i_time).Data,co2_usa.(city).(site).Variables(i_species).Data)
     end
 end
 ylabel([upper(species),' (ppm)'],'FontWeight','Bold')
 %ylim([350,750])
 hold off; grid on;
-%legend(replace(d.(city).site_names,'_',' '),'Location','NorthWest')
+%legend(replace(co2_usa.(city).site_names,'_',' '),'Location','NorthWest')
 xl = get(gca,'XLabel'); xlFontSize = get(xl,'FontSize'); xAX = get(gca,'XAxis'); yl = get(gca,'YLabel'); ylFontSize = get(yl,'FontSize'); yAX = get(gca,'YAxis');
 xAX.FontSize = 25; yAX.FontSize = 25; yl.FontSize = 30; yl.FontWeight = 'Bold';
 
