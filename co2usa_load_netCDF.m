@@ -1,8 +1,24 @@
+% Load the CO2-USA Data Synthesis files from netCDF
+%
+% USAGE:
+%
+% The CO2-USA data should be saved in a directory structure as follows:
+% /synthesis_output/[city]/[netCDF_file.nc]
+%
+% For example, for the CO2 data file for Boston it would be:
+% /synthesis_output/boston/boston_all_sites_co2_1_hour_R0_2019-07-09.nc
+%
+% Update the cities you want to extract, the species, and choose if you want to save plots.
+% After running the script, the CO2_USA greenhouse gas data will all be contained within the
+% 'co2_usa' list variable.
+%
+% Written by Logan Mitchell (logan.mitchell@utah.edu)
+% University of Utah
+% Last updated: 2019-07-29
+
 % clear all
 % close all
 % set(0,'DefaultFigureWindowStyle','docked')
-% 
-% Loads the data from all of the cities.
 
 currentFolder = pwd;
 readFolder = fullfile(currentFolder(1:regexp(currentFolder,'gcloud.utah.edu')+14),'data','co2-usa','synthesis_output');
@@ -27,7 +43,8 @@ if ~exist('cities','var')
 %    cities = {'indianapolis'}; fprintf('*** Only loading %s.\n',cities{1,1})
 end
 
-plt.save_overview_image = 'n';
+% Do you want to save the summary figures?
+plt.save_overview_image = 'n'; % options: 'y' or 'n'
 
 for ii = 1:size(cities,1)
     city = cities{ii,1};
