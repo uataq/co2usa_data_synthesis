@@ -4,12 +4,7 @@ set(0,'DefaultFigureWindowStyle','docked')
 
 %% Outstanding questions:
 
-fprintf('Outstanding questions as of 10/03/2018:\n')
-fprintf('-I cant find the inlet heights for any of the sites (only the site elevation).?\n')
-fprintf(' PSU says top of 2-story building whereas SEL and SIS were on 1-story DEQ buildings\n')
-
-fprintf('- Are there better GPS coordinates?\n')
-
+fprintf('No outstanding questions as of 2019/07/30:\n')
 
 %% netCDF creation documentation
 
@@ -32,11 +27,11 @@ fprintf('- Are there better GPS coordinates?\n')
 %% Creation date
 
 date_created_now = datestr(now,'yyyy-mm-dd');
-date_created_str = datestr(datenum(2018,02,01),'yyyy-mm-dd');
+date_created_str = datestr(datenum(2019,07,30),'yyyy-mm-dd');
 %date_created_SLC_CO2 = datestr(datenum(2017,07,11),'yyyy-mm-dd');
 
 date_issued_now = datestr(now,'yyyy-mm-dd');
-date_issued = datetime(2018,07,01);
+date_issued = datetime(2019,07,30);
 date_issued_str = datestr(date_issued,'yyyy-mm-dd');
 
 % Working folders
@@ -79,7 +74,7 @@ site.(site.codes{i}).long_name = 'Portland State University';
 site.(site.codes{i}).code = 'PSU';
 site.(site.codes{i}).country = 'United States';
 site.(site.codes{i}).time_zone = 'America/Los_Angeles'; % use timezones to find out the available time zone designations.
-site.(site.codes{i}).inlet_height = {10}; 
+site.(site.codes{i}).inlet_height = {21}; 
 for j = 1:length(site.(site.codes{i}).inlet_height); site.(site.codes{i}).inlet_height_long_name{1,j} = [num2str(site.(site.codes{i}).inlet_height{1,j}),'m']; end
 site.(site.codes{i}).species = {'co2'};
 site.(site.codes{i}).species_long_name = {'carbon_dioxide'};
@@ -87,8 +82,8 @@ site.(site.codes{i}).species_units = {'micromol mol-1'};
 site.(site.codes{i}).species_units_long_name = {'ppm'};
 site.(site.codes{i}).instrument = {'LiCor 840'};
 site.(site.codes{i}).calibration_scale = {'WMO CO2 X2007'};
-site.(site.codes{i}).in_lat = 45.51;
-site.(site.codes{i}).in_lon = -122.60;
+site.(site.codes{i}).in_lat = 45.5132;
+site.(site.codes{i}).in_lon = -122.6864;
 site.(site.codes{i}).in_elevation = 63;
 site.(site.codes{i}).date_issued = datetime(2018,10,01);
 site.(site.codes{i}).date_issued_str = datestr(site.(site.codes{i}).date_issued,'yyyy-mm-dd');
@@ -101,7 +96,7 @@ site.(site.codes{i}).long_name = 'SE Lafayette';
 site.(site.codes{i}).code = 'SEL';
 site.(site.codes{i}).country = 'United States';
 site.(site.codes{i}).time_zone = 'America/Los_Angeles'; % use timezones to find out the available time zone designations.
-site.(site.codes{i}).inlet_height = {5};
+site.(site.codes{i}).inlet_height = {9};
 for j = 1:length(site.(site.codes{i}).inlet_height); site.(site.codes{i}).inlet_height_long_name{1,j} = [num2str(site.(site.codes{i}).inlet_height{1,j}),'m']; end
 site.(site.codes{i}).species = {'co2'};
 site.(site.codes{i}).species_long_name = {'carbon_dioxide'};
@@ -109,8 +104,8 @@ site.(site.codes{i}).species_units = {'micromol mol-1'};
 site.(site.codes{i}).species_units_long_name = {'ppm'};
 site.(site.codes{i}).instrument = {'LiCor 840'};
 site.(site.codes{i}).calibration_scale = {'WMO CO2 X2007'};
-site.(site.codes{i}).in_lat = 45.50;
-site.(site.codes{i}).in_lon = -122.60;
+site.(site.codes{i}).in_lat = 45.4966;
+site.(site.codes{i}).in_lon = -122.6029;
 site.(site.codes{i}).in_elevation = 75;
 site.(site.codes{i}).date_issued = datetime(2018,10,01);
 site.(site.codes{i}).date_issued_str = datestr(site.(site.codes{i}).date_issued,'yyyy-mm-dd');
@@ -123,7 +118,7 @@ site.(site.codes{i}).long_name = 'Sauvie Island';
 site.(site.codes{i}).code = 'SIS';
 site.(site.codes{i}).country = 'United States';
 site.(site.codes{i}).time_zone = 'America/Los_Angeles'; % use timezones to find out the available time zone designations.
-site.(site.codes{i}).inlet_height = {5};
+site.(site.codes{i}).inlet_height = {7};
 for j = 1:length(site.(site.codes{i}).inlet_height); site.(site.codes{i}).inlet_height_long_name{1,j} = [num2str(site.(site.codes{i}).inlet_height{1,j}),'m']; end
 site.(site.codes{i}).species = {'co2'};
 site.(site.codes{i}).species_long_name = {'carbon_dioxide'};
@@ -131,8 +126,8 @@ site.(site.codes{i}).species_units = {'micromol mol-1'};
 site.(site.codes{i}).species_units_long_name = {'ppm'};
 site.(site.codes{i}).instrument = {'LiCor 840'};
 site.(site.codes{i}).calibration_scale = {'WMO CO2 X2007'};
-site.(site.codes{i}).in_lat = 45.77;
-site.(site.codes{i}).in_lon = -122.77;
+site.(site.codes{i}).in_lat = 45.7685;
+site.(site.codes{i}).in_lon = -122.7721;
 site.(site.codes{i}).in_elevation = 6;
 site.(site.codes{i}).date_issued = datetime(2018,10,01);
 site.(site.codes{i}).date_issued_str = datestr(site.(site.codes{i}).date_issued,'yyyy-mm-dd');
