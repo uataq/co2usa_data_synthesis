@@ -2,6 +2,18 @@ clear all
 close all
 set(0,'DefaultFigureWindowStyle','docked')
 
+%% Outstanding questions:
+
+fprintf('Outstanding Issues: Need site inlet heights.  Can this be integrated into the latest node file?.\n')
+
+%% Data access notes:
+
+% Latest node file is found here:
+% https://cohen-research.appspot.com/get_latest_nodes/csv/
+
+% Download the data with this call (in this example, this is from node 11)
+% http://beacon.berkeley.edu/node/11/measurements/csv/?interval=60&start=2012-01-01%2000:00:00&end=2019-05-14%2000:00:00&quality_level=2
+
 %% netCDF creation documentation
 
 % Following the Climate Forecasting conventions for netCDF files documented here:
@@ -19,20 +31,6 @@ set(0,'DefaultFigureWindowStyle','docked')
 % Data will be archived at the ORNL DAAC:
 % https://daac.ornl.gov/PI/
 % 
-%% OUTSTANDING ISSUES:
-
-% Latest node file is found here:
-% https://cohen-research.appspot.com/get_latest_nodes/csv/
-% Download the data with (in this example, this is from node 10)
-% https://cohen-research.appspot.com/node/10/measurements/csv/?interval=60&start=2001-01-01%2000:00:00&end=2018-12-01%2000:00:00
-
-
-% node 057 doesn't exist for download.
-% The latest nodes file has two entries for node 14.
-% Need site elevation and inlet heights.  Can this be integrated into the
-% latest node file?
-
-
 %% Creation date
 
 date_created_now = datestr(now,'yyyy-mm-dd');
@@ -92,7 +90,7 @@ site.date_issued_str = datestr(site.date_issued,'yyyy-mm-dd');
 % https://cohen-research.appspot.com/get_latest_nodes/csv/
 
 % Read the latest node file and loop through it:
-[latest_nodes_num,latest_nodes_txt] = xlsread(fullfile(readFolder,city,'v_20190515','get_latest_nodes.csv'));
+[latest_nodes_num,latest_nodes_txt] = xlsread(fullfile(readFolder,city,'v_20190809','get_latest_nodes.csv'));
 latest_nodes_txt = latest_nodes_txt(2:end,:); % Removes the header line
 
 % Download the data with (in this example, this is from node 10)
