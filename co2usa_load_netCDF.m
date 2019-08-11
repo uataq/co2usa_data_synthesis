@@ -30,14 +30,14 @@ fprintf('Loading the %s city data...\n',species)
 
 if ~exist('cities','var')
     cities = {
-        'boston'
+        %'boston'
         %'indianapolis'
         %'los_angeles'
         %'northeast_corridor'
         %'portland'
         %'salt_lake_city'
         %'san_francisco_baaqmd'
-        %'san_francisco_beacon'
+        'san_francisco_beacon'
         };
     
 %    cities = {'indianapolis'}; fprintf('*** Only loading %s.\n',cities{1,1})
@@ -52,7 +52,7 @@ for ii = 1:size(cities,1)
     fprintf('Working on %s...',city)
     
     fn = dir(fullfile(readFolder,city,[city,'_all_sites_',species,'_','*.nc']));
-    if isempty(fn);     fprintf('No data. Time elapsed: %4.0f seconds.\n',toc(t_city)); continue; end % Skip it if the file doesn't exist.
+    if isempty(fn);     fprintf('\n*** Data files for %s were not found! Check the path name and try again.***\nTime elapsed: %4.0f seconds.\n',city,toc(t_city)); continue; end % Skip it if the file doesn't exist.
     
     %ncdisp(fullfile(fn.folder,fn.name))
     info = ncinfo(fullfile(fn.folder,fn.name));
@@ -168,7 +168,7 @@ end
 ylabel([upper(species),' (ppm)'],'FontWeight','Bold')
 %ylim([350,750])
 hold off; grid on;
-%legend(replace(co2_usa.(city).site_names,'_',' '),'Location','NorthWest')
+legend(replace(co2_usa.(city).site_names,'_',' '),'Location','NorthWest')
 xl = get(gca,'XLabel'); xlFontSize = get(xl,'FontSize'); xAX = get(gca,'XAxis'); yl = get(gca,'YLabel'); ylFontSize = get(yl,'FontSize'); yAX = get(gca,'YAxis');
 xAX.FontSize = 25; yAX.FontSize = 25; yl.FontSize = 30; yl.FontWeight = 'Bold';
 
