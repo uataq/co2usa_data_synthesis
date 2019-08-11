@@ -12,6 +12,9 @@
 % After running the script, the CO2_USA greenhouse gas data will all be contained within the
 % 'co2_usa' list variable.
 %
+% For more information, visit the CO2-USA GitHub repository:
+% https://github.com/loganemitchell/co2usa_data_synthesis
+%
 % Written by Logan Mitchell (logan.mitchell@utah.edu)
 % University of Utah
 % Last updated: 2019-07-29

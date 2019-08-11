@@ -12,6 +12,9 @@
 # After running the script, the CO2_USA greenhouse gas data will all be contained within the
 # 'co2_usa' list variable.
 #
+# For more information, visit the CO2-USA GitHub repository:
+# https://github.com/loganemitchell/co2usa_data_synthesis
+#
 # Written by Logan Mitchell (logan.mitchell@utah.edu) and Ben Fasoli
 # University of Utah
 # Last updated: 2019-07-29
@@ -50,7 +53,7 @@ make_co2_usa_plots = 'y' # Options: 'y' or 'n'
 # For example, for Boston it would be:
 # /synthesis_output/boston/boston_all_sites_co2_1_hour_R0_2019-07-09.nc
   
-read_folder = file.path('C:/Users','logan_000','gcloud.utah.edu','data','co2-usa','synthesis_output')
+read_folder = file.path('C:/Users','logan','gcloud.utah.edu','data','co2-usa','synthesis_output')
 if (!dir.exists(read_folder)) stop('Cannot find the specified read folder. Check the file path to make sure it is correct.')
 setwd(read_folder)
 
