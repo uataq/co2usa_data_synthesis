@@ -318,63 +318,34 @@ for i = 1:length(site.codes)
     fprintf('---- %-6s complete ----\n\n',site.codes{i})
 end
 
-% Load background data, or leave it blank if it doesn't exist.
-% 
-% i = length(site.codes)+1;
-% site.codes{1,i} = 'background';
-% 
-% site.(site.codes{i}).name = 'background';
-% site.(site.codes{i}).long_name = 'background';
-% site.(site.codes{i}).code = '';
-% site.(site.codes{i}).country = 'United States';
-% site.(site.codes{i}).time_zone = 'America/Indianapolis';
-% site.(site.codes{i}).inlet_height_long_name = {'background'};
-% site.(site.codes{i}).inlet_height = {0};
-% site.(site.codes{i}).species = {'co2','ch4','co'};
-% site.(site.codes{i}).species_long_name = {'carbon_dioxide','methane','carbon_monoxide'};
-% site.(site.codes{i}).species_units = {'micromol mol-1','nanomol mol-1','nanomol mol-1'};
-% site.(site.codes{i}).species_units_long_name = {'ppm','ppb','ppb'};
-% site.(site.codes{i}).instrument = {'upwind_tower','upwind_tower','upwind_tower'};
-% site.(site.codes{i}).calibration_scale = {'WMO CO2 X2007','WMO CH4 X2004A','WMO CO X2014A'};
-% site.(site.codes{i}).in_lat = site.(site.codes{i-1}).in_lat;
-% site.(site.codes{i}).in_lon = site.(site.codes{i-1}).in_lon;
-% site.(site.codes{i}).in_elevation = 0;
-% site.(site.codes{i}).date_issued = site.(site.codes{i-1}).date_issued;
-% site.(site.codes{i}).date_issued_str = datestr(site.(site.codes{i}).date_issued,'yyyy-mm-dd');
-% 
-% fn = dir(fullfile(readFolder,city,'background','INFLUX_backgrounds_2013_2017.dat'));
-% 
-% fid = fopen(fullfile(fn.folder,fn.name));
-% formatSpec = '%f%f%f%f%f%f%f%f'; % Yr,Mn,Dy,Hr,sp
-% header_lines = 1;
-% read_dat = textscan(fid,formatSpec,'HeaderLines',header_lines,'Delimiter',',\t','CollectOutput',true,'TreatAsEmpty','NaN');
-% fclose(fid);
-% 
-% for sp = 1:length(site.(site.codes{i}).species)
-%     sptxt = site.(site.codes{i}).species{sp};
-%     inlet = 1; intxt = site.(site.codes{i}).inlet_height_long_name{inlet};
-%     if strcmp(sptxt,'co2'); col.species = 6; end
-%     if strcmp(sptxt,'ch4'); col.species = 7; end
-%     if strcmp(sptxt,'co'); col.species = 8; end
-%                 
-%     site.(site.codes{i}).([sptxt,'_',intxt]) = read_dat{1,1}(:,col.species);
-%     site.(site.codes{i}).([sptxt,'_',intxt])(isnan(site.(site.codes{i}).([sptxt,'_',intxt]))) = -1e34;
-%     site.(site.codes{i}).([sptxt,'_',intxt,'_time']) = datetime(ones(length(read_dat{1,1}),1)*2013,ones(length(read_dat{1,1}),1),read_dat{1,1}(:,2),read_dat{1,1}(:,5),zeros(length(read_dat{1,1}),1),zeros(length(read_dat{1,1}),1));
-%     site.(site.codes{i}).([sptxt,'_',intxt,'_std']) = ones(length(read_dat{1,1}),1)*-1e34;
-%     site.(site.codes{i}).([sptxt,'_',intxt,'_n']) = ones(length(read_dat{1,1}),1)*-1e34;
-%     site.(site.codes{i}).([sptxt,'_',intxt,'_unc']) = ones(length(read_dat{1,1}),1)*-1e34;
-%     site.(site.codes{i}).([sptxt,'_',intxt,'_lat']) = ones(length(read_dat{1,1}),1)*-1e34;
-%     site.(site.codes{i}).([sptxt,'_',intxt,'_lon']) = ones(length(read_dat{1,1}),1)*-1e34;
-%     site.(site.codes{i}).([sptxt,'_',intxt,'_elevation']) = ones(length(read_dat{1,1}),1)*-1e34;
-%     site.(site.codes{i}).([sptxt,'_',intxt,'_inlet_height']) = ones(length(read_dat{1,1}),1)*-1e34;
-%     
-%     site.groups = [site.groups; {[site.(site.codes{i}).name,'_',sptxt]}];
-%     site.species = [site.species; {sptxt}];
-% end
-% 
-% fprintf('---- %-6s complete ----\n\n',site.codes{i})
+%% Custom QAQC based on discussion with Tasha Aug 2019
 
-% Identify the netCDF files to create based on species.
+%return
+fprintf('*** Custom QAQC requested by Tasha Miles in Aug 2019***\n')
+fprintf('Remove the 307.3 ppm CO2 point at Site 10 (40m inlet) on Aug 16, 2013\n')
+
+i = find(strcmp(site.codes,'site10')); %site.(site.codes{i})
+inlet = find(strcmp(site.(site.codes{i}).inlet_height_long_name,'40M')); intxt = site.(site.codes{i}).inlet_height_long_name{inlet};
+sp = find(strcmp(site.(site.codes{i}).species,'co2')); sptxt = site.(site.codes{i}).species{sp};
+tmp_dt = site.(site.codes{i}).([sptxt,'_',intxt,'_time']);
+tmp_dat = site.(site.codes{i}).([sptxt,'_',intxt]);
+tmp_dat(tmp_dat==-1e34) = nan;
+% figure(99);clf; plot(tmp_dt,tmp_dat);
+mask = find(and(tmp_dat<310,and(tmp_dt>datetime(2013,08,16),tmp_dt<datetime(2013,08,17))));
+site.(site.codes{i}).([sptxt,'_',intxt])(mask) = -1e34;
+
+fprintf('Remove the -1008 ppb CO points at Site 03 (54m inlet) on June 8, 2012.\n')
+i = find(strcmp(site.codes,'site03')); %site.(site.codes{i})
+inlet = find(strcmp(site.(site.codes{i}).inlet_height_long_name,'54M')); intxt = site.(site.codes{i}).inlet_height_long_name{inlet};
+sp = find(strcmp(site.(site.codes{i}).species,'co')); sptxt = site.(site.codes{i}).species{sp};
+tmp_dt = site.(site.codes{i}).([sptxt,'_',intxt,'_time']);
+tmp_dat = site.(site.codes{i}).([sptxt,'_',intxt]);
+tmp_dat(tmp_dat==-1e34) = nan;
+% figure(99);clf; plot(tmp_dt,tmp_dat);
+mask = find(and(tmp_dat<-1000,and(tmp_dt>datetime(2012,06,08),tmp_dt<datetime(2012,06,09))));
+site.(site.codes{i}).([sptxt,'_',intxt])(mask) = -1e34;
+
+%% Identify the netCDF files to create based on species.
 
 site.unique_species = unique(site.species);
 site.species_list = [];
