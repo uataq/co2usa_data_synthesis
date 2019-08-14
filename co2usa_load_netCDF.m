@@ -34,13 +34,13 @@ fprintf('Loading the %s city data...\n',species)
 if ~exist('cities','var')
     cities = {
         %'boston'
-        %'indianapolis'
+        'indianapolis'
         %'los_angeles'
         %'northeast_corridor'
         %'portland'
         %'salt_lake_city'
         %'san_francisco_baaqmd'
-        'san_francisco_beacon'
+        %'san_francisco_beacon'
         };
     
 %    cities = {'indianapolis'}; fprintf('*** Only loading %s.\n',cities{1,1})
@@ -168,7 +168,12 @@ for jj = 1:length(co2_usa.(city).site_names)
         plot(co2_usa.(city).(site).Variables(i_time).Data,co2_usa.(city).(site).Variables(i_species).Data)
     end
 end
-ylabel([upper(species),' (ppm)'],'FontWeight','Bold')
+i_units = strcmp({co2_usa.(city).(site).Variables(i_species).Attributes.Name},'units');
+units_label = co2_usa.(city).(site).Variables(i_species).Attributes(i_units).Value;
+if strcmp(units_label,'nanomol mol-1'); units_label_abbr = 'ppb'; end
+if strcmp(units_label,'micromol mol-1'); units_label_abbr = 'ppm'; end
+
+ylabel([upper(species),' (',units_label_abbr,')'],'FontWeight','Bold')
 %ylim([350,750])
 hold off; grid on;
 legend(replace(co2_usa.(city).site_names,'_',' '),'Location','NorthWest')
