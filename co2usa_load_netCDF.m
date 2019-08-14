@@ -168,6 +168,7 @@ for jj = 1:length(co2_usa.(city).site_names)
         plot(co2_usa.(city).(site).Variables(i_time).Data,co2_usa.(city).(site).Variables(i_species).Data)
     end
 end
+units_label_abbr = '';
 i_units = strcmp({co2_usa.(city).(site).Variables(i_species).Attributes.Name},'units');
 units_label = co2_usa.(city).(site).Variables(i_species).Attributes(i_units).Value;
 if strcmp(units_label,'nanomol mol-1'); units_label_abbr = 'ppb'; end
