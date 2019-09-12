@@ -27,7 +27,7 @@ date_created_str = datestr(datenum(2018,07,01),'yyyy-mm-dd');
 %date_created_SLC_CO2 = datestr(datenum(2017,07,11),'yyyy-mm-dd');
 
 date_issued_now = datestr(now,'yyyy-mm-dd');
-date_issued = datetime(2018,07,01);
+date_issued = datetime(2019,07,01);
 date_issued_str = datestr(date_issued,'yyyy-mm-dd');
 
 % Working folders
@@ -263,13 +263,14 @@ for i = 1:length(site.codes)
                 if strcmp(sptxt,'co'); col.species = 13; col.std = 14; col.unc = 15; end
                 col.n = 16; % n is common to all of the species.
                 
-                site.(site.codes{i}).([sptxt,'_',intxt]) = [site.(site.codes{i}).([sptxt,'_',intxt]); read_dat{1,2}(:,col.species)]; % species 
-                site.(site.codes{i}).([sptxt,'_',intxt,'_std']) = [site.(site.codes{i}).([sptxt,'_',intxt,'_std']); read_dat{1,2}(:,col.std)]; % species std
-                site.(site.codes{i}).([sptxt,'_',intxt,'_n']) = [site.(site.codes{i}).([sptxt,'_',intxt,'_n']); read_dat{1,2}(:,col.n)]; % species n
-                site.(site.codes{i}).([sptxt,'_',intxt,'_unc']) = [site.(site.codes{i}).([sptxt,'_',intxt,'_unc']); read_dat{1,2}(:,col.unc)]; % species uncertainty
+                % Col 17 is the QC flag.  Only use data that has col 17==1. 
+                site.(site.codes{i}).([sptxt,'_',intxt]) = [site.(site.codes{i}).([sptxt,'_',intxt]); read_dat{1,2}(read_dat{1,2}(:,17)==1,col.species)]; % species 
+                site.(site.codes{i}).([sptxt,'_',intxt,'_std']) = [site.(site.codes{i}).([sptxt,'_',intxt,'_std']); read_dat{1,2}(read_dat{1,2}(:,17)==1,col.std)]; % species std
+                site.(site.codes{i}).([sptxt,'_',intxt,'_n']) = [site.(site.codes{i}).([sptxt,'_',intxt,'_n']); read_dat{1,2}(read_dat{1,2}(:,17)==1,col.n)]; % species n
+                site.(site.codes{i}).([sptxt,'_',intxt,'_unc']) = [site.(site.codes{i}).([sptxt,'_',intxt,'_unc']); read_dat{1,2}(read_dat{1,2}(:,17)==1,col.unc)]; % species uncertainty
                 
                 site.(site.codes{i}).([sptxt,'_',intxt,'_time']) = [site.(site.codes{i}).([sptxt,'_',intxt,'_time']); ...
-                    datetime(read_dat{1,2}(:,4),ones(length(read_dat{1,2}),1),read_dat{1,2}(:,5),read_dat{1,2}(:,6),zeros(length(read_dat{1,2}),1),zeros(length(read_dat{1,2}),1))]; % time
+                    datetime(read_dat{1,2}(read_dat{1,2}(:,17)==1,4),ones(length(read_dat{1,2}(read_dat{1,2}(:,17)==1,1)),1),read_dat{1,2}(read_dat{1,2}(:,17)==1,5),read_dat{1,2}(read_dat{1,2}(:,17)==1,6),zeros(length(read_dat{1,2}(read_dat{1,2}(:,17)==1,1)),1),zeros(length(read_dat{1,2}(read_dat{1,2}(:,17)==1,1)),1))]; % time
                 clear col
                 fprintf('%-3s read from file: %s\n',sptxt,site.(site.codes{i}).files(fn).name)
             end
