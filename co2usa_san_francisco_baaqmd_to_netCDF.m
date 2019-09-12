@@ -27,7 +27,7 @@ date_created_str = datestr(datenum(2018,02,01),'yyyy-mm-dd');
 %date_created_SLC_CO2 = datestr(datenum(2017,07,11),'yyyy-mm-dd');
 
 date_issued_now = datestr(now,'yyyy-mm-dd');
-date_issued = datetime(2018,07,01);
+date_issued = datetime(2019,07,01);
 date_issued_str = datestr(date_issued,'yyyy-mm-dd');
 
 % Working folders
@@ -43,26 +43,26 @@ city_long_name = 'San Francisco';
 city_url = 'http://www.baaqmd.gov/research-and-data/air-quality-measurement/ghg-measurement/ghg-data';
 
 % http://www.baaqmd.gov/research-and-data/air-quality-measurement/ghg-measurement/ghg-data
-
-provider(1).name = 'Abhinav Guha';
-provider(1).address1 = 'BAAQMD Planning and Climate Protection Division';
-provider(1).address2 = '375 Beale Street Suite 600';
-provider(1).address3 = 'San Francisco, CA 94105';
-provider(1).country = 'United States';
-provider(1).city = city_long_name;
-provider(1).affiliation = 'BAAQMD';
-provider(1).email = 'aguha@baaqmd.gov';
-provider(1).parameter = 'Provider has contributed measurements for: ';
-
-provider(2).name = 'Sally Newman';
-provider(2).address1 = 'BAAQMD Planning and Climate Protection Division';
-provider(2).address2 = '375 Beale Street Suite 600';
-provider(2).address3 = 'San Francisco, CA 94105';
-provider(2).country = 'United States';
-provider(2).city = city_long_name;
-provider(2).affiliation = 'BAAQMD';
-provider(2).email = 'snewman@baaqmd.gov';
-provider(2).parameter = 'Provider has contributed measurements for: ';
+i=1;
+provider(i).name = 'Sally Newman';
+provider(i).address1 = 'BAAQMD Planning and Climate Protection Division';
+provider(i).address2 = '375 Beale Street Suite 600';
+provider(i).address3 = 'San Francisco, CA 94105';
+provider(i).country = 'United States';
+provider(i).city = city_long_name;
+provider(i).affiliation = 'BAAQMD';
+provider(i).email = 'snewman@baaqmd.gov';
+provider(i).parameter = 'Provider has contributed measurements for: ';
+i=2;
+provider(i).name = 'Abhinav Guha';
+provider(i).address1 = 'BAAQMD Planning and Climate Protection Division';
+provider(i).address2 = '375 Beale Street Suite 600';
+provider(i).address3 = 'San Francisco, CA 94105';
+provider(i).country = 'United States';
+provider(i).city = city_long_name;
+provider(i).affiliation = 'BAAQMD';
+provider(i).email = 'aguha@baaqmd.gov';
+provider(i).parameter = 'Provider has contributed measurements for: ';
 
 %% Site meta data
 
@@ -197,67 +197,104 @@ for i = 1:length(site.codes)
         for sp = 1:length(site.(site.codes{i}).species)
             sptxt = site.(site.codes{i}).species{sp};
             
+            % v20180409 of the data had minute averages and needed to be hourly averaged. Newer versions of the data are already hourly averaged. 
+%             if ~exist(fullfile(readFolder,city,['hourly_avg_',site.codes{i},'_',sptxt,'_',intxt,'.mat']),'file')
+%                 fprintf('Computing %s hourly %s averaged data...\n',site.codes{i},sptxt)
+%                 
+%                 site.(site.codes{i}).files = dir(fullfile(readFolder,city,[upper(sptxt),'_*',site.(site.codes{i}).name,'*.csv']));
+%                 site.(site.codes{i}).(['min_',sptxt,'_',intxt]) = [];
+%                 site.(site.codes{i}).(['min_',sptxt,'_',intxt,'_time']) = [];
+%                 for fn = 1:length(site.(site.codes{i}).files)
+%                     formatSpec = '%s%f';
+%                     
+%                     % Read the data file
+%                     fid = fopen(fullfile(site.(site.codes{i}).files(fn).folder,site.(site.codes{i}).files(fn).name));
+%                     read_dat = textscan(fid,formatSpec,'HeaderLines',0,'Delimiter',',','CollectOutput',true,'TreatAsEmpty','NaN');
+%                     fclose(fid);
+%                     
+%                     site.(site.codes{i}).(['min_',sptxt,'_',intxt]) = [site.(site.codes{i}).(['min_',sptxt,'_',intxt]); read_dat{1,2}(:,1)]; % species
+%                     site.(site.codes{i}).(['min_',sptxt,'_',intxt,'_time']) = [site.(site.codes{i}).(['min_',sptxt,'_',intxt,'_time']); ...
+%                         datetime(read_dat{1,1},'InputFormat','dd-MMM-yyyy HH:mm:ss')]; % time
+%                     fprintf('%-3s read from file: %s\n',sptxt,site.(site.codes{i}).files(fn).name)
+%                 end
+%                 
+%                 % Sort the data in chronological order since it wasn't necessarily loaded that way.
+%                 [site.(site.codes{i}).(['min_',sptxt,'_',intxt,'_time']),sort_index] = sortrows(site.(site.codes{i}).(['min_',sptxt,'_',intxt,'_time']));
+%                 site.(site.codes{i}).(['min_',sptxt,'_',intxt]) = site.(site.codes{i}).(['min_',sptxt,'_',intxt])(sort_index,1);
+%                 
+%                 % Removes the leading and trailing NaNs
+%                 data_range_ind = find(~isnan(site.(site.codes{i}).(['min_',sptxt,'_',intxt])),1,'first'):find(~isnan(site.(site.codes{i}).(['min_',sptxt,'_',intxt])),1,'last');
+%                 site.(site.codes{i}).(['min_',sptxt,'_',intxt]) = site.(site.codes{i}).(['min_',sptxt,'_',intxt])(data_range_ind);
+%                 site.(site.codes{i}).(['min_',sptxt,'_',intxt,'_time']) = site.(site.codes{i}).(['min_',sptxt,'_',intxt,'_time'])(data_range_ind);
+%                 clear sort_index data_range_ind
+%                 
+%                 % Creating an hourly averaged data set from the minute data.
+%                 qht = (dateshift(site.(site.codes{i}).(['min_',sptxt,'_',intxt,'_time'])(1),'start','hour'):1/24:dateshift(site.(site.codes{i}).(['min_',sptxt,'_',intxt,'_time'])(end),'start','hour'))'; % Date numbers of the floored hours.
+%                 qhdata = nan(size(qht,1),1);
+%                 qhdataStd = nan(size(qht,1),1);
+%                 qhdataCount = nan(size(qht,1),1);
+%                 qtFloorHour = dateshift(site.(site.codes{i}).(['min_',sptxt,'_',intxt,'_time']),'start','hour');
+%                 
+%                 tic
+%                 for j = 1:size(qht,1)
+%                     qhdataTemp = site.(site.codes{i}).(['min_',sptxt,'_',intxt])(qtFloorHour==qht(j,1),:);
+%                     if size(qhdataTemp,1)>=2 % Must be at least two data points in order to save an "hourly average"
+%                         qhdata(j,:) = nanmean(qhdataTemp,1);
+%                         qhdataStd(j,:) = nanstd(qhdataTemp,1);
+%                         qhdataCount(j,:) = sum(~isnan(qhdataTemp));
+%                     end
+%                 end
+%                 toc
+%                 save(fullfile(readFolder,city,['hourly_avg_',site.codes{i},'_',sptxt,'_',intxt,'.mat']),'qht','qhdata','qhdataStd','qhdataCount')
+%             else
+%                 fprintf('Loading previously computed %s hourly %s averaged data.\n',site.codes{i},sptxt)
+%                 load(fullfile(readFolder,city,['hourly_avg_',site.codes{i},'_',sptxt,'_',intxt,'.mat']))
+%             end
+%             
+%             site.(site.codes{i}).([sptxt,'_',intxt]) = qhdata;
+%             site.(site.codes{i}).([sptxt,'_',intxt,'_std']) = qhdataStd;
+%             site.(site.codes{i}).([sptxt,'_',intxt,'_n']) = qhdataCount;
+%             site.(site.codes{i}).([sptxt,'_',intxt,'_time']) = qht;
+%             
+%             % No uncertainty data yet.
+%             site.(site.codes{i}).([sptxt,'_',intxt,'_unc']) = nan(length(site.(site.codes{i}).([sptxt,'_',intxt])),1);
             
-            if ~exist(fullfile(readFolder,city,['hourly_avg_',site.codes{i},'_',sptxt,'_',intxt,'.mat']),'file')
-                fprintf('Computing %s hourly %s averaged data...\n',site.codes{i},sptxt)
-                
-                site.(site.codes{i}).files = dir(fullfile(readFolder,city,[upper(sptxt),'_*',site.(site.codes{i}).name,'*.csv']));
-                site.(site.codes{i}).(['min_',sptxt,'_',intxt]) = [];
-                site.(site.codes{i}).(['min_',sptxt,'_',intxt,'_time']) = [];
-                for fn = 1:length(site.(site.codes{i}).files)
-                    formatSpec = '%s%f';
-                    
-                    % Read the data file
-                    fid = fopen(fullfile(site.(site.codes{i}).files(fn).folder,site.(site.codes{i}).files(fn).name));
-                    read_dat = textscan(fid,formatSpec,'HeaderLines',0,'Delimiter',',','CollectOutput',true,'TreatAsEmpty','NaN');
-                    fclose(fid);
-                    
-                    site.(site.codes{i}).(['min_',sptxt,'_',intxt]) = [site.(site.codes{i}).(['min_',sptxt,'_',intxt]); read_dat{1,2}(:,1)]; % species
-                    site.(site.codes{i}).(['min_',sptxt,'_',intxt,'_time']) = [site.(site.codes{i}).(['min_',sptxt,'_',intxt,'_time']); ...
-                        datetime(read_dat{1,1},'InputFormat','dd-MMM-yyyy HH:mm:ss')]; % time
-                    fprintf('%-3s read from file: %s\n',sptxt,site.(site.codes{i}).files(fn).name)
-                end
-                
-                % Sort the data in chronological order since it wasn't necessarily loaded that way.
-                [site.(site.codes{i}).(['min_',sptxt,'_',intxt,'_time']),sort_index] = sortrows(site.(site.codes{i}).(['min_',sptxt,'_',intxt,'_time']));
-                site.(site.codes{i}).(['min_',sptxt,'_',intxt]) = site.(site.codes{i}).(['min_',sptxt,'_',intxt])(sort_index,1);
-                
-                % Removes the leading and trailing NaNs
-                data_range_ind = find(~isnan(site.(site.codes{i}).(['min_',sptxt,'_',intxt])),1,'first'):find(~isnan(site.(site.codes{i}).(['min_',sptxt,'_',intxt])),1,'last');
-                site.(site.codes{i}).(['min_',sptxt,'_',intxt]) = site.(site.codes{i}).(['min_',sptxt,'_',intxt])(data_range_ind);
-                site.(site.codes{i}).(['min_',sptxt,'_',intxt,'_time']) = site.(site.codes{i}).(['min_',sptxt,'_',intxt,'_time'])(data_range_ind);
-                clear sort_index data_range_ind
-                
-                % Creating an hourly averaged data set from the minute data.
-                qht = (dateshift(site.(site.codes{i}).(['min_',sptxt,'_',intxt,'_time'])(1),'start','hour'):1/24:dateshift(site.(site.codes{i}).(['min_',sptxt,'_',intxt,'_time'])(end),'start','hour'))'; % Date numbers of the floored hours.
-                qhdata = nan(size(qht,1),1);
-                qhdataStd = nan(size(qht,1),1);
-                qhdataCount = nan(size(qht,1),1);
-                qtFloorHour = dateshift(site.(site.codes{i}).(['min_',sptxt,'_',intxt,'_time']),'start','hour');
-                
-                tic
-                for j = 1:size(qht,1)
-                    qhdataTemp = site.(site.codes{i}).(['min_',sptxt,'_',intxt])(qtFloorHour==qht(j,1),:);
-                    if size(qhdataTemp,1)>=2 % Must be at least two data points in order to save an "hourly average"
-                        qhdata(j,:) = nanmean(qhdataTemp,1);
-                        qhdataStd(j,:) = nanstd(qhdataTemp,1);
-                        qhdataCount(j,:) = sum(~isnan(qhdataTemp));
-                    end
-                end
-                toc
-                save(fullfile(readFolder,city,['hourly_avg_',site.codes{i},'_',sptxt,'_',intxt,'.mat']),'qht','qhdata','qhdataStd','qhdataCount')
-            else
-                fprintf('Loading previously computed %s hourly %s averaged data.\n',site.codes{i},sptxt)
-                load(fullfile(readFolder,city,['hourly_avg_',site.codes{i},'_',sptxt,'_',intxt,'.mat']))
-            end
+            version_folder = 'v20190815';
+
+            formatSpec = '%s%s%s%f%f%f%f%f%f';
             
-            site.(site.codes{i}).([sptxt,'_',intxt]) = qhdata;
-            site.(site.codes{i}).([sptxt,'_',intxt,'_std']) = qhdataStd;
-            site.(site.codes{i}).([sptxt,'_',intxt,'_n']) = qhdataCount;
-            site.(site.codes{i}).([sptxt,'_',intxt,'_time']) = qht;
+            % Read the data file
+            site.(site.codes{i}).files = dir(fullfile(readFolder,city,version_folder,['*',site.(site.codes{i}).name,'*.csv']));
+            fid = fopen(fullfile(site.(site.codes{i}).files.folder,site.(site.codes{i}).files.name));
+            read_dat = textscan(fid,formatSpec,'HeaderLines',1,'Delimiter',',','CollectOutput',true,'TreatAsEmpty','NaN');
+            fclose(fid);
             
-            % No uncertainty data yet.
-            site.(site.codes{i}).([sptxt,'_',intxt,'_unc']) = nan(length(site.(site.codes{i}).([sptxt,'_',intxt])),1);
+            % All of BAAQMD sites have columns for CO2, CH4, CO
+            if strcmp(sptxt,'co2'); col.species = 3; col.std = nan; col.unc = 4; end
+            if strcmp(sptxt,'ch4'); col.species = 1; col.std = nan; col.unc = 2; end
+            if strcmp(sptxt,'co'); col.species = 5; col.std = nan; col.unc = 6; end
+            
+            site.(site.codes{i}).([sptxt,'_',intxt]) = read_dat{1,2}(:,col.species); % species
+            
+            if strcmp(sptxt,'ch4'); site.(site.codes{i}).([sptxt,'_',intxt]) = site.(site.codes{i}).([sptxt,'_',intxt])*1000; end % convert ppm to ppb
+            
+            %site.(site.codes{i}).([sptxt,'_',intxt,'_std']) = read_dat{1,2}(:,col.std); % species std
+            site.(site.codes{i}).([sptxt,'_',intxt,'_std']) = nan(length(read_dat{1,2}(:,col.species)),1); % species std
+            %site.(site.codes{i}).([sptxt,'_',intxt,'_n']) = read_dat{1,2}(:,col.n); % species n
+            site.(site.codes{i}).([sptxt,'_',intxt,'_n']) = nan(length(read_dat{1,2}(:,col.species)),1); % species n
+            site.(site.codes{i}).([sptxt,'_',intxt,'_unc']) = read_dat{1,2}(:,col.unc); % species uncertainty
+            
+            site.(site.codes{i}).([sptxt,'_',intxt,'_time']) = datetime(read_dat{1,1}(:,3),'InputFormat','M/d/yy HH:mm');% time
+            site.(site.codes{i}).([sptxt,'_',intxt,'_time']).Minute = 0; % Sets the minute to be 0.
+            clear col
+            fprintf('%-3s read from file: %s\n',sptxt,site.(site.codes{i}).files.name)
+            
+            % Remove any data that was blank:
+            site.(site.codes{i}).([sptxt,'_',intxt]) =  site.(site.codes{i}).([sptxt,'_',intxt])(~isnat(site.(site.codes{i}).([sptxt,'_',intxt,'_time'])),:);
+            site.(site.codes{i}).([sptxt,'_',intxt,'_std']) =  site.(site.codes{i}).([sptxt,'_',intxt,'_std'])(~isnat(site.(site.codes{i}).([sptxt,'_',intxt,'_time'])),:);
+            site.(site.codes{i}).([sptxt,'_',intxt,'_n']) =  site.(site.codes{i}).([sptxt,'_',intxt,'_n'])(~isnat(site.(site.codes{i}).([sptxt,'_',intxt,'_time'])),:);
+            site.(site.codes{i}).([sptxt,'_',intxt,'_unc']) =  site.(site.codes{i}).([sptxt,'_',intxt,'_unc'])(~isnat(site.(site.codes{i}).([sptxt,'_',intxt,'_time'])),:);
+            site.(site.codes{i}).([sptxt,'_',intxt,'_time']) =  site.(site.codes{i}).([sptxt,'_',intxt,'_time'])(~isnat(site.(site.codes{i}).([sptxt,'_',intxt,'_time'])),:);
             
             % Lat, Lon, Elevation, and Inlet heights do not change, so they are all entered as a constant through the data set. 
             site.(site.codes{i}).([sptxt,'_',intxt,'_lat']) = repmat(site.(site.codes{i}).in_lat,length(site.(site.codes{i}).([sptxt,'_',intxt])),1);
@@ -281,47 +318,6 @@ for i = 1:length(site.codes)
     end
     fprintf('---- %-6s complete ----\n\n',site.codes{i})
 end
-
-%% Load background data, or leave it blank if it doesn't exist.
-
-% i = length(site.codes)+1;
-% 
-% site.codes{1,i} = 'background';
-% site.groups = [site.groups; 'background'];
-% 
-% site.(site.codes{i}).name = 'background';
-% site.(site.codes{i}).long_name = 'background';
-% site.(site.codes{i}).code = '';
-% site.(site.codes{i}).country = 'United States';
-% site.(site.codes{i}).time_zone = 'America/Los_Angeles';
-% site.(site.codes{i}).inlet_height_long_name = {'background'};
-% site.(site.codes{i}).inlet_height = {0};
-% site.(site.codes{i}).species = {'co2'};
-% site.(site.codes{i}).species_long_name = {'carbon_dioxide'};
-% site.(site.codes{i}).species_units = {'micromol mol-1'};
-% site.(site.codes{i}).species_units_long_name = {'ppm'};
-% site.(site.codes{i}).instrument = {'modeled'};
-% site.(site.codes{i}).calibration_scale = {'WMO CO2 X2007'};
-% site.(site.codes{i}).in_lat = site.(site.codes{i-1}).in_lat;
-% site.(site.codes{i}).in_lon = site.(site.codes{i-1}).in_lon;
-% site.(site.codes{i}).in_elevation = 0;
-% site.(site.codes{i}).date_issued = site.(site.codes{i-1}).date_issued;
-% site.(site.codes{i}).date_issued_str = datestr(site.(site.codes{i}).date_issued,'yyyy-mm-dd');
-% 
-% sp = 1; sptxt = site.(site.codes{i}).species{sp};
-% inlet = 1; intxt = site.(site.codes{i}).inlet_height_long_name{inlet};
-% 
-% site.(site.codes{i}).([sptxt,'_',intxt]) = [-1e34;-1e34];
-% site.(site.codes{i}).([sptxt,'_',intxt,'_time']) = [datetime(2016,01,01);datetime(2016,01,02)];
-% site.(site.codes{i}).([sptxt,'_',intxt,'_std']) = [-1e34;-1e34];
-% site.(site.codes{i}).([sptxt,'_',intxt,'_n']) = [-1e34;-1e34];
-% site.(site.codes{i}).([sptxt,'_',intxt,'_unc']) = [-1e34;-1e34];
-% site.(site.codes{i}).([sptxt,'_',intxt,'_lat']) = [-1e34;-1e34];
-% site.(site.codes{i}).([sptxt,'_',intxt,'_lon']) = [-1e34;-1e34];
-% site.(site.codes{i}).([sptxt,'_',intxt,'_elevation']) = [-1e34;-1e34];
-% site.(site.codes{i}).([sptxt,'_',intxt,'_inlet_height']) = [-1e34;-1e34];
-% 
-% fprintf('---- %-6s complete ----\n\n',site.codes{i})
 
 % Identify the netCDF files to create based on species.
 
