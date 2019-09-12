@@ -4,15 +4,6 @@ set(0,'DefaultFigureWindowStyle','docked')
 
 %% Outstanding questions:
 
-fprintf('Outstanding Issues: Need site inlet heights.  Can this be integrated into the latest node file?.\n')
-
-%% Data access notes:
-
-% Latest node file is found here:
-% https://cohen-research.appspot.com/get_latest_nodes/csv/
-
-% Download the data with this call (in this example, this is from node 11)
-% http://beacon.berkeley.edu/node/52/measurements/csv/?interval=60&start=2012-01-01%2000:00:00&end=2019-05-14%2000:00:00&quality_level=2
 
 %% netCDF creation documentation
 
@@ -35,7 +26,6 @@ fprintf('Outstanding Issues: Need site inlet heights.  Can this be integrated in
 
 date_created_now = datestr(now,'yyyy-mm-dd');
 date_created_str = datestr(datenum(2019,07,09),'yyyy-mm-dd');
-%date_created_SLC_CO2 = datestr(datenum(2017,07,11),'yyyy-mm-dd');
 
 date_issued_now = datestr(now,'yyyy-mm-dd');
 date_issued = datetime(2019,07,09);
@@ -85,25 +75,55 @@ site.species = {}; % List of the "species"
 site.date_issued = date_issued;
 site.date_issued_str = datestr(site.date_issued,'yyyy-mm-dd');
 
+version_folder = 'v20190830';
 
 % Latest node file is found here:
 % https://cohen-research.appspot.com/get_latest_nodes/csv/
-
-version_folder = 'v_20190809';
 
 % Read the latest node file and loop through it:
 [latest_nodes_num,latest_nodes_txt] = xlsread(fullfile(readFolder,city,version_folder,'get_latest_nodes.csv'));
 latest_nodes_txt = latest_nodes_txt(2:end,:); % Removes the header line
 
-% Download the data with (in this example, this is from node 10)
-% http://beacon.berkeley.edu/node/10/measurements/csv/?interval=60&start=2012-01-01%2000:00:00&end=2019-05-14%2000:00:00&quality_level=2
+
+%%
+download_new_data = 'n';
+if strcmp(download_new_data,'y')
+    % Download the data with (in this example, this is from node 10)
+    % http://beacon.berkeley.edu/node/93/measurements/csv/?interval=60&start=2012-01-01%2000:00:00&end=2019-05-14%2000:00:00&quality_level=2
+    
+    % This is an automated way to download all of the data at once:
+    for i = 1:size(latest_nodes_num,1)
+        %web(['http://beacon.berkeley.edu/node/',num2str(latest_nodes_num(i,1)),'/measurements/csv/?interval=60&start=2012-01-01%2000:00:00&end=2019-05-14%2000:00:00&quality_level=2'],'-browser')
+        url = ['http://beacon.berkeley.edu/node/',num2str(latest_nodes_num(i,1)),'/measurements/csv/?interval=60&start=2012-01-01%2000:00:00&end=2019-05-14%2000:00:00&quality_level=2'];
+        filename = fullfile(readFolder,city,version_folder,['node_id_',num2str(latest_nodes_num(i,1)),'_start_2012-01-01 00_00_00_end_2019-05-14 00_00_00_measurements.csv']);
+        options = weboptions('Timeout',20);
+        % Note: Sometimes there is an Internal Server Error in the downloading and you just need to start again.
+        % This try/catch statement allows it to try 2x if it encounters an error, and that seems to work well.
+        % Otherwise re-start the loop on the failed node (i).
+        try
+            outfilename = websave(filename,url,options);
+        catch
+            fprintf('Had a download error on node %s, trying again...',num2str(latest_nodes_num(i,1)))
+            outfilename = websave(filename,url,options);
+            fprintf('and it worked!\n')
+        end
+    end
+    fprintf('Finished downloading data!\n')
+end
+
+%%
+
 
 for i = 1:size(latest_nodes_num,1)
     site.codes{1,i} = ['node',num2str(latest_nodes_num(i,1),'%03.0f')];
     site.(site.codes{i}).name = ['node',num2str(latest_nodes_num(i,1),'%03.0f')];
     site.(site.codes{i}).long_name = latest_nodes_txt{i,2};
     site.(site.codes{i}).code = ['node',num2str(latest_nodes_num(i,1),'%03.0f')];
-    site.(site.codes{i}).inlet_height = {1}; % I don't actually know the inlet height for any of these sites
+    if isnan(latest_nodes_num(i,6))
+        site.(site.codes{i}).inlet_height = {3}; % For sites w/o a known inlet ht, current best estimate is 3m (2019-08-18)
+    else
+        site.(site.codes{i}).inlet_height = {round(latest_nodes_num(i,6))}; % For sites w/o a known inlet ht, current best estimate is 3m (2019-08-18)
+    end
     site.(site.codes{i}).in_lat = latest_nodes_num(i,4);
     site.(site.codes{i}).in_lon = latest_nodes_num(i,5);
     site.(site.codes{i}).in_elevation = latest_nodes_num(i,7);
@@ -203,17 +223,25 @@ end
 
 % If there is no QCed data from this site, remove it from the list of sites.
 % Loop through.
-fprintf('***No data from nodes:***\n')
+fprintf('***nodes being removed:***\n')
 site_group_index = true(length(site.groups),1);
 for i = 1:length(site.codes)
+    msg = [];
     any_site_data = [];
     for sp = 1:length(site.(site.codes{i}).species) % only doing CO2 for now.
         sptxt = site.(site.codes{i}).species{sp};
         for inlet = 1:length(site.(site.codes{i}).inlet_height_long_name)
+            intxt = site.(site.codes{i}).inlet_height_long_name{inlet};
             % If there is no data, or if its all NaNs, remove that species/inlet.
             if or(sum(isnan(site.(site.codes{i}).([sptxt,'_',intxt])))==length(site.(site.codes{i}).([sptxt,'_',intxt])),isempty(site.(site.codes{i}).([sptxt,'_',intxt])))
                 site.(site.codes{i}) = rmfield(site.(site.codes{i}),{[sptxt,'_',intxt],[sptxt,'_',intxt,'_std'],[sptxt,'_',intxt,'_n'],[sptxt,'_',intxt,'_unc'],...
                     [sptxt,'_',intxt,'_time'],[sptxt,'_',intxt,'_lat'],[sptxt,'_',intxt,'_lon'],[sptxt,'_',intxt,'_elevation'],[sptxt,'_',intxt,'_inlet_height']});
+                msg = '-no data';
+            % Or if the site is outside of San Francisco
+            elseif any([site.(site.codes{i}).in_lat>39,site.(site.codes{i}).in_lat<36,site.(site.codes{i}).in_lon<-125,site.(site.codes{i}).in_lon>-120])
+                site.(site.codes{i}) = rmfield(site.(site.codes{i}),{[sptxt,'_',intxt],[sptxt,'_',intxt,'_std'],[sptxt,'_',intxt,'_n'],[sptxt,'_',intxt,'_unc'],...
+                    [sptxt,'_',intxt,'_time'],[sptxt,'_',intxt,'_lat'],[sptxt,'_',intxt,'_lon'],[sptxt,'_',intxt,'_elevation'],[sptxt,'_',intxt,'_inlet_height']});
+                msg = '-outside SF';
             else
                 any_site_data = [any_site_data,true];
             end
@@ -222,7 +250,7 @@ for i = 1:length(site.codes)
     if ~any(any_site_data) % If there is no data, remove the site, species, groups using the logical index.
         site = rmfield(site,site.codes{i});
         site_group_index(i) = false;
-        fprintf('%s \n',site.codes{i})
+        fprintf('%s%s \n',site.codes{i},msg)
     end
 end
 
