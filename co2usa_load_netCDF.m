@@ -34,11 +34,11 @@ fprintf('Loading the %s city data...\n',species)
 if ~exist('cities','var')
     cities = {
         %'boston'
-        'indianapolis'
+        %'indianapolis'
         %'los_angeles'
         %'northeast_corridor'
         %'portland'
-        %'salt_lake_city'
+        'salt_lake_city'
         %'san_francisco_baaqmd'
         %'san_francisco_beacon'
         };
@@ -91,7 +91,9 @@ for ii = 1:size(cities,1)
     % Now check to see if there is a background for the city & load that if it exists.
     fn = dir(fullfile(readFolder,city,[city,'_background_',species,'_','*.nc']));
     if isempty(fn)
-        fprintf('No background data.\n'); continue;
+        fprintf('(No background data). '); 
+        fprintf('Done. Time elapsed: %4.0f seconds.\n',toc(t_city))
+        continue;
     else
         %ncdisp(fullfile(fn.folder,fn.name))
         info = ncinfo(fullfile(fn.folder,fn.name));
