@@ -1,0 +1,89 @@
+CO2 Urban Synthesis and Analysis (CO2-USA) Data Synthesis
+
+This data product contains hourly urban greenhouse gas measurements for cities in the CO2-USA network.  Greenhouse gases included in this product are carbon dioxide (CO2), methane (CH4), and carbon monoxide (CO).
+
+Version: 2019-09-09
+Prepared by: Logan Mitchell
+
+------------------------------------------------------------------------------------------------
+CONTENTS
+
+1.	CO2-USA Data Synthesis data source and contact information
+2.	Data fair use policy
+3.	Cities included in this data product
+4.	Data format
+5.	Data Synthesis GitHub repository
+
+------------------------------------------------------------------------------------------------
+1.	CO2-USA Data Synthesis data source and contact information
+
+This synthesis data product was prepared by Logan Mitchell in collaboration with all of the participating CO2-USA data contributors (see below).  Correspondence concerning this data product should be directed to:
+
+Dr. Logan Mitchell
+Department of Atmospheric Sciences
+University of Utah
+135 S. 1460 E. Rm. 819
+Salt Lake City, UT 84112
+
+Email:
+Logan Mitchell: logan.mitchell@utah.edu
+John C. Lin: john.lin@utah.edu
+Lucy Hutyra: lrhutyra@bu.edu
+
+More information about the CO2-USA project can be found on the project web page:
+http://sites.bu.edu/co2usa/
+
+------------------------------------------------------------------------------------------------
+2.	Data fair use policy
+
+These cooperative data products are made freely available to the public and scientific community to advance the study of urban carbon cycling and associated air pollutants. Fair credit should be given to data contributors and will depend on the nature of your work. When you start data analysis that may result in a publication, it is your responsibility to contact the data contributors directly, such that, if it is appropriate, they have the opportunity to contribute substantively and become a co-author. Data contributors reserve the right to make corrections to the data based on scientific grounds (e.g. recalibration or operational issues). Use of the data implies an agreement to reciprocate by making your research efforts (e.g. measurements as well as model tools, data products, and code) publicly available in a timely manner to the best of your ability.
+
+------------------------------------------------------------------------------------------------
+3.	Cities included in this data product
+
+Boston
+Indianapolis
+Los Angeles
+Portland
+Salt Lake City
+San Francisco BEACON
+San Francisco BAAQMD
+
+Contact information for the data providers and references to published paper are included in the data file for each city.
+
+------------------------------------------------------------------------------------------------
+4.	Data format
+
+The data files are in netCDF and text format. NetCDF files can be viewed with the Panoply data viewer developed by NASA (https://www.giss.nasa.gov/tools/panoply/). The text files were created from the netCDF files and their content is identical to the netCDF files.
+
+For each city, a separate netCDF file was created for each species in the data set (CO2, CH4, or CO).  Within each netCDF file, there is a folder for each site and inlet height combination.  
+
+In addition, there is a separate netCDF file for the “background” for each species available.  The “background” time series comes from the published literature, and users are encouraged to read the relevant publication to understand how the “background” time series was created, and how it should be used.
+
+The text files are included as an alternative way to access the data.  There is a separate text file for each species, site, and inlet combination.  The text files for each city are bundled together in a single zip file.
+
+The following information can be found within each of the netCDF and text files:
+- Title of the data set
+- Summary
+- Keywords
+- References
+- Date created
+- Fair use data policy
+- Data provider name, affiliation, contact information, and email
+- Compilation originator name, affiliation, contact information, and email
+- Temporal resolution of the data
+- Data start and stop dates
+- Instruments used in the data collection
+- Calibration scale of the species
+
+Each city has developed their own metric to estimate measurement uncertainty.  We have included this uncertainty (when available).  In addition, we have included the standard deviation and number of the measurements used to calculate the hourly averages (where available).
+
+------------------------------------------------------------------------------------------------
+5.	Data Synthesis GitHub repository
+
+Code used to compile and work with this synthesis data product is being maintained on the following GitHub repository:
+https://github.com/loganemitchell/co2usa_data_synthesis
+
+In particular, scripts to load the data from the netCDF files have been written in the R and Matlab programming languages.  They can be found here:
+https://github.com/loganemitchell/co2usa_data_synthesis/blob/master/co2usa_load_netCDF.m
+https://github.com/loganemitchell/co2usa_data_synthesis/blob/master/co2usa_load_netCDF.r
