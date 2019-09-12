@@ -27,7 +27,7 @@ date_created_str = datestr(datenum(2018,07,01),'yyyy-mm-dd');
 %date_created_SLC_CO2 = datestr(datenum(2017,07,11),'yyyy-mm-dd');
 
 date_issued_now = datestr(now,'yyyy-mm-dd');
-date_issued = datetime(2018,07,01);
+date_issued = datetime(2019,07,01);
 date_issued_str = datestr(date_issued,'yyyy-mm-dd');
 
 % Working folders
