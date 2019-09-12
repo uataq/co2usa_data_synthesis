@@ -14,8 +14,9 @@ cities = {
     };
 
 eval('co2usa_load_netCDF')
+%%
 
-year_start = 2000; year_end = 2018;
+year_start = 2000; year_end = 2019;
 n_months = (year_end-year_start)*12;
 mm = datetime(repmat(year_start,n_months,1),(1:n_months)',ones(n_months,1));
 
@@ -66,7 +67,7 @@ ylabel('# of measurement sites')
 xl = get(gca,'XLabel'); xlFontSize = get(xl,'FontSize'); xAX = get(gca,'XAxis'); yl = get(gca,'YLabel'); ylFontSize = get(yl,'FontSize'); yAX = get(gca,'YAxis');
 xAX.FontSize = 25; yAX.FontSize = 25; yl.FontSize = 30; yl.FontWeight = 'Bold'; xl.FontWeight = 'Bold';
 
-export_fig(fullfile(readFolder,['co2usa_station_count_',species,'.jpg']),'-r300','-p0.01',fx)
+%export_fig(fullfile(readFolder,['co2usa_station_count_',species,'_',datestr(today,'yyyy-mm-dd'),'.jpg']),'-r300','-p0.01',fx)
 
 
 
