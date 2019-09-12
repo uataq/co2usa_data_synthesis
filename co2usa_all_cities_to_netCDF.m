@@ -79,6 +79,7 @@ delete(fullfile(writeFolder,'san_francisco_baaqmd','txt_formatted_files','*.zip'
 eval('co2usa_san_francisco_baaqmd_to_netCDF')
 %eval('co2usa_san_francisco_baaqmd_background_to_netCDF')
 
+
 %% San Francisco BEACON
 clear all
 close all
@@ -89,6 +90,43 @@ delete(fullfile(writeFolder,'san_francisco_beacon','txt_formatted_files','*.txt'
 delete(fullfile(writeFolder,'san_francisco_beacon','txt_formatted_files','*.zip'))
 eval('co2usa_san_francisco_beacon_to_netCDF')
 %eval('co2usa_san_francisco_beacon_background_to_netCDF')
+
+%% Package up each city in a zip file:
+
+
+clear all
+close all
+currentFolder = pwd;
+writeFolder = fullfile(currentFolder(1:regexp(currentFolder,'gcloud.utah.edu')+14),'data','co2-usa','synthesis_output');
+
+cities = {
+    'boston'
+    'indianapolis'
+    'los_angeles'
+    %'northeast_corridor'
+    'portland'
+    'salt_lake_city'
+    'san_francisco_beacon'
+    'san_francisco_baaqmd'
+    };
+t_city = tic;
+
+for ii = 1:size(cities,1)
+    city = cities{ii,1};
+    fprintf('Working on %s...',city)
+    fn = dir(fullfile(writeFolder,city,'*.nc'));
+    fn_zip = dir(fullfile(writeFolder,city,'txt_formatted_files','*.zip'));
+    zip(fullfile(writeFolder,['co2usa_',city,'_',fn(1).name(end-12:end-3),'.zip']),[{fn.name},['txt_formatted_files/',fn_zip.name]],fn(1).folder)
+    fprintf('Done.\n')
+end
+fprintf('Done. Time elapsed: %4.0f seconds.\n',toc(t_city))
+
+
+
+
+
+
+
 
 
 
