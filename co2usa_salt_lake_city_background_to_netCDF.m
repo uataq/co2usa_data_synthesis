@@ -27,7 +27,7 @@ date_created_str = datestr(datenum(2018,07,01),'yyyy-mm-dd');
 %date_created_SLC_CO2 = datestr(datenum(2017,07,11),'yyyy-mm-dd');
 
 date_issued_now = datestr(now,'yyyy-mm-dd');
-date_issued = datetime(2018,07,01);
+date_issued = datetime(2019,07,01);
 date_issued_str = datestr(date_issued,'yyyy-mm-dd');
 
 % Working folders
@@ -121,7 +121,7 @@ site.(site.codes{i}).([sptxt,'_',intxt,'_elevation']) = repmat(site.(site.codes{
 
 
 
-site.date_issued = datetime(1970,1,1); % This date will be updated with the most recent date in the files below.
+site.date_issued = date_issued; % This date will be updated with the most recent date in the files below.
 site.date_issued_str = datestr(site.date_issued,'yyyy-mm-dd');
 
 fprintf('---- %-6s complete ----\n\n',site.codes{i})
