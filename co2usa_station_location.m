@@ -3,13 +3,13 @@ close all
 set(0,'DefaultFigureWindowStyle','docked')
 
 cities = {
-    'boston'
+    %'boston'
     %'indianapolis'
     %'los_angeles'
     %'northeast_corridor'
     %'portland'
     %'salt_lake_city'
-    %'san_francisco_beacon'
+    'san_francisco_beacon'
     %'san_francisco_baaqmd'
     };
 
@@ -50,8 +50,9 @@ for ii = 1:size(cities,1)
     plt.station_map = 'y';
     if strcmp(plt.station_map,'y')
         basemap_fn = dir(fullfile(readFolder,'maps',[city,'_basemap*.jpg']));
-        if isempty(basemap_fn)
-            fx(ii) = figure(ii); fx(ii).WindowStyle = 'normal';  fx(ii).Color = [1 1 1]; fx(ii).Units = 'centimeters'; fx(ii).Position = [fx(ii).Position(1:2),15,15];clf;hold on
+        plt.update_basemap = 'n';
+        if or(strcmp(plt.update_basemap,'y'),isempty(basemap_fn))
+            fx(100+ii) = figure(100+ii); fx(100+ii).WindowStyle = 'normal';  fx(100+ii).Color = [1 1 1]; fx(100+ii).Units = 'centimeters'; fx(100+ii).Position = [fx(100+ii).Position(1:2),15,15];clf;hold on
             mapLim = [min(city_lons)-0.1,max(city_lons)+0.1,min(city_lats)-0.1,max(city_lats)+0.1];
             ax(1) = axesm('MapProjection','mercator','MapLatLimit',mapLim(3:4),'MapLonLimit',mapLim(1:2),'Grid','on','MeridianLabel','on','ParallelLabel','on');
             ax(1).Position = [.01,.01,.98,.98]; box('on'); hold('all');
@@ -60,8 +61,12 @@ for ii = 1:size(cities,1)
             plot_google_map('MapType','terrain','Scale',2,'showlabels',0,'APIKey',key) % redrawing the map to make sure it has the correct axes ratio.
             set(gca,'XLim',mapLim(1:2)); set(gca,'YLim',mapLim(3:4))
             set(gcf,'renderer','zbuffer')
-            export_fig(fullfile(readFolder,'maps',[city,'_basemap_',num2str(mapLim(1)),'_',num2str(mapLim(2)),'_',num2str(mapLim(3)),'_',num2str(mapLim(4)),'.jpg']),'-r300','-p0.01',fx(ii))
+            export_fig(fullfile(readFolder,'maps',[city,'_basemap_',num2str(mapLim(1)),'_',num2str(mapLim(2)),'_',num2str(mapLim(3)),'_',num2str(mapLim(4)),'.jpg']),'-r300','-p0.01',fx(100+ii))
             basemap_fn = dir(fullfile(readFolder,'maps',[city,'_basemap*.jpg']));
+        end
+        % Use the most recent map file if there are more than one.
+        if length(basemap_fn)>1
+            basemap_fn = basemap_fn(max(datenum({basemap_fn.date},'dd-mmm-yyyy HH:MM:SS'))==datenum({basemap_fn.date},'dd-mmm-yyyy HH:MM:SS'));
         end
         % Extract map lat/lon from the file name:
         basemap_i = regexp(basemap_fn(1).name,'basemap'); ui = regexp(basemap_fn(1).name,'_'); ui = ui(ui>basemap_i); ui = [ui,regexp(basemap_fn(1).name,'.jpg')];
