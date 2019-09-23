@@ -99,7 +99,7 @@ site.(site.codes{i}).date_issued_str = date_issued_str;
 % CO2 background:
 sp = 1; sptxt = site.(site.codes{i}).species{sp};
 inlet = 1; intxt = site.(site.codes{i}).inlet_height_long_name{inlet};
-site.groups = [site.groups; {[site.(site.codes{i}).name,'_',sptxt]}];
+site.groups = [site.groups; {[sptxt,'_',site.(site.codes{i}).name]}];
 site.species = [site.species; {sptxt}];
 site.(site.codes{i}).files = dir(fullfile(readFolder,city,'background','bound_*.txt'));
 site.(site.codes{i}).files_header_lines = nan(1,length(site.(site.codes{i}).files));
@@ -127,23 +127,27 @@ for fn = 1:length(site.(site.codes{i}).files)
         site.(site.codes{i}).([sptxt,'_',intxt,'_time']) = [site.(site.codes{i}).([sptxt,'_',intxt,'_time']); ...
             datetime(read_dat{1,1}(:,1),read_dat{1,1}(:,2),read_dat{1,1}(:,3),read_dat{1,1}(:,4),zeros(length(read_dat{1,1}),1),zeros(length(read_dat{1,1}),1))]; % time
 end
+
+% In a new version of the data, -1e34 is used to represent missing values. 
+site.(site.codes{i}).([sptxt,'_',intxt])(site.(site.codes{i}).([sptxt,'_',intxt])==-1e34) = -9999.0; 
+
 % Removes the leading and trailing NaNs
-data_range_ind = find(site.(site.codes{i}).([sptxt,'_',intxt])~=-1e34,1,'first'):find(site.(site.codes{i}).([sptxt,'_',intxt])~=-1e34,1,'last');
+data_range_ind = find(site.(site.codes{i}).([sptxt,'_',intxt])~=-9999.0,1,'first'):find(site.(site.codes{i}).([sptxt,'_',intxt])~=-9999.0,1,'last');
 site.(site.codes{i}).([sptxt,'_',intxt]) = site.(site.codes{i}).([sptxt,'_',intxt])(data_range_ind);
 site.(site.codes{i}).([sptxt,'_',intxt,'_time']) = site.(site.codes{i}).([sptxt,'_',intxt,'_time'])(data_range_ind);
 clear data_range_ind
-%site.(site.codes{i}).([sptxt,'_',intxt,'_std']) = ones(length(site.(site.codes{i}).([sptxt,'_',intxt])),1)*-1e34;
-%site.(site.codes{i}).([sptxt,'_',intxt,'_unc']) = ones(length(site.(site.codes{i}).([sptxt,'_',intxt])),1)*-1e34;
-%site.(site.codes{i}).([sptxt,'_',intxt,'_n']) = ones(length(site.(site.codes{i}).([sptxt,'_',intxt])),1)*-1e34;
+site.(site.codes{i}).([sptxt,'_',intxt,'_std']) = ones(length(site.(site.codes{i}).([sptxt,'_',intxt])),1)*-9999.0;
+site.(site.codes{i}).([sptxt,'_',intxt,'_unc']) = ones(length(site.(site.codes{i}).([sptxt,'_',intxt])),1)*-9999.0;
+site.(site.codes{i}).([sptxt,'_',intxt,'_n']) = ones(length(site.(site.codes{i}).([sptxt,'_',intxt])),1)*-9999.0;
 site.(site.codes{i}).([sptxt,'_',intxt,'_lat']) = repmat(site.(site.codes{i}).in_lat,length(site.(site.codes{i}).([sptxt,'_',intxt])),1);
 site.(site.codes{i}).([sptxt,'_',intxt,'_lon']) = repmat(site.(site.codes{i}).in_lon,length(site.(site.codes{i}).([sptxt,'_',intxt])),1);
 site.(site.codes{i}).([sptxt,'_',intxt,'_elevation']) = repmat(site.(site.codes{i}).in_elevation,length(site.(site.codes{i}).([sptxt,'_',intxt])),1);
-%site.(site.codes{i}).([sptxt,'_',intxt,'_inlet_height']) = ones(length(site.(site.codes{i}).([sptxt,'_',intxt])),1)*-1e34;
+site.(site.codes{i}).([sptxt,'_',intxt,'_inlet_height']) = ones(length(site.(site.codes{i}).([sptxt,'_',intxt])),1)*-9999.0;
 
 % CH4 background:
 sp = 2; sptxt = site.(site.codes{i}).species{sp};
 inlet = 1; intxt = site.(site.codes{i}).inlet_height_long_name{inlet};
-site.groups = [site.groups; {[site.(site.codes{i}).name,'_',sptxt]}];
+site.groups = [site.groups; {[sptxt,'_',site.(site.codes{i}).name]}];
 site.species = [site.species; {sptxt}];
 site.(site.codes{i}).files = dir(fullfile(readFolder,city,'background','ch4_bg.txt'));
 site.(site.codes{i}).files_header_lines = nan(1,length(site.(site.codes{i}).files));
@@ -171,25 +175,28 @@ for fn = 1:length(site.(site.codes{i}).files)
         site.(site.codes{i}).([sptxt,'_',intxt,'_time']) = [site.(site.codes{i}).([sptxt,'_',intxt,'_time']); ...
             datetime(read_dat{1,1}(:,1),read_dat{1,1}(:,2),read_dat{1,1}(:,3),read_dat{1,1}(:,4),zeros(length(read_dat{1,1}),1),zeros(length(read_dat{1,1}),1))]; % time
 end
+% In a new version of the data, -1e34 is used to represent missing values. 
+site.(site.codes{i}).([sptxt,'_',intxt])(site.(site.codes{i}).([sptxt,'_',intxt])==-1e34) = -9999.0; 
+
 % Removes the leading and trailing NaNs
-data_range_ind = find(site.(site.codes{i}).([sptxt,'_',intxt])~=-1e34,1,'first'):find(site.(site.codes{i}).([sptxt,'_',intxt])~=-1e34,1,'last');
+data_range_ind = find(site.(site.codes{i}).([sptxt,'_',intxt])~=-9999.0,1,'first'):find(site.(site.codes{i}).([sptxt,'_',intxt])~=-9999.0,1,'last');
 site.(site.codes{i}).([sptxt,'_',intxt]) = site.(site.codes{i}).([sptxt,'_',intxt])(data_range_ind);
 site.(site.codes{i}).([sptxt,'_',intxt,'_time']) = site.(site.codes{i}).([sptxt,'_',intxt,'_time'])(data_range_ind);
 clear data_range_ind
-%site.(site.codes{i}).([sptxt,'_',intxt,'_std']) = ones(length(site.(site.codes{i}).([sptxt,'_',intxt])),1)*-1e34;
-%site.(site.codes{i}).([sptxt,'_',intxt,'_unc']) = ones(length(site.(site.codes{i}).([sptxt,'_',intxt])),1)*-1e34;
-%site.(site.codes{i}).([sptxt,'_',intxt,'_n']) = ones(length(site.(site.codes{i}).([sptxt,'_',intxt])),1)*-1e34;
+site.(site.codes{i}).([sptxt,'_',intxt,'_std']) = ones(length(site.(site.codes{i}).([sptxt,'_',intxt])),1)*-9999.0;
+site.(site.codes{i}).([sptxt,'_',intxt,'_unc']) = ones(length(site.(site.codes{i}).([sptxt,'_',intxt])),1)*-9999.0;
+site.(site.codes{i}).([sptxt,'_',intxt,'_n']) = ones(length(site.(site.codes{i}).([sptxt,'_',intxt])),1)*-9999.0;
 site.(site.codes{i}).([sptxt,'_',intxt,'_lat']) = repmat(site.(site.codes{i}).in_lat,length(site.(site.codes{i}).([sptxt,'_',intxt])),1);
 site.(site.codes{i}).([sptxt,'_',intxt,'_lon']) = repmat(site.(site.codes{i}).in_lon,length(site.(site.codes{i}).([sptxt,'_',intxt])),1);
 site.(site.codes{i}).([sptxt,'_',intxt,'_elevation']) = repmat(site.(site.codes{i}).in_elevation,length(site.(site.codes{i}).([sptxt,'_',intxt])),1);
-%site.(site.codes{i}).([sptxt,'_',intxt,'_inlet_height']) = ones(length(site.(site.codes{i}).([sptxt,'_',intxt])),1)*-1e34;
+site.(site.codes{i}).([sptxt,'_',intxt,'_inlet_height']) = ones(length(site.(site.codes{i}).([sptxt,'_',intxt])),1)*-9999.0;
 
 
 site.date_issued = date_issued;
 site.date_issued_str = date_issued_str;
 
 site.reference = ['McKain K, Down A, Racit S M, Budney J, Hutyra L R, Floerchinger C, Herndon S C, Nehrkorn T, Zahniser M S, Jackson R B, Phillips N, and Wofsy S. (2015) Methane emissions from natural gas infrastructure and use in the urban region of Boston, Massachusetts. Proc Natl Acad Sci U.S.A. 112(7):1941-6.; ',...
- 'Sargent M, Barrera Y, Nehrkorn T, Lucy R. Hutyra L R, Gately C, Jones T, Kathryn McKain K, Sweeney C, Hegarty J, Hardiman B, and Wofsy S (2018) Anthropogenic and biogenic CO2 fluxes in the Boston urban region, Proc Natl Acad Sci USA, submitted.'];
+ 'Sargent, Maryann, Yanina Barrera, Thomas Nehrkorn, Lucy R. Hutyra, Conor K. Gately, Taylor Jones, Kathryn McKain, et al. Anthropogenic and Biogenic CO2 Fluxes in the Boston Urban Region. Proceedings of the National Academy of Sciences 115, no. 29 (July 17, 2018): 7491–96. https://doi.org/10.1073/pnas.1803715115.'];
 
 fprintf('---- %-6s complete ----\n\n',site.codes{i})
 
@@ -201,26 +208,20 @@ for species_ind = 1:length(site.unique_species)
 end
 site.species_list = strip(site.species_list); % Removes the last space
 
-for j = 1:length(site.unique_species)
-    if strcmp(site.unique_species{j,1},'co2')
-        site.unique_species_long_name{j,1} = 'carbon dioxide';
-    elseif strcmp(site.unique_species{j,1},'ch4')
-        site.unique_species_long_name{j,1} = 'methane';
-    elseif strcmp(site.unique_species{j,1},'co')
-        site.unique_species_long_name{j,1} = 'carbon monoxide';
+for j = 1:length(site.species)
+    if strcmp(site.species{j,1},'co2')
+        site.species_long_name{j,1} = 'carbon dioxide';
+    elseif strcmp(site.species{j,1},'ch4')
+        site.species_long_name{j,1} = 'methane';
+    elseif strcmp(site.species{j,1},'co')
+        site.species_long_name{j,1} = 'carbon monoxide';
     end
 end
 
+
 %% Creating the netCDF file
 
-eval('co2usa_create_background_netCDF')
-
-%% Convert the netCDF data to text files.
-
-fprintf('Now creating the text files from the netCDF files.\n')
-
-netCDF2txt_group = 'background'; % 'all_sites' or 'background'
-
-eval('co2usa_netCDF2txt')
+fprintf('Now creating the netCDF files.\n')
+eval('co2usa_create_netCDF')
 
 

@@ -99,7 +99,7 @@ site.date_issued_str = date_issued_str; % This date will be updated with the mos
 
 for i = 1:length(site_names)
 
-site.codes{1,i} = site_names(i).name;
+site.codes{1,i} = upper(site_names(i).name);
 fprintf('Reading header info for site %s.\n',site.codes{1,i})
 
 site.(site.codes{i}).name = site_names(i).name;
@@ -218,11 +218,9 @@ site.(site.codes{i}).country = 'United States';
 site.(site.codes{i}).time_zone = 'America/Indianapolis'; % use timezones to find out the available time zone designations.
 end
 
-
-
 site.date_issued_str = datestr(site.date_issued,'yyyy-mm-dd');
 
-site.reference = 'Richardson, Scott J., Natasha L. Miles, Kenneth J. Davis, Thomas Lauvaux, Douglas K. Martins, Jocelyn C. Turnbull, Kathryn McKain, Colm Sweeney, and Maria Obiminda L. Cambaliza. “Tower Measurement Network of In-Situ CO2, CH4, and CO in Support of the Indianapolis FLUX (INFLUX) Experiment.” Elem Sci Anth 5, no. 0 (October 19, 2017). https://doi.org/10.1525/elementa.140.';
+site.reference = 'Richardson, Scott J., Natasha L. Miles, Kenneth J. Davis, Thomas Lauvaux, Douglas K. Martins, Jocelyn C. Turnbull, Kathryn McKain, Colm Sweeney, and Maria Obiminda L. Cambaliza. Tower Measurement Network of In-Situ CO2, CH4, and CO in Support of the Indianapolis FLUX (INFLUX) Experiment. Elem Sci Anth 5, no. 0 (October 19, 2017). https://doi.org/10.1525/elementa.140.';
 
 % Loading the data
 
@@ -292,7 +290,6 @@ for i = 1:length(site.codes)
                 continue
             end
             
-            
             % Indianapolis does not currently have 'n' in their data files so this needs to be manually entered currently. 
             %site.(site.codes{i}).([sptxt,'_',intxt,'_n']) = nan(length(site.(site.codes{i}).([sptxt,'_',intxt])),1);
             
@@ -303,16 +300,16 @@ for i = 1:length(site.codes)
             site.(site.codes{i}).([sptxt,'_',intxt,'_inlet_height']) = repmat(site.(site.codes{i}).inlet_height{inlet},length(site.(site.codes{i}).([sptxt,'_',intxt])),1);
             
             % Set fill values:
-            site.(site.codes{i}).([sptxt,'_',intxt])(isnan(site.(site.codes{i}).([sptxt,'_',intxt]))) = -1e34;
-            site.(site.codes{i}).([sptxt,'_',intxt,'_std'])(isnan(site.(site.codes{i}).([sptxt,'_',intxt,'_std']))) = -1e34;
-            site.(site.codes{i}).([sptxt,'_',intxt,'_n'])(isnan(site.(site.codes{i}).([sptxt,'_',intxt,'_n']))) = -1e34;
-            site.(site.codes{i}).([sptxt,'_',intxt,'_unc'])(isnan(site.(site.codes{i}).([sptxt,'_',intxt,'_unc']))) = -1e34;
-            site.(site.codes{i}).([sptxt,'_',intxt,'_lat'])(isnan(site.(site.codes{i}).([sptxt,'_',intxt,'_lat']))) = -1e34;
-            site.(site.codes{i}).([sptxt,'_',intxt,'_lon'])(isnan(site.(site.codes{i}).([sptxt,'_',intxt,'_lon']))) = -1e34;
-            site.(site.codes{i}).([sptxt,'_',intxt,'_elevation'])(isnan(site.(site.codes{i}).([sptxt,'_',intxt,'_elevation']))) = -1e34;
-            site.(site.codes{i}).([sptxt,'_',intxt,'_inlet_height'])(isnan(site.(site.codes{i}).([sptxt,'_',intxt,'_inlet_height']))) = -1e34;
+            site.(site.codes{i}).([sptxt,'_',intxt])(isnan(site.(site.codes{i}).([sptxt,'_',intxt]))) = -9999.0;
+            site.(site.codes{i}).([sptxt,'_',intxt,'_std'])(isnan(site.(site.codes{i}).([sptxt,'_',intxt,'_std']))) = -9999.0;
+            site.(site.codes{i}).([sptxt,'_',intxt,'_n'])(isnan(site.(site.codes{i}).([sptxt,'_',intxt,'_n']))) = -9999.0;
+            site.(site.codes{i}).([sptxt,'_',intxt,'_unc'])(isnan(site.(site.codes{i}).([sptxt,'_',intxt,'_unc']))) = -9999.0;
+            site.(site.codes{i}).([sptxt,'_',intxt,'_lat'])(isnan(site.(site.codes{i}).([sptxt,'_',intxt,'_lat']))) = -9999.0;
+            site.(site.codes{i}).([sptxt,'_',intxt,'_lon'])(isnan(site.(site.codes{i}).([sptxt,'_',intxt,'_lon']))) = -9999.0;
+            site.(site.codes{i}).([sptxt,'_',intxt,'_elevation'])(isnan(site.(site.codes{i}).([sptxt,'_',intxt,'_elevation']))) = -9999.0;
+            site.(site.codes{i}).([sptxt,'_',intxt,'_inlet_height'])(isnan(site.(site.codes{i}).([sptxt,'_',intxt,'_inlet_height']))) = -9999.0;
             
-            site.groups = [site.groups; {[site.(site.codes{i}).code,'_',sptxt,'_',intxt]}];
+            site.groups = [site.groups; {[sptxt,'_',site.(site.codes{i}).code,'_',intxt]}];
             site.species = [site.species; {sptxt}];
         end
     end
@@ -325,26 +322,26 @@ end
 fprintf('*** Custom QAQC requested by Tasha Miles in Aug 2019***\n')
 fprintf('Remove the 307.3 ppm CO2 point at Site 10 (40m inlet) on Aug 16, 2013\n')
 
-i = find(strcmp(site.codes,'site10')); %site.(site.codes{i})
+i = find(strcmp(site.codes,'SITE10')); %site.(site.codes{i})
 inlet = find(strcmp(site.(site.codes{i}).inlet_height_long_name,'40M')); intxt = site.(site.codes{i}).inlet_height_long_name{inlet};
 sp = find(strcmp(site.(site.codes{i}).species,'co2')); sptxt = site.(site.codes{i}).species{sp};
 tmp_dt = site.(site.codes{i}).([sptxt,'_',intxt,'_time']);
 tmp_dat = site.(site.codes{i}).([sptxt,'_',intxt]);
-tmp_dat(tmp_dat==-1e34) = nan;
+tmp_dat(tmp_dat==-9999.0) = nan;
 % figure(99);clf; plot(tmp_dt,tmp_dat);
 mask = find(and(tmp_dat<310,and(tmp_dt>datetime(2013,08,16),tmp_dt<datetime(2013,08,17))));
-site.(site.codes{i}).([sptxt,'_',intxt])(mask) = -1e34;
+site.(site.codes{i}).([sptxt,'_',intxt])(mask) = -9999.0;
 
 fprintf('Remove the -1008 ppb CO points at Site 03 (54m inlet) on June 8, 2012.\n')
-i = find(strcmp(site.codes,'site03')); %site.(site.codes{i})
+i = find(strcmp(site.codes,'SITE03')); %site.(site.codes{i})
 inlet = find(strcmp(site.(site.codes{i}).inlet_height_long_name,'54M')); intxt = site.(site.codes{i}).inlet_height_long_name{inlet};
 sp = find(strcmp(site.(site.codes{i}).species,'co')); sptxt = site.(site.codes{i}).species{sp};
 tmp_dt = site.(site.codes{i}).([sptxt,'_',intxt,'_time']);
 tmp_dat = site.(site.codes{i}).([sptxt,'_',intxt]);
-tmp_dat(tmp_dat==-1e34) = nan;
+tmp_dat(tmp_dat==-9999.0) = nan;
 % figure(99);clf; plot(tmp_dt,tmp_dat);
 mask = find(and(tmp_dat<-1000,and(tmp_dt>datetime(2012,06,08),tmp_dt<datetime(2012,06,09))));
-site.(site.codes{i}).([sptxt,'_',intxt])(mask) = -1e34;
+site.(site.codes{i}).([sptxt,'_',intxt])(mask) = -9999.0;
 
 %% Identify the netCDF files to create based on species.
 
@@ -355,24 +352,19 @@ for species_ind = 1:length(site.unique_species)
 end
 site.species_list = strip(site.species_list); % Removes the last space
 
-for j = 1:length(site.unique_species)
-    if strcmp(site.unique_species{j,1},'co2')
-        site.unique_species_long_name{j,1} = 'carbon dioxide';
-    elseif strcmp(site.unique_species{j,1},'ch4')
-        site.unique_species_long_name{j,1} = 'methane';
-    elseif strcmp(site.unique_species{j,1},'co')
-        site.unique_species_long_name{j,1} = 'carbon monoxide';
+for j = 1:length(site.species)
+    if strcmp(site.species{j,1},'co2')
+        site.species_long_name{j,1} = 'carbon dioxide';
+    elseif strcmp(site.species{j,1},'ch4')
+        site.species_long_name{j,1} = 'methane';
+    elseif strcmp(site.species{j,1},'co')
+        site.species_long_name{j,1} = 'carbon monoxide';
     end
 end
 
 %% Creating the netCDF file
 
+fprintf('Now creating the netCDF files.\n')
 eval('co2usa_create_netCDF')
-
-%% Convert the netCDF data to text files.
-
-fprintf('Now creating the text files from the netCDF files.\n')
-netCDF2txt_group = 'all_sites';
-eval('co2usa_netCDF2txt')
 
 

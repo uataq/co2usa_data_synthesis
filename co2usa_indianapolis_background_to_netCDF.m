@@ -117,21 +117,21 @@ for sp = 1:length(site.(site.codes{i}).species)
     if strcmp(sptxt,'co'); col.species = 8; end
                 
     site.(site.codes{i}).([sptxt,'_',intxt]) = read_dat{1,1}(:,col.species);
-    site.(site.codes{i}).([sptxt,'_',intxt])(isnan(site.(site.codes{i}).([sptxt,'_',intxt]))) = -1e34;
+    site.(site.codes{i}).([sptxt,'_',intxt])(isnan(site.(site.codes{i}).([sptxt,'_',intxt]))) = -9999.0;
     site.(site.codes{i}).([sptxt,'_',intxt,'_time']) = datetime(ones(length(read_dat{1,1}),1)*2013,ones(length(read_dat{1,1}),1),read_dat{1,1}(:,2),read_dat{1,1}(:,5),zeros(length(read_dat{1,1}),1),zeros(length(read_dat{1,1}),1));
-    %site.(site.codes{i}).([sptxt,'_',intxt,'_std']) = ones(length(read_dat{1,1}),1)*-1e34;
-    %site.(site.codes{i}).([sptxt,'_',intxt,'_n']) = ones(length(read_dat{1,1}),1)*-1e34;
-    %site.(site.codes{i}).([sptxt,'_',intxt,'_unc']) = ones(length(read_dat{1,1}),1)*-1e34;
+    site.(site.codes{i}).([sptxt,'_',intxt,'_std']) = ones(length(read_dat{1,1}),1)*-9999.0;
+    site.(site.codes{i}).([sptxt,'_',intxt,'_n']) = ones(length(read_dat{1,1}),1)*-9999.0;
+    site.(site.codes{i}).([sptxt,'_',intxt,'_unc']) = ones(length(read_dat{1,1}),1)*-9999.0;
     site.(site.codes{i}).([sptxt,'_',intxt,'_lat']) = repmat(site.(site.codes{i}).in_lat,length(site.(site.codes{i}).([sptxt,'_',intxt])),1);
     site.(site.codes{i}).([sptxt,'_',intxt,'_lon']) = repmat(site.(site.codes{i}).in_lon,length(site.(site.codes{i}).([sptxt,'_',intxt])),1);
     site.(site.codes{i}).([sptxt,'_',intxt,'_elevation']) = repmat(site.(site.codes{i}).in_elevation,length(site.(site.codes{i}).([sptxt,'_',intxt])),1);
-    %site.(site.codes{i}).([sptxt,'_',intxt,'_inlet_height']) = ones(length(read_dat{1,1}),1)*-1e34;
+    site.(site.codes{i}).([sptxt,'_',intxt,'_inlet_height']) = ones(length(read_dat{1,1}),1)*-9999.0;
     
-    site.groups = [site.groups; {[site.(site.codes{i}).name,'_',sptxt]}];
+    site.groups = [site.groups; {[sptxt,'_',site.(site.codes{i}).name]}];
     site.species = [site.species; {sptxt}];
 end
 
-site.reference = 'Richardson, Scott J., Natasha L. Miles, Kenneth J. Davis, Thomas Lauvaux, Douglas K. Martins, Jocelyn C. Turnbull, Kathryn McKain, Colm Sweeney, and Maria Obiminda L. Cambaliza. “Tower Measurement Network of In-Situ CO2, CH4, and CO in Support of the Indianapolis FLUX (INFLUX) Experiment.” Elem Sci Anth 5, no. 0 (October 19, 2017). https://doi.org/10.1525/elementa.140.';
+site.reference = 'Richardson, Scott J., Natasha L. Miles, Kenneth J. Davis, Thomas Lauvaux, Douglas K. Martins, Jocelyn C. Turnbull, Kathryn McKain, Colm Sweeney, and Maria Obiminda L. Cambaliza. Tower Measurement Network of In-Situ CO2, CH4, and CO in Support of the Indianapolis FLUX (INFLUX) Experiment. Elem Sci Anth 5, no. 0 (October 19, 2017). https://doi.org/10.1525/elementa.140.';
 
 fprintf('---- %-6s loading complete ----\n\n',site.codes{i})
 
@@ -144,26 +144,19 @@ for species_ind = 1:length(site.unique_species)
 end
 site.species_list = strip(site.species_list); % Removes the last space
 
-for j = 1:length(site.unique_species)
-    if strcmp(site.unique_species{j,1},'co2')
-        site.unique_species_long_name{j,1} = 'carbon dioxide';
-    elseif strcmp(site.unique_species{j,1},'ch4')
-        site.unique_species_long_name{j,1} = 'methane';
-    elseif strcmp(site.unique_species{j,1},'co')
-        site.unique_species_long_name{j,1} = 'carbon monoxide';
+for j = 1:length(site.species)
+    if strcmp(site.species{j,1},'co2')
+        site.species_long_name{j,1} = 'carbon dioxide';
+    elseif strcmp(site.species{j,1},'ch4')
+        site.species_long_name{j,1} = 'methane';
+    elseif strcmp(site.species{j,1},'co')
+        site.species_long_name{j,1} = 'carbon monoxide';
     end
 end
 
 %% Creating the netCDF file
 
-eval('co2usa_create_background_netCDF')
-
-%% Convert the netCDF data to text files.
-
-fprintf('Now creating the text files from the netCDF files.\n')
-
-netCDF2txt_group = 'background'; % 'all_sites' or 'background'
-
-eval('co2usa_netCDF2txt')
+fprintf('Now creating the netCDF files.\n')
+eval('co2usa_create_netCDF')
 
 

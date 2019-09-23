@@ -33,12 +33,11 @@ library(plotly)
 # Clear the workspace
 rm(list = ls())
 
-
 ######## Set the following options:  ########
 
 # City options: 'boston', 'indianapolis', 'los_angeles', 'northeast_corridor', 'portland', 'salt_lake_city', 'san_francisco_baaqmd', 'san_francisco_beacon'
 # Note: multiple cities may be selected.
-cities = c('boston','indianapolis','salt_lake_city') 
+cities = c('salt_lake_city','boston','los_angeles')
 
 # Greenhouse gas species options: 'co2', 'ch4', or 'co'
 species = 'co2'
@@ -46,14 +45,14 @@ species = 'co2'
 # Produce figures for each city? The script runs faster if no figures are produced.
 make_co2_usa_plots = 'y' # Options: 'y' or 'n'
 
-# Choose the path to the location on your computer where the CO2-USA Synthesis data files have been saved.
-# Within the 'synthesis_output' folder the data should be saved in subfolders as follows:
-# /synthesis_output/[city]/[netCDF_file.nc]
+# Choose the path to the location on your computer where the CO2-USA Synthesis data files have been saved, called the 'read_folder'.
+# Within the 'read_folder' the data should be saved in subfolders as follows:
+# /read_folder/[city]/netCDF_formatted_files/[city_species_site_inlet_netCDF_file.nc]
 #
-# For example, for Boston it would be:
-# /synthesis_output/boston/boston_all_sites_co2_1_hour_R0_2019-07-09.nc
-  
-read_folder = file.path('C:/Users','logan','gcloud.utah.edu','data','co2-usa','synthesis_output')
+# For example, the CO2 measurements from the COP site in Boston would be:
+# /read_folder/boston/netCDF_formatted_files/boston_co2_COP_215m_1_hour_R0_2019-07-09
+
+read_folder = file.path('C:/Users','u0932260','gcloud.utah.edu','data','co2-usa','synthesis_output')
 if (!dir.exists(read_folder)) stop('Cannot find the specified read folder. Check the file path to make sure it is correct.')
 setwd(read_folder)
 
@@ -67,78 +66,46 @@ for (ii in 1:length(cities)) {
   city = cities[ii]
   
   # netCDF file name
-  fn = list.files(path=file.path(read_folder,city),
-                  pattern=paste(city,'_all_sites_',species,'_','.*nc$',sep = ''),
+  fn = list.files(path=file.path(read_folder,city,'netCDF_formatted_files'),
+                  pattern=paste(city,'_',species,'_','.*nc$',sep = ''),
                   include.dirs = TRUE)
   if (is_empty(fn)) {
-    warning(paste('File for ',city,' doesnt exist or is in the wrong location. Check the path and file names. Skipping it for now.',sep=''))
+    warning(paste('Looked for data files for ',city,' here:\n',
+                  file.path(read_folder,city,'netCDF_formatted_files'),
+                  '\nHowever none were found. Either they do not exist or the path name is incorrect.\n',
+                  'Check the path and file names. Skipping ',city,' data files for now.',sep=''))
     next()
   }
-  
-  # Opens the netCDF file for reading
-  info = nc_open(file.path(read_folder,city,fn))
-  
-  # Global attributes for that city
-  co2_usa[[city]][['Attributes']] = list('global' = ncatt_get(info,varid=0))
   
   # Data frame for all of the sites
   co2_usa[[city]][['all_sites']] = data.frame()
   
-  for (jj in 1:length(info$groups)) {
-    # If the group name is blank, skip it
-    if (info$groups[[jj]]$name=="") next()
+  for (jj in 1:length(fn)) {
+    # Opens the netCDF file for reading
+    info = nc_open(file.path(read_folder,city,'netCDF_formatted_files',fn[jj]))
     
     # site/inlet/species name
-    site = info$groups[[jj]]$name
+    site = substr(fn[jj],regexpr(species,fn[jj])+str_length(species)+1,regexpr('_1_hour',fn[jj])-1)
     
+    # Global attributes for that site
+    co2_usa[[city]][['Attributes']][[site]] = list('global' = ncatt_get(info,varid=0))
+
     # Extracting the time variable
-    co2_usa[[city]][[site]] = data.frame(time = as.POSIXct(info$dim[[paste(site,'/time',sep='')]]$vals, tz='UTC',origin = "1970-01-01 00:00.00"))
+    co2_usa[[city]][[site]] = data.frame(time = as.POSIXct(info$dim$time$vals, tz='UTC',origin = "1970-01-01 00:00.00"))
     
     # Extracting the variable Name, Data, and Attributes
-    var_names = str_replace(attributes(info$var)$names[grep(site,attributes(info$var)$names)],paste(site,'/',sep=''),'')
+    var_names = attributes(info$var)$names
     
     for (kk in 1:length(var_names)) {
       var_name = var_names[kk]
       
       # Variable Attributes
-      co2_usa[[city]][['Attributes']][[site]][[var_name]] = ncatt_get(info,paste(site,'/',var_name,sep=''))
+      co2_usa[[city]][['Attributes']][[site]][[var_name]] = ncatt_get(info,var_name)
       # Variable data
-      co2_usa[[city]][[site]][var_name] = ncvar_get(info,paste(site,'/',var_name,sep=''))
+      co2_usa[[city]][[site]][var_name] = ncvar_get(info,var_name)
     }
-    # Add the site name to the data frame:
-    co2_usa[[city]][[site]]['site_name'] = site
     
-    # Bind all the sites together into a single data frame for easier plotting:
-    co2_usa[[city]][['all_sites']] = bind_rows(co2_usa[[city]][['all_sites']],co2_usa[[city]][[site]])
-  }
-  
-  # Check to see if that city has a background:
-  fn = list.files(path=file.path(read_folder,city),
-                  pattern=paste(city,'_background_',species,'_','.*nc$',sep = ''),
-                  include.dirs = TRUE)
-  if (!is_empty(fn)) {
-    # Opens the background netCDF file for reading
-    info = nc_open(file.path(read_folder,city,fn))
-    
-    jj = 2
-    # site/inlet/species name
-    site = info$groups[[jj]]$name
-    
-    # Extracting the time variable
-    co2_usa[[city]][[site]] = data.frame(time = as.POSIXct(info$dim[[paste(site,'/time',sep='')]]$vals, tz='UTC',origin = "1970-01-01 00:00.00"))
-    
-    # Extracting the variable Name, Data, and Attributes
-    var_names = str_replace(attributes(info$var)$names[grep(site,attributes(info$var)$names)],paste(site,'/',sep=''),'')
-    
-    for (kk in 1:length(var_names)) {
-      var_name = var_names[kk]
-      
-      # Variable Attributes
-      co2_usa[[city]][['Attributes']][[site]][[var_name]] = ncatt_get(info,paste(site,'/',var_name,sep=''))
-      # Variable data
-      co2_usa[[city]][[site]][var_name] = ncvar_get(info,paste(site,'/',var_name,sep=''))
-    }
-    # Add the site name to the data frame:
+    # Add the site_name data column to the data frame (to make plotting easier):
     co2_usa[[city]][[site]]['site_name'] = site
     
     # Bind all the sites together into a single data frame for easier plotting:

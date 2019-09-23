@@ -65,7 +65,7 @@ provider(2).parameter = 'Provider has contributed measurements for: ';
 
 clear site % start fresh
 
-site.reference = 'Verhulst, Kristal R., Anna Karion, Jooil Kim, Peter K. Salameh, Ralph F. Keeling, Sally Newman, John Miller, et al. “Carbon Dioxide and Methane Measurements from the Los Angeles Megacity Carbon Project – Part 1: Calibration, Urban Enhancements, and Uncertainty Estimates.” Atmospheric Chemistry and Physics 17, no. 13 (July 7, 2017): 8313–41. https://doi.org/10.5194/acp-17-8313-2017.';
+site.reference = 'Verhulst, Kristal R., Anna Karion, Jooil Kim, Peter K. Salameh, Ralph F. Keeling, Sally Newman, John Miller, et al. Carbon Dioxide and Methane Measurements from the Los Angeles Megacity Carbon Project – Part 1: Calibration, Urban Enhancements, and Uncertainty Estimates. Atmospheric Chemistry and Physics 17, no. 13 (July 7, 2017): 8313–41. https://doi.org/10.5194/acp-17-8313-2017.';
 
 site.groups = {}; % List of the site "code_species_inletHt"
 site.species = {}; % List of the "species"
@@ -73,7 +73,7 @@ site.date_issued = date_issued;
 site.date_issued_str = date_issued_str;
 
 i = 1;
-site.codes{1,i} = 'cit';
+site.codes{1,i} = 'CIT';
 site.(site.codes{i}).name = 'Caltech';
 site.(site.codes{i}).long_name = 'Caltech';
 site.(site.codes{i}).code = 'CIT';
@@ -96,7 +96,7 @@ site.(site.codes{i}).date_issued_str = datestr(site.(site.codes{i}).date_issued,
 site.date_issued = max([site.date_issued,site.(site.codes{i}).date_issued]);
 
 i = i+1;
-site.codes{1,i} = 'cnp';
+site.codes{1,i} = 'CNP';
 site.(site.codes{i}).name = 'Canoga_Park';
 site.(site.codes{i}).long_name = 'Canoga Park';
 site.(site.codes{i}).code = 'CNP';
@@ -119,7 +119,7 @@ site.(site.codes{i}).date_issued_str = datestr(site.(site.codes{i}).date_issued,
 site.date_issued = max([site.date_issued,site.(site.codes{i}).date_issued]);
 
 i = i+1;
-site.codes{1,i} = 'com';
+site.codes{1,i} = 'COM';
 site.(site.codes{i}).name = 'Compton';
 site.(site.codes{i}).long_name = 'Compton';
 site.(site.codes{i}).code = 'COM';
@@ -142,7 +142,7 @@ site.(site.codes{i}).date_issued_str = datestr(site.(site.codes{i}).date_issued,
 site.date_issued = max([site.date_issued,site.(site.codes{i}).date_issued]);
 
 i = i+1;
-site.codes{1,i} = 'ful';
+site.codes{1,i} = 'FUL';
 site.(site.codes{i}).name = 'CSU_Fullerton';
 site.(site.codes{i}).long_name = 'CSU Fullerton';
 site.(site.codes{i}).code = 'FUL';
@@ -165,7 +165,7 @@ site.(site.codes{i}).date_issued_str = datestr(site.(site.codes{i}).date_issued,
 site.date_issued = max([site.date_issued,site.(site.codes{i}).date_issued]);
 
 i = i+1;
-site.codes{1,i} = 'gra';
+site.codes{1,i} = 'GRA';
 site.(site.codes{i}).name = 'Granada_Hills';
 site.(site.codes{i}).long_name = 'Granada Hills';
 site.(site.codes{i}).code = 'GRA';
@@ -188,7 +188,7 @@ site.(site.codes{i}).date_issued_str = datestr(site.(site.codes{i}).date_issued,
 site.date_issued = max([site.date_issued,site.(site.codes{i}).date_issued]);
 
 i = i+1;
-site.codes{1,i} = 'ljo';
+site.codes{1,i} = 'LJO';
 site.(site.codes{i}).name = 'La_Jolla';
 site.(site.codes{i}).long_name = 'La Jolla';
 site.(site.codes{i}).code = 'LJO';
@@ -211,7 +211,7 @@ site.(site.codes{i}).date_issued_str = datestr(site.(site.codes{i}).date_issued,
 site.date_issued = max([site.date_issued,site.(site.codes{i}).date_issued]);
 
 i = i+1;
-site.codes{1,i} = 'ont';
+site.codes{1,i} = 'ONT';
 site.(site.codes{i}).name = 'Ontario';
 site.(site.codes{i}).long_name = 'Ontario';
 site.(site.codes{i}).code = 'ONT';
@@ -234,7 +234,7 @@ site.(site.codes{i}).date_issued_str = datestr(site.(site.codes{i}).date_issued,
 site.date_issued = max([site.date_issued,site.(site.codes{i}).date_issued]);
 
 i = i+1;
-site.codes{1,i} = 'sci';
+site.codes{1,i} = 'SCI';
 site.(site.codes{i}).name = 'San_Clemente_Island';
 site.(site.codes{i}).long_name = 'San Clemente Islan';
 site.(site.codes{i}).code = 'SCI';
@@ -257,7 +257,7 @@ site.(site.codes{i}).date_issued_str = datestr(site.(site.codes{i}).date_issued,
 site.date_issued = max([site.date_issued,site.(site.codes{i}).date_issued]);
 
 i = i+1;
-site.codes{1,i} = 'irv';
+site.codes{1,i} = 'IRV';
 site.(site.codes{i}).name = 'UC_Irvine';
 site.(site.codes{i}).long_name = 'UC Irvine';
 site.(site.codes{i}).code = 'IRV';
@@ -280,7 +280,7 @@ site.(site.codes{i}).date_issued_str = datestr(site.(site.codes{i}).date_issued,
 site.date_issued = max([site.date_issued,site.(site.codes{i}).date_issued]);
 
 i = i+1;
-site.codes{1,i} = 'usc1';
+site.codes{1,i} = 'USC1';
 site.(site.codes{i}).name = 'USC1';
 site.(site.codes{i}).long_name = 'University of Southern California (downtown LA) 1';
 site.(site.codes{i}).code = 'USC1';
@@ -303,7 +303,7 @@ site.(site.codes{i}).date_issued_str = datestr(site.(site.codes{i}).date_issued,
 site.date_issued = max([site.date_issued,site.(site.codes{i}).date_issued]);
 
 i = i+1;
-site.codes{1,i} = 'usc2';
+site.codes{1,i} = 'USC2';
 site.(site.codes{i}).name = 'USC2';
 site.(site.codes{i}).long_name = 'University of Southern California (downtown LA) 2';
 site.(site.codes{i}).code = 'USC2';
@@ -326,7 +326,7 @@ site.(site.codes{i}).date_issued_str = datestr(site.(site.codes{i}).date_issued,
 site.date_issued = max([site.date_issued,site.(site.codes{i}).date_issued]);
 
 i = i+1;
-site.codes{1,i} = 'vic';
+site.codes{1,i} = 'VIC';
 site.(site.codes{i}).name = 'Victorville';
 site.(site.codes{i}).long_name = 'Victorville';
 site.(site.codes{i}).code = 'VIC';
@@ -401,60 +401,20 @@ for i = 1:length(site.codes)
             site.(site.codes{i}).([sptxt,'_',intxt,'_inlet_height']) = repmat(site.(site.codes{i}).inlet_height{inlet},length(site.(site.codes{i}).([sptxt,'_',intxt])),1);
             
             % Set fill values:
-            site.(site.codes{i}).([sptxt,'_',intxt])(isnan(site.(site.codes{i}).([sptxt,'_',intxt]))) = -1e34;
-            site.(site.codes{i}).([sptxt,'_',intxt,'_std'])(isnan(site.(site.codes{i}).([sptxt,'_',intxt,'_std']))) = -1e34;
-            site.(site.codes{i}).([sptxt,'_',intxt,'_n'])(isnan(site.(site.codes{i}).([sptxt,'_',intxt,'_n']))) = -1e34;
-            site.(site.codes{i}).([sptxt,'_',intxt,'_unc'])(isnan(site.(site.codes{i}).([sptxt,'_',intxt,'_unc']))) = -1e34;
-            site.(site.codes{i}).([sptxt,'_',intxt,'_lat'])(isnan(site.(site.codes{i}).([sptxt,'_',intxt,'_lat']))) = -1e34;
-            site.(site.codes{i}).([sptxt,'_',intxt,'_lon'])(isnan(site.(site.codes{i}).([sptxt,'_',intxt,'_lon']))) = -1e34;
-            site.(site.codes{i}).([sptxt,'_',intxt,'_elevation'])(isnan(site.(site.codes{i}).([sptxt,'_',intxt,'_elevation']))) = -1e34;
-            site.(site.codes{i}).([sptxt,'_',intxt,'_inlet_height'])(isnan(site.(site.codes{i}).([sptxt,'_',intxt,'_inlet_height']))) = -1e34;
+            site.(site.codes{i}).([sptxt,'_',intxt])(isnan(site.(site.codes{i}).([sptxt,'_',intxt]))) = -9999.0;
+            site.(site.codes{i}).([sptxt,'_',intxt,'_std'])(isnan(site.(site.codes{i}).([sptxt,'_',intxt,'_std']))) = -9999.0;
+            site.(site.codes{i}).([sptxt,'_',intxt,'_n'])(isnan(site.(site.codes{i}).([sptxt,'_',intxt,'_n']))) = -9999.0;
+            site.(site.codes{i}).([sptxt,'_',intxt,'_unc'])(isnan(site.(site.codes{i}).([sptxt,'_',intxt,'_unc']))) = -9999.0;
+            site.(site.codes{i}).([sptxt,'_',intxt,'_lat'])(isnan(site.(site.codes{i}).([sptxt,'_',intxt,'_lat']))) = -9999.0;
+            site.(site.codes{i}).([sptxt,'_',intxt,'_lon'])(isnan(site.(site.codes{i}).([sptxt,'_',intxt,'_lon']))) = -9999.0;
+            site.(site.codes{i}).([sptxt,'_',intxt,'_elevation'])(isnan(site.(site.codes{i}).([sptxt,'_',intxt,'_elevation']))) = -9999.0;
+            site.(site.codes{i}).([sptxt,'_',intxt,'_inlet_height'])(isnan(site.(site.codes{i}).([sptxt,'_',intxt,'_inlet_height']))) = -9999.0;
             
-            site.groups = [site.groups; {[site.(site.codes{i}).code,'_',sptxt,'_',intxt]}];
+            site.groups = [site.groups; {[sptxt,'_',site.(site.codes{i}).code,'_',intxt]}];
             site.species = [site.species; {sptxt}];
         end
     end
 end
-
-% Load background data, or leave it blank if it doesn't exist.
-% 
-% site.codes = [site.codes,'background'];
-% site.groups = [site.groups; 'background'];
-% 
-% i = length(site.codes);
-% site.(site.codes{i}).name = 'background';
-% site.(site.codes{i}).long_name = 'background';
-% site.(site.codes{i}).code = '';
-% site.(site.codes{i}).country = 'United States';
-% site.(site.codes{i}).time_zone = 'America/Los_Angeles';
-% %site.(site.codes{i}).url = 'https://megacities.jpl.nasa.gov/public/Los_Angeles/In_Situ/La_Jolla/';
-% site.(site.codes{i}).inlet_height_long_name = {'background'};
-% site.(site.codes{i}).inlet_height = {0};
-% %site.(site.codes{i}).years = {'2015','2016'};
-% site.(site.codes{i}).species = {'co2'};
-% site.(site.codes{i}).species_long_name = {'carbon_dioxide'};
-% site.(site.codes{i}).species_units = {'micromol mol-1'};
-% site.(site.codes{i}).species_units_long_name = {'ppm'};
-% site.(site.codes{i}).instrument = {'modeled'};
-% site.(site.codes{i}).calibration_scale = {'WMO CO2 X2007'};
-% site.(site.codes{i}).in_lat = 32.87;
-% site.(site.codes{i}).in_lon = -117.25;
-% site.(site.codes{i}).in_elevation = 0;
-% site.(site.codes{i}).date_issued = datetime(2017,05,17);
-% site.(site.codes{i}).date_issued_str = datestr(site.(site.codes{i}).date_issued,'yyyy-mm-dd');
-% 
-% sp = 1; sptxt = site.(site.codes{i}).species{sp};
-% inlet = 1; intxt = site.(site.codes{i}).inlet_height_long_name{inlet};
-% 
-% site.(site.codes{i}).([sptxt,'_',intxt]) = [-1e34;-1e34];
-% site.(site.codes{i}).([sptxt,'_',intxt,'_time']) = [datetime(2016,01,01);datetime(2016,01,02)];
-% site.(site.codes{i}).([sptxt,'_',intxt,'_std']) = [-1e34;-1e34];
-% site.(site.codes{i}).([sptxt,'_',intxt,'_n']) = [-1e34;-1e34];
-% site.(site.codes{i}).([sptxt,'_',intxt,'_unc']) = [-1e34;-1e34];
-% site.(site.codes{i}).([sptxt,'_',intxt,'_lat']) = [-1e34;-1e34];
-% site.(site.codes{i}).([sptxt,'_',intxt,'_lon']) = [-1e34;-1e34];
-% site.(site.codes{i}).([sptxt,'_',intxt,'_elevation']) = [-1e34;-1e34];
-% site.(site.codes{i}).([sptxt,'_',intxt,'_inlet_height']) = [-1e34;-1e34];
 
 % Identify the netCDF files to create based on species.
 
@@ -465,23 +425,19 @@ for species_ind = 1:length(site.unique_species)
 end
 site.species_list = strip(site.species_list); % Removes the last space
 
-for j = 1:length(site.unique_species)
-    if strcmp(site.unique_species{j,1},'co2')
-        site.unique_species_long_name{j,1} = 'carbon dioxide';
-    elseif strcmp(site.unique_species{j,1},'ch4')
-        site.unique_species_long_name{j,1} = 'methane';
-    elseif strcmp(site.unique_species{j,1},'co')
-        site.unique_species_long_name{j,1} = 'carbon monoxide';
+for j = 1:length(site.species)
+    if strcmp(site.species{j,1},'co2')
+        site.species_long_name{j,1} = 'carbon dioxide';
+    elseif strcmp(site.species{j,1},'ch4')
+        site.species_long_name{j,1} = 'methane';
+    elseif strcmp(site.species{j,1},'co')
+        site.species_long_name{j,1} = 'carbon monoxide';
     end
 end
 
+
 %% Creating the netCDF file
 
+fprintf('Now creating the netCDF files.\n')
 eval('co2usa_create_netCDF')
-
-%% Convert the netCDF data to text files.
-
-fprintf('Now creating the text files from the netCDF files.\n')
-netCDF2txt_group = 'all_sites'; % 'all_sites' or 'background'
-eval('co2usa_netCDF2txt')
 

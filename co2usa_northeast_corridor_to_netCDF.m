@@ -83,7 +83,7 @@ site.date_issued = date_issued;
 site.date_issued_str = datestr(site.date_issued,'yyyy-mm-dd');
 
 i = 1;
-site.codes{1,i} = 'arl';
+site.codes{1,i} = 'ARL';
 site.(site.codes{i}).name = 'Arlington_VA';
 site.(site.codes{i}).long_name = 'Arlington VA';
 site.(site.codes{i}).code = 'ARL';
@@ -106,7 +106,7 @@ site.(site.codes{i}).date_issued_str = datestr(site.(site.codes{i}).date_issued,
 site.date_issued = max([site.date_issued,site.(site.codes{i}).date_issued]);
 
 i = i+1;
-site.codes{1,i} = 'buc';
+site.codes{1,i} = 'BUC';
 site.(site.codes{i}).name = 'Bucktown_MD';
 site.(site.codes{i}).long_name = 'Bucktown MD';
 site.(site.codes{i}).code = 'BUC';
@@ -129,7 +129,7 @@ site.(site.codes{i}).date_issued_str = datestr(site.(site.codes{i}).date_issued,
 site.date_issued = max([site.date_issued,site.(site.codes{i}).date_issued]);
 
 i = i+1;
-site.codes{1,i} = 'hal';
+site.codes{1,i} = 'HAL';
 site.(site.codes{i}).name = 'Halethorpe_MD';
 site.(site.codes{i}).long_name = 'Halethorpe MD';
 site.(site.codes{i}).code = 'HAL';
@@ -152,7 +152,7 @@ site.(site.codes{i}).date_issued_str = datestr(site.(site.codes{i}).date_issued,
 site.date_issued = max([site.date_issued,site.(site.codes{i}).date_issued]);
 
 i = i+1;
-site.codes{1,i} = 'jes';
+site.codes{1,i} = 'JES';
 site.(site.codes{i}).name = 'Jessup_MD';
 site.(site.codes{i}).long_name = 'Jessup MD';
 site.(site.codes{i}).code = 'JES';
@@ -175,7 +175,7 @@ site.(site.codes{i}).date_issued_str = datestr(site.(site.codes{i}).date_issued,
 site.date_issued = max([site.date_issued,site.(site.codes{i}).date_issued]);
 
 i = i+1;
-site.codes{1,i} = 'msh';
+site.codes{1,i} = 'MSH';
 site.(site.codes{i}).name = 'Mashpee_MA';
 site.(site.codes{i}).long_name = 'Mashpee MA';
 site.(site.codes{i}).code = 'MSH';
@@ -198,7 +198,7 @@ site.(site.codes{i}).date_issued_str = datestr(site.(site.codes{i}).date_issued,
 site.date_issued = max([site.date_issued,site.(site.codes{i}).date_issued]);
 
 i = i+1;
-site.codes{1,i} = 'ndc';
+site.codes{1,i} = 'NDC';
 site.(site.codes{i}).name = 'Washington_DC';
 site.(site.codes{i}).long_name = 'Washington DC';
 site.(site.codes{i}).code = 'NDC';
@@ -221,7 +221,7 @@ site.(site.codes{i}).date_issued_str = datestr(site.(site.codes{i}).date_issued,
 site.date_issued = max([site.date_issued,site.(site.codes{i}).date_issued]);
 
 i = i+1;
-site.codes{1,i} = 'neb';
+site.codes{1,i} = 'NEB';
 site.(site.codes{i}).name = 'NE_Baltimore_MD';
 site.(site.codes{i}).long_name = 'Northeast Baltimore MD';
 site.(site.codes{i}).code = 'NEB';
@@ -244,7 +244,7 @@ site.(site.codes{i}).date_issued_str = datestr(site.(site.codes{i}).date_issued,
 site.date_issued = max([site.date_issued,site.(site.codes{i}).date_issued]);
 
 i = i+1;
-site.codes{1,i} = 'nwb';
+site.codes{1,i} = 'NWB';
 site.(site.codes{i}).name = 'NW_Baltimore_MD';
 site.(site.codes{i}).long_name = 'Northwest Baltimore MD';
 site.(site.codes{i}).code = 'NWB';
@@ -314,60 +314,21 @@ for i = 1:length(site.codes)
             site.(site.codes{i}).([sptxt,'_',intxt,'_inlet_height']) = repmat(site.(site.codes{i}).inlet_height{inlet},length(site.(site.codes{i}).([sptxt,'_',intxt])),1);
             
             % Set fill values:
-            site.(site.codes{i}).([sptxt,'_',intxt])(isnan(site.(site.codes{i}).([sptxt,'_',intxt]))) = -1e34;
-            site.(site.codes{i}).([sptxt,'_',intxt,'_std'])(isnan(site.(site.codes{i}).([sptxt,'_',intxt,'_std']))) = -1e34;
-            site.(site.codes{i}).([sptxt,'_',intxt,'_n'])(isnan(site.(site.codes{i}).([sptxt,'_',intxt,'_n']))) = -1e34;
-            site.(site.codes{i}).([sptxt,'_',intxt,'_unc'])(isnan(site.(site.codes{i}).([sptxt,'_',intxt,'_unc']))) = -1e34;
-            site.(site.codes{i}).([sptxt,'_',intxt,'_lat'])(isnan(site.(site.codes{i}).([sptxt,'_',intxt,'_lat']))) = -1e34;
-            site.(site.codes{i}).([sptxt,'_',intxt,'_lon'])(isnan(site.(site.codes{i}).([sptxt,'_',intxt,'_lon']))) = -1e34;
-            site.(site.codes{i}).([sptxt,'_',intxt,'_elevation'])(isnan(site.(site.codes{i}).([sptxt,'_',intxt,'_elevation']))) = -1e34;
-            site.(site.codes{i}).([sptxt,'_',intxt,'_inlet_height'])(isnan(site.(site.codes{i}).([sptxt,'_',intxt,'_inlet_height']))) = -1e34;
+            site.(site.codes{i}).([sptxt,'_',intxt])(isnan(site.(site.codes{i}).([sptxt,'_',intxt]))) = -9999.0;
+            site.(site.codes{i}).([sptxt,'_',intxt,'_std'])(isnan(site.(site.codes{i}).([sptxt,'_',intxt,'_std']))) = -9999.0;
+            site.(site.codes{i}).([sptxt,'_',intxt,'_n'])(isnan(site.(site.codes{i}).([sptxt,'_',intxt,'_n']))) = -9999.0;
+            site.(site.codes{i}).([sptxt,'_',intxt,'_unc'])(isnan(site.(site.codes{i}).([sptxt,'_',intxt,'_unc']))) = -9999.0;
+            site.(site.codes{i}).([sptxt,'_',intxt,'_lat'])(isnan(site.(site.codes{i}).([sptxt,'_',intxt,'_lat']))) = -9999.0;
+            site.(site.codes{i}).([sptxt,'_',intxt,'_lon'])(isnan(site.(site.codes{i}).([sptxt,'_',intxt,'_lon']))) = -9999.0;
+            site.(site.codes{i}).([sptxt,'_',intxt,'_elevation'])(isnan(site.(site.codes{i}).([sptxt,'_',intxt,'_elevation']))) = -9999.0;
+            site.(site.codes{i}).([sptxt,'_',intxt,'_inlet_height'])(isnan(site.(site.codes{i}).([sptxt,'_',intxt,'_inlet_height']))) = -9999.0;
             
-            site.groups = [site.groups; {[site.(site.codes{i}).code,'_',sptxt,'_',intxt]}];
+            site.groups = [site.groups; {[sptxt,'_',site.(site.codes{i}).code,'_',intxt]}];
             site.species = [site.species; {sptxt}];
         end
     end
 end
 
-% Load background data, or leave it blank if it doesn't exist.
-% 
-% site.codes = [site.codes,'background'];
-% site.groups = [site.groups; 'background'];
-% 
-% i = length(site.codes);
-% site.(site.codes{i}).name = 'background';
-% site.(site.codes{i}).long_name = 'background';
-% site.(site.codes{i}).code = '';
-% site.(site.codes{i}).country = 'United States';
-% site.(site.codes{i}).time_zone = 'America/Los_Angeles';
-% %site.(site.codes{i}).url = 'https://megacities.jpl.nasa.gov/public/Los_Angeles/In_Situ/La_Jolla/';
-% site.(site.codes{i}).inlet_height_long_name = {'background'};
-% site.(site.codes{i}).inlet_height = {0};
-% %site.(site.codes{i}).years = {'2015','2016'};
-% site.(site.codes{i}).species = {'co2'};
-% site.(site.codes{i}).species_long_name = {'carbon_dioxide'};
-% site.(site.codes{i}).species_units = {'micromol mol-1'};
-% site.(site.codes{i}).species_units_long_name = {'ppm'};
-% site.(site.codes{i}).instrument = {'modeled'};
-% site.(site.codes{i}).calibration_scale = {'WMO CO2 X2007'};
-% site.(site.codes{i}).in_lat = 32.87;
-% site.(site.codes{i}).in_lon = -117.25;
-% site.(site.codes{i}).in_elevation = 0;
-% site.(site.codes{i}).date_issued = datetime(2017,05,17);
-% site.(site.codes{i}).date_issued_str = datestr(site.(site.codes{i}).date_issued,'yyyy-mm-dd');
-% 
-% sp = 1; sptxt = site.(site.codes{i}).species{sp};
-% inlet = 1; intxt = site.(site.codes{i}).inlet_height_long_name{inlet};
-% 
-% site.(site.codes{i}).([sptxt,'_',intxt]) = [-1e34;-1e34];
-% site.(site.codes{i}).([sptxt,'_',intxt,'_time']) = [datetime(2016,01,01);datetime(2016,01,02)];
-% site.(site.codes{i}).([sptxt,'_',intxt,'_std']) = [-1e34;-1e34];
-% site.(site.codes{i}).([sptxt,'_',intxt,'_n']) = [-1e34;-1e34];
-% site.(site.codes{i}).([sptxt,'_',intxt,'_unc']) = [-1e34;-1e34];
-% site.(site.codes{i}).([sptxt,'_',intxt,'_lat']) = [-1e34;-1e34];
-% site.(site.codes{i}).([sptxt,'_',intxt,'_lon']) = [-1e34;-1e34];
-% site.(site.codes{i}).([sptxt,'_',intxt,'_elevation']) = [-1e34;-1e34];
-% site.(site.codes{i}).([sptxt,'_',intxt,'_inlet_height']) = [-1e34;-1e34];
 
 % Identify the netCDF files to create based on species.
 
@@ -378,23 +339,19 @@ for species_ind = 1:length(site.unique_species)
 end
 site.species_list = strip(site.species_list); % Removes the last space
 
-for j = 1:length(site.unique_species)
-    if strcmp(site.unique_species{j,1},'co2')
-        site.unique_species_long_name{j,1} = 'carbon dioxide';
-    elseif strcmp(site.unique_species{j,1},'ch4')
-        site.unique_species_long_name{j,1} = 'methane';
-    elseif strcmp(site.unique_species{j,1},'co')
-        site.unique_species_long_name{j,1} = 'carbon monoxide';
+for j = 1:length(site.species)
+    if strcmp(site.species{j,1},'co2')
+        site.species_long_name{j,1} = 'carbon dioxide';
+    elseif strcmp(site.species{j,1},'ch4')
+        site.species_long_name{j,1} = 'methane';
+    elseif strcmp(site.species{j,1},'co')
+        site.species_long_name{j,1} = 'carbon monoxide';
     end
 end
 
 %% Creating the netCDF file
 
+fprintf('Now creating the netCDF files.\n')
 eval('co2usa_create_netCDF')
 
-%% Convert the netCDF data to text files.
-
-fprintf('Now creating the text files from the netCDF files.\n')
-netCDF2txt_group = 'all_sites'; % 'all_sites' or 'background'
-eval('co2usa_netCDF2txt')
 

@@ -56,11 +56,11 @@ Contact information for the data providers and references to published paper are
 
 The data files are in netCDF and text format. NetCDF files can be viewed with the Panoply data viewer developed by NASA (https://www.giss.nasa.gov/tools/panoply/). The text files were created from the netCDF files and their content is identical to the netCDF files.
 
-For each city, a separate netCDF file was created for each species in the data set (CO2, CH4, or CO).  Within each netCDF file, there is a folder for each site and inlet height combination.  
+For each city, a netCDF file was created for each species (CO2, CH4, or CO), site, and inlet combination in the data set.
 
-In addition, there is a separate netCDF file for the “background” for each species available.  The “background” time series comes from the published literature, and users are encouraged to read the relevant publication to understand how the “background” time series was created, and how it should be used.
+In addition, there is a netCDF file for the “background” for each species available.  The “background” time series comes from the published literature, and users are encouraged to read the relevant references to understand how the “background” time series was created, and how it should be used.
 
-The text files are included as an alternative way to access the data.  There is a separate text file for each species, site, and inlet combination.  The text files for each city are bundled together in a single zip file.
+The text files are included as an alternative way to access the data.  There is a separate text file for each species, site, and inlet combination.
 
 The following information can be found within each of the netCDF and text files:
 - Title of the data set

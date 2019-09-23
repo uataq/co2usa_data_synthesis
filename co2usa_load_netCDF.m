@@ -52,84 +52,47 @@ plt.save_overview_image = 'n'; % options: 'y' or 'n'
 for ii = 1:size(cities,1)
     city = cities{ii,1};
     t_city = tic;
-    fprintf('Working on %s...',city)
+    fprintf('------Working on %s: ------\n',city)
     
-    fn = dir(fullfile(readFolder,city,[city,'_all_sites_',species,'_','*.nc']));
-    if isempty(fn);     fprintf('\n*** Data files for %s were not found! Check the path name and try again.***\nTime elapsed: %4.0f seconds.\n',city,toc(t_city)); continue; end % Skip it if the file doesn't exist.
+    all_files = dir(fullfile(readFolder,city,'netCDF_formatted_files',[city,'*',species,'_','*.nc']));
     
-    %ncdisp(fullfile(fn.folder,fn.name))
-    info = ncinfo(fullfile(fn.folder,fn.name));
+    if isempty(all_files); fprintf('\n*** Data files for %s were not found! Check the path name and try again.***\nTime elapsed: %4.0f seconds.\n',city,toc(t_city)); continue; end % Skip it if the file doesn't exist.
     
-    for jj = 1:length(info.Attributes)
-        co2_usa.(city).Attributes(jj).Name = info.Attributes(jj).Name;
-        co2_usa.(city).Attributes(jj).Value = info.Attributes(jj).Value;
-    end
-    co2_usa.(city).site_codes = cell(length(info.Groups),1);
-    co2_usa.(city).site_names = cell(length(info.Groups),1);
-    for group = 1:length(info.Groups)
-        co2_usa.(city).site_names{group,1} = info.Groups(group).Name;
-        for jj = 1:length(info.Groups(group).Attributes)
-            co2_usa.(city).(info.Groups(group).Name).Attributes(jj).Name = info.Groups(group).Attributes(jj).Name;
-            co2_usa.(city).(info.Groups(group).Name).Attributes(jj).Value = info.Groups(group).Attributes(jj).Value;
-            if strcmp(co2_usa.(city).(info.Groups(group).Name).Attributes(jj).Name,'site_code')
-                co2_usa.(city).site_codes{group,1} = co2_usa.(city).(info.Groups(group).Name).Attributes(jj).Value;
-            end
-        end
-        for var = 1:length(info.Groups(group).Variables)
-            co2_usa.(city).(info.Groups(group).Name).Variables(var).Name = info.Groups(group).Variables(var).Name;
-            co2_usa.(city).(info.Groups(group).Name).Variables(var).Data = ncread(fullfile(fn.folder,fn.name),[info.Groups(group).Name,'/',info.Groups(group).Variables(var).Name]);
-            if strcmp('time',co2_usa.(city).(info.Groups(group).Name).Variables(var).Name)
-                co2_usa.(city).(info.Groups(group).Name).Variables(var).Data = datetime(co2_usa.(city).(info.Groups(group).Name).Variables(var).Data,'ConvertFrom','posixtime');
-            end            
-            for jj = 1:length(info.Groups(group).Variables(var).Attributes)
-                co2_usa.(city).(info.Groups(group).Name).Variables(var).Attributes(jj).Name = info.Groups(group).Variables(var).Attributes(jj).Name;
-                co2_usa.(city).(info.Groups(group).Name).Variables(var).Attributes(jj).Value = info.Groups(group).Variables(var).Attributes(jj).Value;
-            end
-        end
-    end
-    
-    % Now check to see if there is a background for the city & load that if it exists.
-    fn = dir(fullfile(readFolder,city,[city,'_background_',species,'_','*.nc']));
-    if isempty(fn)
-        fprintf('(No background data). '); 
-        fprintf('Done. Time elapsed: %4.0f seconds.\n',toc(t_city))
-        continue;
-    else
+    for fni = 1:length(all_files)
+        
+        fn = all_files(fni);
+        fprintf('Working on %s.\n',fn.name)
+        
         %ncdisp(fullfile(fn.folder,fn.name))
         info = ncinfo(fullfile(fn.folder,fn.name));
-
-        % Attributes are the same as the city.
-%         for jj = 1:length(info.Attributes)
-%             co2_usa.(city).Attributes(jj).Name = info.Attributes(jj).Name;
-%             co2_usa.(city).Attributes(jj).Value = info.Attributes(jj).Value;
-%         end
-%        co2_usa.(city).site_codes = cell(length(info.Groups),1);
-%        co2_usa.(city).site_names = cell(length(info.Groups),1);
         
-        group_num = length(co2_usa.(city).site_codes);
-        for group = 1:length(info.Groups)
-            co2_usa.(city).site_names{group+group_num,1} = info.Groups(group).Name;
-            for jj = 1:length(info.Groups(group).Attributes)
-                co2_usa.(city).(info.Groups(group).Name).Attributes(jj).Name = info.Groups(group).Attributes(jj).Name;
-                co2_usa.(city).(info.Groups(group).Name).Attributes(jj).Value = info.Groups(group).Attributes(jj).Value;
-                if strcmp(co2_usa.(city).(info.Groups(group).Name).Attributes(jj).Name,'site_code')
-                    co2_usa.(city).site_codes{group+group_num,1} = co2_usa.(city).(info.Groups(group).Name).Attributes(jj).Value;
-                end
+        fn_parts = strsplit(fn.name,{'_','.'});
+        
+        
+        %site_code = strjoin({fn_parts{end-7:end-5}},'_');
+        site_code = fn.name(length(city)+2:regexp(fn.name,'_1_hour')-1);
+        
+        co2_usa.(city).site_codes{fni,1} = site_code;
+        
+        % Loading Attributes:
+        for jj = 1:length(info.Attributes)
+            co2_usa.(city).(site_code).Attributes(jj).Name = info.Attributes(jj).Name;
+            co2_usa.(city).(site_code).Attributes(jj).Value = info.Attributes(jj).Value;
+        end
+        
+        % Loading Variables
+        for var = 1:length(info.Variables)
+            co2_usa.(city).(site_code).Variables(var).Name = info.Variables(var).Name;
+            co2_usa.(city).(site_code).Variables(var).Data = ncread(fullfile(fn.folder,fn.name),[info.Name,'/',info.Variables(var).Name]);
+            if strcmp('time',co2_usa.(city).(site_code).Variables(var).Name)
+                co2_usa.(city).(site_code).Variables(var).Data = datetime(co2_usa.(city).(site_code).Variables(var).Data,'ConvertFrom','posixtime');
             end
-            for var = 1:length(info.Groups(group).Variables)
-                co2_usa.(city).(info.Groups(group).Name).Variables(var).Name = info.Groups(group).Variables(var).Name;
-                co2_usa.(city).(info.Groups(group).Name).Variables(var).Data = ncread(fullfile(fn.folder,fn.name),[info.Groups(group).Name,'/',info.Groups(group).Variables(var).Name]);
-                if strcmp('time',co2_usa.(city).(info.Groups(group).Name).Variables(var).Name)
-                    co2_usa.(city).(info.Groups(group).Name).Variables(var).Data = datetime(co2_usa.(city).(info.Groups(group).Name).Variables(var).Data,'ConvertFrom','posixtime');
-                end
-                for jj = 1:length(info.Groups(group).Variables(var).Attributes)
-                    co2_usa.(city).(info.Groups(group).Name).Variables(var).Attributes(jj).Name = info.Groups(group).Variables(var).Attributes(jj).Name;
-                    co2_usa.(city).(info.Groups(group).Name).Variables(var).Attributes(jj).Value = info.Groups(group).Variables(var).Attributes(jj).Value;
-                end
+            for jj = 1:length(info.Variables(var).Attributes)
+                co2_usa.(city).(site_code).Variables(var).Attributes(jj).Name = info.Variables(var).Attributes(jj).Name;
+                co2_usa.(city).(site_code).Variables(var).Attributes(jj).Value = info.Variables(var).Attributes(jj).Value;
             end
         end
     end
-    
     fprintf('Done. Time elapsed: %4.0f seconds.\n',toc(t_city))
 end
 clear info
@@ -160,8 +123,8 @@ city_long_name = replace(city,'_',' '); city_long_name([1,regexp(city_long_name,
 
 fx(ii) = figure(ii); fx(ii).Color = [1 1 1]; clf; hold on
 title([city_long_name,' ',upper(species),' - All sites'],'FontSize',35,'FontWeight','Bold')
-for jj = 1:length(co2_usa.(city).site_names)
-    site = co2_usa.(city).site_names{jj,1};
+for jj = 1:length(co2_usa.(city).site_codes)
+    site = co2_usa.(city).site_codes{jj,1};
     i_species = strcmp({co2_usa.(city).(site).Variables.Name},species);
     i_time = strcmp({co2_usa.(city).(site).Variables.Name},'time');
     if ~isempty(regexp(site,'background','once'))
@@ -179,7 +142,7 @@ if strcmp(units_label,'micromol mol-1'); units_label_abbr = 'ppm'; end
 ylabel([upper(species),' (',units_label_abbr,')'],'FontWeight','Bold')
 %ylim([350,750])
 hold off; grid on;
-legend(replace(co2_usa.(city).site_names,'_',' '),'Location','NorthWest')
+legend(replace(co2_usa.(city).site_codes,'_',' '),'Location','NorthWest')
 xl = get(gca,'XLabel'); xlFontSize = get(xl,'FontSize'); xAX = get(gca,'XAxis'); yl = get(gca,'YLabel'); ylFontSize = get(yl,'FontSize'); yAX = get(gca,'YAxis');
 xAX.FontSize = 25; yAX.FontSize = 25; yl.FontSize = 30; yl.FontWeight = 'Bold';
 
@@ -191,7 +154,7 @@ xAX.FontSize = 25; yAX.FontSize = 25; yl.FontSize = 30; yl.FontWeight = 'Bold';
 %ax = gca; ax.XLim = [t1,t2]; ax.XTick = t1:calmonths(6):t2; datetick('x','yyyy-mm','keepticks')
 
 % Plot all of the data:
-ax = gca; t1 = ax.XLim(1); t2 = ax.XLim(2); datetick('x','yyyy')
+%ax = gca; t1 = ax.XLim(1); t2 = ax.XLim(2); datetick('x','yyyy')
 
 if strcmp(plt.save_overview_image,'y')
     export_fig(fullfile(readFolder,city,[city,'_img_all_sites_',species,'.jpg']),'-r300','-p0.01',fx(ii))

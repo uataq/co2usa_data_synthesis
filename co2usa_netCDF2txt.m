@@ -4,7 +4,7 @@ if exist('city','var')
     % script, remove all the variables except for 'city'.
     vars = whos;
     for j = 1:length(vars)
-        if ~any(strcmp(vars(j).name,{'city','netCDF2txt_group'}))
+        if ~any(strcmp(vars(j).name,{'city'}))
             clear(vars(j).name)
         end
     end
@@ -19,29 +19,23 @@ else
 end
 
 currentFolder = pwd;
-readFolder = fullfile(currentFolder(1:regexp(currentFolder,'gcloud.utah.edu')+14),'data','co2-usa','synthesis_output',city);
+readFolder = fullfile(currentFolder(1:regexp(currentFolder,'gcloud.utah.edu')+14),'data','co2-usa','synthesis_output',city,'netCDF_formatted_files');
 writeFolder = fullfile(currentFolder(1:regexp(currentFolder,'gcloud.utah.edu')+14),'data','co2-usa','synthesis_output',city,'txt_formatted_files');
 
 if ~exist(writeFolder,'dir'); mkdir(writeFolder); end
 
-fn = dir(fullfile(readFolder,['*',netCDF2txt_group,'*.nc']));
+all_files = dir(fullfile(readFolder,'*.nc'));
 
-for fni = 1:length(fn)
+for fni = 1:length(all_files) % Loops through all of the netCDF files in the folder
 
-finfo = ncinfo(fullfile(fn(fni).folder,fn(fni).name));
+fn = all_files(fni);
+fn_parts = strsplit(fn.name,{'_','.'});
+date_issued_str = fn_parts{end-1};
+site_code = fn.name(length(city)+2:regexp(fn.name,'_1_hour')-1);
 
-underscore_ind = regexp(fn(fni).name,'_');
+finfo = ncinfo(fullfile(fn.folder,fn.name));
 
-date_issued_str = fn(fni).name(underscore_ind(end)+1:regexp(fn(fni).name,'[.]nc')-1);
-
-% for i = [1,2,3,4,6];
-%     fooLat = ncread([fn.folder,'\',fn.name],[siteCode{i},'/lat']);
-%     fooLon = ncread([fn.folder,'\',fn.name],[siteCode{i},'/lon']);
-%     fprintf('%s %7.4f %9.4f\n',siteCode{i},fooLat,fooLon)
-% end
 separator = '# ------------------------------------------------------------->>>>';
-
-for group = 1:length(finfo.Groups)
 
 % The fair use policy is embedded in the netCDF file, so a separate entry is not needed. 
 % fair_use_policy{1,1} = separator;
@@ -53,57 +47,48 @@ for group = 1:length(finfo.Groups)
 % fair_use_policy{7,1} = '# Use of the data implies an agreement to reciprocate by making your research efforts (e.g. measurements as well as model tools, data products, and code) publicly available in a timely manner to the best of your ability.';
 % fair_use_policy{8,1} = '# ';
 
-% Global attributes (city specific)
-global_attributes = cell(length(finfo.Attributes)+4,1);
+%% Global attributes
+number_of_extra_lines = 4; % Number of extra lines in the Global attributes section (accounts for the separator, blank lines, and GLOBAL ATTRIBUTES text line). 
+global_attributes = cell(length(finfo.Attributes)+number_of_extra_lines,1);
 global_attributes{1,1} = separator;
 global_attributes{2,1} = '# GLOBAL ATTRIBUTES';
 global_attributes{3,1} = '# ';
-% Global attributes (for all of the city sites)
+% Global attributes
 for j = 1:length(finfo.Attributes)
     global_attributes{j+3,1} = ['# ',finfo.Attributes(j).Name,' : ',finfo.Attributes(j).Value];
 end
 global_attributes{end,1} = '# ';
 
-% Group attributes (site specific)
-site_attributes = cell(length(finfo.Groups(group).Attributes)+4,1);
-site_attributes{1,1} = separator;
-site_attributes{2,1} = '# SITE ATTRIBUTES';
-site_attributes{3,1} = '# ';
-for j = 1:length(finfo.Groups(group).Attributes)
-    site_attributes{j+3,1} = ['# ',finfo.Groups(group).Attributes(j).Name,' : ',finfo.Groups(group).Attributes(j).Value];
-end
-site_attributes{end,1} = '# ';
-
 % Variables and variable attributes (for all of the variables listed in the file) 
-variable_attributes = cell(length(finfo.Groups(group).Variables),1); % Not the full size, but that is fine, it will grow to be the correct size.
+variable_attributes = cell(length(finfo.Variables),1); % Not the full size, but that is fine, it will grow to be the correct size.
 variable_attributes{1,1} = separator;
 variable_attributes{2,1} = '# VARIABLE ATTRIBUTES';
 variable_attributes{3,1} = '# ';
 row = 4; 
 varIndToWrite = []; % Indicies of the variables to put in the netCDF data below.
 time_ind = nan; % Index of the time variable used in the netCDF data below.
-for j = 1:length(finfo.Groups(group).Variables)
-    for k = 1:length(finfo.Groups(group).Variables(j).Attributes)
-        if isnumeric(finfo.Groups(group).Variables(j).Attributes(k).Value)
-            variable_attributes{row,1} = ['# ',finfo.Groups(group).Variables(j).Name,' : ',finfo.Groups(group).Variables(j).Attributes(k).Name,' : ',num2str(finfo.Groups(group).Variables(j).Attributes(k).Value)];
+for j = 1:length(finfo.Variables)
+    for k = 1:length(finfo.Variables(j).Attributes)
+        if isnumeric(finfo.Variables(j).Attributes(k).Value)
+            variable_attributes{row,1} = ['# ',finfo.Variables(j).Name,' : ',finfo.Variables(j).Attributes(k).Name,' : ',num2str(finfo.Variables(j).Attributes(k).Value)];
         else
-            variable_attributes{row,1} = ['# ',finfo.Groups(group).Variables(j).Name,' : ',finfo.Groups(group).Variables(j).Attributes(k).Name,' : ',finfo.Groups(group).Variables(j).Attributes(k).Value];
+            variable_attributes{row,1} = ['# ',finfo.Variables(j).Name,' : ',finfo.Variables(j).Attributes(k).Name,' : ',finfo.Variables(j).Attributes(k).Value];
         end
         row = row+1;
     end
     % If the variable has a length of 1, put that information in the header, otherwise it will go in the output.
-    if finfo.Groups(group).Variables(j).Size==1
-        variable_attributes{row,1} = ['# ',finfo.Groups(group).Variables(j).Name,' : Value : ',num2str(ncread([fn.folder,'\',fn.name],[finfo.Groups(group).Name,'/',finfo.Groups(group).Variables(j).Name]))];
+    if finfo.Variables(j).Size==1
+        variable_attributes{row,1} = ['# ',finfo.Variables(j).Name,' : Value : ',num2str(ncread([fn.folder,'\',fn.name],finfo.Variables(j).Name))];
         row = row+1;
     else
         varIndToWrite = [varIndToWrite,j]; %#ok<AGROW>
     end
-    if strcmp(finfo.Groups(group).Variables(j).Name,'time'); time_ind = j; end
+    if strcmp(finfo.Variables(j).Name,'time'); time_ind = j; end
 end
 variable_attributes{end+1,1} = '# '; %#ok<SAGROW>
 
 % Convert the time variable into a datetime format.
-time1 = ncread(fullfile(fn(fni).folder,fn(fni).name),[finfo.Groups(group).Name,'/',finfo.Groups(group).Variables(time_ind).Name]);
+time1 = ncread(fullfile(fn.folder,fn.name),finfo.Variables(time_ind).Name);
 time = datetime(time1,'ConvertFrom','datenum','TimeZone','UTC');
 
 % Assemble the data output and the variable order line
@@ -112,47 +97,35 @@ variable_order{2,1} = '# VARIABLE ORDER';
 variable_order{3,1} = '# ';
 variable_order{4,1} = '# ';
 for j = varIndToWrite
-    variable_order{4,1} = [variable_order{4,1},finfo.Groups(group).Variables(j).Name,', '];
+    variable_order{4,1} = [variable_order{4,1},finfo.Variables(j).Name,', '];
 end
 variable_order{4,1} = variable_order{4,1}(1:end-2); % removes the last comma.
 
 % Structure containing all of the data to write.
-if isempty(regexp(finfo.Groups(group).Name,'background','once'))
-    output = {ncread(fullfile(fn(fni).folder,fn(fni).name),[finfo.Groups(group).Name,'/time']),...
-        cellstr(ncread(fullfile(fn(fni).folder,fn(fni).name),[finfo.Groups(group).Name,'/time_string'])),...
-        ncread(fullfile(fn(fni).folder,fn(fni).name),[finfo.Groups(group).Name,'/',finfo.Groups(group).Attributes(strcmp({finfo.Groups(group).Attributes.Name},'dataset_parameter')).Value]),...
-        ncread(fullfile(fn(fni).folder,fn(fni).name),[finfo.Groups(group).Name,'/std_dev']),...
-        ncread(fullfile(fn(fni).folder,fn(fni).name),[finfo.Groups(group).Name,'/n']),...
-        ncread(fullfile(fn(fni).folder,fn(fni).name),[finfo.Groups(group).Name,'/uncertainty']),...
-        ncread(fullfile(fn(fni).folder,fn(fni).name),[finfo.Groups(group).Name,'/lat']),...
-        ncread(fullfile(fn(fni).folder,fn(fni).name),[finfo.Groups(group).Name,'/lon']),...
-        ncread(fullfile(fn(fni).folder,fn(fni).name),[finfo.Groups(group).Name,'/elevation']),...
-        ncread(fullfile(fn(fni).folder,fn(fni).name),[finfo.Groups(group).Name,'/inlet_height'])};
-else
-    output = {ncread(fullfile(fn(fni).folder,fn(fni).name),[finfo.Groups(group).Name,'/time']),...
-        cellstr(ncread(fullfile(fn(fni).folder,fn(fni).name),[finfo.Groups(group).Name,'/time_string'])),...
-        ncread(fullfile(fn(fni).folder,fn(fni).name),[finfo.Groups(group).Name,'/',finfo.Groups(group).Attributes(strcmp({finfo.Groups(group).Attributes.Name},'dataset_parameter')).Value]),...
-        ncread(fullfile(fn(fni).folder,fn(fni).name),[finfo.Groups(group).Name,'/lat']),...
-        ncread(fullfile(fn(fni).folder,fn(fni).name),[finfo.Groups(group).Name,'/lon']),...
-        ncread(fullfile(fn(fni).folder,fn(fni).name),[finfo.Groups(group).Name,'/elevation'])};
-end
-
-
+output = {ncread(fullfile(fn.folder,fn.name),[finfo.Name,'/time']),...
+    cellstr(ncread(fullfile(fn.folder,fn.name),[finfo.Name,'/time_string'])),...
+    ncread(fullfile(fn.folder,fn.name),[finfo.Name,'/',finfo.Attributes(strcmp({finfo.Attributes.Name},'dataset_parameter')).Value]),...
+    ncread(fullfile(fn.folder,fn.name),[finfo.Name,'/std_dev']),...
+    ncread(fullfile(fn.folder,fn.name),[finfo.Name,'/n']),...
+    ncread(fullfile(fn.folder,fn.name),[finfo.Name,'/uncertainty']),...
+    ncread(fullfile(fn.folder,fn.name),[finfo.Name,'/lat']),...
+    ncread(fullfile(fn.folder,fn.name),[finfo.Name,'/lon']),...
+    ncread(fullfile(fn.folder,fn.name),[finfo.Name,'/elevation']),...
+    ncread(fullfile(fn.folder,fn.name),[finfo.Name,'/inlet_height'])};
 
 % Sets the fill value for all of the nan values. Note that the time in the first 2 columns (time, time_string) should not have any nan values. 
 for j = 3:length(output)
-   output{1,j}(isnan(output{1,j}),1) = -1e34;
+   output{1,j}(isnan(output{1,j}),1) = -9999.0;
 end
 
 % Writing the file
-filename    = [city,'_',finfo.Groups(group).Name,'_1_hour_R0_',date_issued_str,'.txt'];
-filepath    = fullfile(writeFolder,filename);
+filename = [city,'_',site_code,'_1_hour_R0_',date_issued_str,'.txt'];
+filepath = fullfile(writeFolder,filename);
 
 % Create the header consisting of the individual pieces:
 full_header = [
     %fair_use_policy;
     global_attributes;
-    site_attributes;
     variable_attributes;
     variable_order];
 
@@ -170,32 +143,19 @@ for j = 1:length(full_header)
 end
 
 % Write the data:
-if isempty(regexp(finfo.Groups(group).Name,'background','once'))
-    for j = 1:finfo.Groups(group).Dimensions.Length
-        fprintf(fid,'%d, %s, %0.6g, %0.6g, %1g, %0.6g, %0.6g, %0.6g, %0.4g, %0.4g\r\n',...
-            output{1,1}(j,1),...
-            output{1,2}{j,1},...
-            output{1,3}(j,1),...
-            output{1,4}(j,1),...
-            output{1,5}(j,1),...
-            output{1,6}(j,1),...
-            output{1,7}(j,1),...
-            output{1,8}(j,1),...
-            output{1,9}(j,1),...
-            output{1,10}(j,1));
-    end
-else
-    for j = 1:finfo.Groups(group).Dimensions.Length
-        fprintf(fid,'%d, %s, %0.6g, %0.6g, %0.6g, %0.4g\r\n',...
-            output{1,1}(j,1),...
-            output{1,2}{j,1},...
-            output{1,3}(j,1),...
-            output{1,4}(j,1),...
-            output{1,5}(j,1),...
-            output{1,6}(j,1));
-    end
+for j = 1:finfo.Dimensions(strcmp({finfo.Dimensions.Name},'time')).Length
+    fprintf(fid,'%d, %s, %0.6g, %0.6g, %1g, %0.6g, %0.6g, %0.6g, %0.4g, %0.4g\r\n',...
+        output{1,1}(j,1),...
+        output{1,2}{j,1},...
+        output{1,3}(j,1),...
+        output{1,4}(j,1),...
+        output{1,5}(j,1),...
+        output{1,6}(j,1),...
+        output{1,7}(j,1),...
+        output{1,8}(j,1),...
+        output{1,9}(j,1),...
+        output{1,10}(j,1));
 end
-
 
 status = fclose(fid);
 if status
@@ -205,12 +165,10 @@ fprintf('netCDF file converted to text and saved to: %s\n',filepath);
 
 end
 
-end
-
-fprintf('Zipping the text files...')
-txtfn = dir(fullfile(writeFolder,'*.txt'));
-zip(fullfile(writeFolder,[city,'_all_sites_1_hour_R0_txt_formatted_files_',date_issued_str,'.zip']),{txtfn.name},txtfn(1).folder)
-fprintf('Done.\n')
+% fprintf('Zipping the text files...')
+% txtfn = dir(fullfile(writeFolder,'*.txt'));
+% zip(fullfile(writeFolder,[city,'_all_sites_1_hour_R0_txt_formatted_files_',date_issued_str,'.zip']),{txtfn.name},txtfn(1).folder)
+% fprintf('Done.\n')
 
 fprintf('<--- Finished creating text files from the netCDF parent files --->\n')
 

@@ -93,7 +93,7 @@ for i = 1:length(site.codes)
             netcdf.putAtt(n.id_site_Grp(grp,1),netcdf.getConstant('GLOBAL'),'site_code',site.(site.codes{i}).code);
             netcdf.putAtt(n.id_site_Grp(grp,1),netcdf.getConstant('GLOBAL'),'site_name',site.(site.codes{i}).long_name);
             netcdf.putAtt(n.id_site_Grp(grp,1),netcdf.getConstant('GLOBAL'),'site_country',site.(site.codes{i}).country);
-            %if site.(site.codes{i}).([sptxt,'_',intxt,'_lat'])(end,1)==-1e34 % the background has fill values, so the format should be changed.
+            %if site.(site.codes{i}).([sptxt,'_',intxt,'_lat'])(end,1)==-9999.0 % the background has fill values, so the format should be changed.
             %    fmt.lat = '%0.6g'; fmt.lon = '%0.6g'; fmt.elevation = '%0.6g'; fmt.inlet_height = '%0.6g';
             %else
             fmt.lat = '%0.4f'; fmt.lon = '%0.4f'; fmt.elevation = '%0.1f'; fmt.inlet_height = '%0.1f';
@@ -117,7 +117,7 @@ for i = 1:length(site.codes)
             netcdf.putAtt(n.id_site_Grp(grp,1),netcdf.getConstant('GLOBAL'),'dataset_data_frequency_unit','hour');
             
             n.id_POSIX_time(grp,1) = netcdf.defVar(n.id_site_Grp(grp,1),'time','NC_DOUBLE',n.id_time_Dim(grp,1));
-            netcdf.defVarFill(n.id_site_Grp(grp,1),n.id_POSIX_time(grp,1),false,-1e34);
+            netcdf.defVarFill(n.id_site_Grp(grp,1),n.id_POSIX_time(grp,1),false,-9999.0);
             netcdf.putAtt(n.id_site_Grp(grp,1),n.id_POSIX_time(grp,1),'units','seconds since 1970-01-01T00:00:00Z');
             netcdf.putAtt(n.id_site_Grp(grp,1),n.id_POSIX_time(grp,1),'long_name','sample_time_in_seconds_since_january_1_1970');
             netcdf.putAtt(n.id_site_Grp(grp,1),n.id_POSIX_time(grp,1),'comment','POSIX time. Number of seconds since January 1, 1970 in UTC.');
@@ -126,47 +126,47 @@ for i = 1:length(site.codes)
             netcdf.putAtt(n.id_site_Grp(grp,1),n.id_time_string(grp,1),'long_name','Sample date/time in ISO 8601 format (UTC).');
             
             n.id_obs(grp,1) = netcdf.defVar(n.id_site_Grp(grp,1),sptxt,'NC_DOUBLE',n.id_time_Dim(grp,1));
-            netcdf.defVarFill(n.id_site_Grp(grp,1),n.id_obs(grp,1),false,-1e34);
+            netcdf.defVarFill(n.id_site_Grp(grp,1),n.id_obs(grp,1),false,-9999.0);
             netcdf.putAtt(n.id_site_Grp(grp,1),n.id_obs(grp,1),'units',site.(site.codes{i}).species_units{sp});
             netcdf.putAtt(n.id_site_Grp(grp,1),n.id_obs(grp,1),'standard_name',['mole_fraction_of_',site.(site.codes{i}).species_long_name{sp},'_in_dry_air']);
             netcdf.putAtt(n.id_site_Grp(grp,1),n.id_obs(grp,1),'long_name',[sptxt,' mole fraction (',site.(site.codes{i}).species_units_long_name{sp},') in the hour.']);
             %netcdf.putAtt(n.id_site_Grp(grp,1),n.id_obs(grp,1),'cell_method',[sptxt,': mean']);
             
             %n.id_std(grp,1) = netcdf.defVar(n.id_site_Grp(grp,1),'std_dev','NC_DOUBLE',n.id_time_Dim(grp,1));
-            %netcdf.defVarFill(n.id_site_Grp(grp,1),n.id_std(grp,1),false,-1e34);
+            %netcdf.defVarFill(n.id_site_Grp(grp,1),n.id_std(grp,1),false,-9999.0);
             %netcdf.putAtt(n.id_site_Grp(grp,1),n.id_std(grp,1),'units',site.(site.codes{i}).species_units{sp});
             %netcdf.putAtt(n.id_site_Grp(grp,1),n.id_std(grp,1),'cell_method',[sptxt,': standard_deviation']);
             %netcdf.putAtt(n.id_site_Grp(grp,1),n.id_std(grp,1),'long_name',['Standard deviation of the ',sptxt,' mole fraction measurements (',site.(site.codes{i}).species_units_long_name{sp},') in the hour.']);
             
             %n.id_n(grp,1) = netcdf.defVar(n.id_site_Grp(grp,1),'n','NC_DOUBLE',n.id_time_Dim(grp,1));
-            %netcdf.defVarFill(n.id_site_Grp(grp,1),n.id_n(grp,1),false,-1e34);
+            %netcdf.defVarFill(n.id_site_Grp(grp,1),n.id_n(grp,1),false,-9999.0);
             %netcdf.putAtt(n.id_site_Grp(grp,1),n.id_n(grp,1),'units','count');
             %netcdf.putAtt(n.id_site_Grp(grp,1),n.id_n(grp,1),'long_name',['Number of the ',sptxt,' mole fraction measurements in the hour.']);
             
             %n.id_unc(grp,1) = netcdf.defVar(n.id_site_Grp(grp,1),'uncertainty','NC_DOUBLE',n.id_time_Dim(grp,1));
-            %netcdf.defVarFill(n.id_site_Grp(grp,1),n.id_unc(grp,1),false,-1e34);
+            %netcdf.defVarFill(n.id_site_Grp(grp,1),n.id_unc(grp,1),false,-9999.0);
             %netcdf.putAtt(n.id_site_Grp(grp,1),n.id_unc(grp,1),'units',site.(site.codes{i}).species_units{sp});
             %netcdf.putAtt(n.id_site_Grp(grp,1),n.id_unc(grp,1),'long_name','Measurement uncertainty determined by the data provider. See the Reference for more details.');
             
             n.id_lat(grp,1) = netcdf.defVar(n.id_site_Grp(grp,1),'lat','NC_DOUBLE',n.id_time_Dim(grp,1));
-            netcdf.defVarFill(n.id_site_Grp(grp,1),n.id_lat(grp,1),false,-1e34);
+            netcdf.defVarFill(n.id_site_Grp(grp,1),n.id_lat(grp,1),false,-9999.0);
             netcdf.putAtt(n.id_site_Grp(grp,1),n.id_lat(grp,1),'units','degrees_north');
             netcdf.putAtt(n.id_site_Grp(grp,1),n.id_lat(grp,1),'standard_name','latitude');
             netcdf.putAtt(n.id_site_Grp(grp,1),n.id_lat(grp,1),'axis','Y');
             
             n.id_lon(grp,1) = netcdf.defVar(n.id_site_Grp(grp,1),'lon','NC_DOUBLE',n.id_time_Dim(grp,1));
-            netcdf.defVarFill(n.id_site_Grp(grp,1),n.id_lon(grp,1),false,-1e34);
+            netcdf.defVarFill(n.id_site_Grp(grp,1),n.id_lon(grp,1),false,-9999.0);
             netcdf.putAtt(n.id_site_Grp(grp,1),n.id_lon(grp,1),'units','degrees_east');
             netcdf.putAtt(n.id_site_Grp(grp,1),n.id_lon(grp,1),'standard_name','longitude');
             netcdf.putAtt(n.id_site_Grp(grp,1),n.id_lon(grp,1),'axis','X');
             
             n.id_elevation(grp,1) = netcdf.defVar(n.id_site_Grp(grp,1),'elevation','NC_DOUBLE',n.id_time_Dim(grp,1));
-            netcdf.defVarFill(n.id_site_Grp(grp,1),n.id_elevation(grp,1),false,-1e34);
+            netcdf.defVarFill(n.id_site_Grp(grp,1),n.id_elevation(grp,1),false,-9999.0);
             netcdf.putAtt(n.id_site_Grp(grp,1),n.id_elevation(grp,1),'units','meters');
             netcdf.putAtt(n.id_site_Grp(grp,1),n.id_elevation(grp,1),'long_name','Elevation above sea level at the station location.');
             
             %n.id_inlet_height(grp,1) = netcdf.defVar(n.id_site_Grp(grp,1),'inlet_height','NC_DOUBLE',n.id_time_Dim(grp,1));
-            %netcdf.defVarFill(n.id_site_Grp(grp,1),n.id_inlet_height(grp,1),false,-1e34);
+            %netcdf.defVarFill(n.id_site_Grp(grp,1),n.id_inlet_height(grp,1),false,-9999.0);
             %netcdf.putAtt(n.id_site_Grp(grp,1),n.id_inlet_height(grp,1),'units','meters');
             %netcdf.putAtt(n.id_site_Grp(grp,1),n.id_inlet_height(grp,1),'long_name','Height of the sample inlet above ground level.');
             %netcdf.putAtt(n.id_site_Grp(grp,1),n.id_inlet_height(grp,1),'axis','Z');
