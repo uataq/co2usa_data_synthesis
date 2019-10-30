@@ -22,29 +22,45 @@
 % clear all
 % close all
 % set(0,'DefaultFigureWindowStyle','docked')
+t_overall = tic;
 
 currentFolder = pwd;
-readFolder = fullfile(currentFolder(1:regexp(currentFolder,'gcloud.utah.edu')+14),'data','co2-usa','synthesis_output');
-t_overall = tic;
-if ~exist('species','var')
-    species = 'co2';
+readFolder = fullfile(currentFolder(1:regexp(currentFolder,'gcloud.utah.edu')+14),'data','co2-usa','synthesis_output_ornl');
+
+% Option Code to automate the download of data from the ORNL:
+ornl_download = 'n';
+if strcmp(ornl_download,'y')
+    download_location = readFolder;
+    if ~isfolder(download_location); mkdir(download_location); end
+    download_token = '<your_ORNL_download_token>'; % PUT IN YOUR DOWNLOAD TOKEN ISSUED FROM ORNL
+    hyperlinks = webread(['https://daac.ornl.gov/orders/',download_token,'/download_links.html']);
+    hyperlinks = regexp(hyperlinks,'<a href=".*?.nc">','match'); hyperlinks = replace(hyperlinks,{'<a href="','">'},'');
+    for i = 1:length(hyperlinks)
+        filename = extractAfter(hyperlinks{i},'/data/');
+        outfilename = websave(fullfile(download_location,filename),hyperlinks{i});
+    end
+    fprintf('Done downloading data from the ORNL DAAC\n')
+    clear('download_location','download_token','str','hyperlinks','filename')
 end
-fprintf('Loading the %s city data...\n',species)
 
 if ~exist('cities','var')
     cities = {
-        %'boston'
+        'boston'
         %'indianapolis'
-        %'los_angeles'
+        'los_angeles'
         %'northeast_corridor'
         %'portland'
-        'salt_lake_city'
+        %'salt_lake_city'
         %'san_francisco_baaqmd'
         %'san_francisco_beacon'
         };
-    
-%    cities = {'indianapolis'}; fprintf('*** Only loading %s.\n',cities{1,1})
 end
+
+if ~exist('species','var')
+    species = 'co2';
+end
+
+fprintf('Loading the %s city data...\n',species)
 
 % Do you want to save the summary figures?
 plt.save_overview_image = 'n'; % options: 'y' or 'n'
@@ -54,7 +70,8 @@ for ii = 1:size(cities,1)
     t_city = tic;
     fprintf('------Working on %s: ------\n',city)
     
-    all_files = dir(fullfile(readFolder,city,'netCDF_formatted_files',[city,'*',species,'_','*.nc']));
+    %all_files = dir(fullfile(readFolder,city,'netCDF_formatted_files',[city,'*',species,'_','*.nc']));
+    all_files = dir(fullfile(readFolder,[city,'*',species,'_','*.nc']));
     
     if isempty(all_files); fprintf('\n*** Data files for %s were not found! Check the path name and try again.***\nTime elapsed: %4.0f seconds.\n',city,toc(t_city)); continue; end % Skip it if the file doesn't exist.
     
@@ -83,7 +100,7 @@ for ii = 1:size(cities,1)
         % Loading Variables
         for var = 1:length(info.Variables)
             co2_usa.(city).(site_code).Variables(var).Name = info.Variables(var).Name;
-            co2_usa.(city).(site_code).Variables(var).Data = ncread(fullfile(fn.folder,fn.name),[info.Name,'/',info.Variables(var).Name]);
+            co2_usa.(city).(site_code).Variables(var).Data = ncread(fullfile(fn.folder,fn.name),[info.Name,info.Variables(var).Name]);
             if strcmp('time',co2_usa.(city).(site_code).Variables(var).Name)
                 co2_usa.(city).(site_code).Variables(var).Data = datetime(co2_usa.(city).(site_code).Variables(var).Data,'ConvertFrom','posixtime');
             end
