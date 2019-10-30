@@ -2,13 +2,20 @@
 #
 # USAGE:
 #
-# The CO2-USA data should be saved in a directory structure as follows:
-# /synthesis_output/[city]/[netCDF_file.nc]
+# The CO2-USA synthesis data is available to download from the ORNL DAAC:
+# https://doi.org/10.3334/ORNLDAAC/1743
+#
+# To download the data, first sign into your account (or create one if you don't have one). 
+# Next, click on "Download Data" to download the entire data set in a zip file. 
+# Extract the netCDF files to a folder on your computer.
+#
+# The CO2-USA synthesis data files should be all saved in a single directory:
+# /synthesis_output/[netCDF_file.nc]
 #
 # For example, for the CO2 data file for Boston it would be:
-# /synthesis_output/boston/boston_all_sites_co2_1_hour_R0_2019-07-09.nc
+# /synthesis_output/boston_all_sites_co2_1_hour_R0_2019-07-09.nc
 #
-# Update the cities you want to extract, the species, and choose if you want to create plots.
+# In the code below, choose the cities you want to extract, the species, and if you want to create plots.
 # After running the script, the CO2_USA greenhouse gas data will all be contained within the
 # 'co2_usa' list variable.
 #
@@ -17,7 +24,7 @@
 #
 # Written by Logan Mitchell (logan.mitchell@utah.edu) and Ben Fasoli
 # University of Utah
-# Last updated: 2019-07-29
+# Last updated: 2019-10-30
 
 if (!'tidyverse' %in% installed.packages()) install.packages('tidyverse', repos='http://cran.us.r-project.org')
 if (!'ncdf4' %in% installed.packages()) install.packages('ncdf4', repos='http://cran.us.r-project.org')
@@ -46,17 +53,13 @@ species = 'co2'
 make_co2_usa_plots = 'y' # Options: 'y' or 'n'
 
 # Choose the path to the location on your computer where the CO2-USA Synthesis data files have been saved, called the 'read_folder'.
-# Within the 'read_folder' the data should be saved in subfolders as follows:
-# /read_folder/[city]/netCDF_formatted_files/[city_species_site_inlet_netCDF_file.nc]
-#
-# For example, the CO2 measurements from the COP site in Boston would be:
-# /read_folder/boston/netCDF_formatted_files/boston_co2_COP_215m_1_hour_R0_2019-07-09
-
 read_folder = file.path('C:/Users','u0932260','gcloud.utah.edu','data','co2-usa','synthesis_output_ornl')
-if (!dir.exists(read_folder)) stop('Cannot find the specified read folder. Check the file path to make sure it is correct.')
-setwd(read_folder)
 
 ##############################################
+
+# Check if the read_folder exists and set it as the working directory
+if (!dir.exists(read_folder)) stop('Cannot find the specified read folder. Check the file path to make sure it is correct.')
+setwd(read_folder)
 
 # Create the data structures
 co2_usa = list()
@@ -66,7 +69,6 @@ for (ii in 1:length(cities)) {
   city = cities[ii]
   
   # netCDF file name
-#  file.path(read_folder,city,'netCDF_formatted_files')
   fn = list.files(path=file.path(read_folder),
                   pattern=paste(city,'_',species,'_','.*nc$',sep = ''),
                   include.dirs = TRUE)

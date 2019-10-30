@@ -2,31 +2,34 @@
 %
 % USAGE:
 %
-% The CO2-USA data should be saved in a directory structure as follows:
-% /synthesis_output/[city]/[netCDF_file.nc]
+% The CO2-USA synthesis data is available to download from the ORNL DAAC:
+% https://doi.org/10.3334/ORNLDAAC/1743
+% 
+% To download the data, first sign into your account (or create one if you don't have one). 
+% Next, click on "Download Data" to download the entire data set in a zip file. 
+% Extract the netCDF files to a folder on your computer.
+%
+% The CO2-USA synthesis data files should be all saved in a single directory:
+% /synthesis_output/[netCDF_files.nc]
 %
 % For example, for the CO2 data file for Boston it would be:
-% /synthesis_output/boston/boston_all_sites_co2_1_hour_R0_2019-07-09.nc
+% /synthesis_output/boston_all_sites_co2_1_hour_R0_2019-07-09.nc
 %
-% Update the cities you want to extract, the species, and choose if you want to save plots.
+% In the code below, choose the cities you want to extract, the species, and if you want to save plots.
 % After running the script, the CO2_USA greenhouse gas data will all be contained within the
-% 'co2_usa' list variable.
+% 'co2_usa' variable.
 %
 % For more information, visit the CO2-USA GitHub repository:
 % https://github.com/loganemitchell/co2usa_data_synthesis
 %
 % Written by Logan Mitchell (logan.mitchell@utah.edu)
 % University of Utah
-% Last updated: 2019-07-29
+% Last updated: 2019-10-30
 
 % clear all
 % close all
 % set(0,'DefaultFigureWindowStyle','docked')
 t_overall = tic;
-
-currentFolder = pwd;
-readFolder = fullfile(currentFolder(1:regexp(currentFolder,'gcloud.utah.edu')+14),'data','co2-usa','synthesis_output_ornl');
-
 
 if ~exist('cities','var')
     cities = {
@@ -44,6 +47,9 @@ end
 if ~exist('species','var')
     species = 'co2';
 end
+
+currentFolder = pwd;
+readFolder = fullfile(currentFolder(1:regexp(currentFolder,'gcloud.utah.edu')+14),'data','co2-usa','synthesis_output_ornl');
 
 fprintf('Loading the %s city data...\n',species)
 
