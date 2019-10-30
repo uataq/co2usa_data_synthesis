@@ -16,7 +16,9 @@ The CO2-USA synthesis data product can be downloaded from the Oak Ridge National
 https://doi.org/10.3334/ORNLDAAC/1743
 
 After downloading the data from the ORNL DAAC, you can use the code in this GitHub repository to load the entire CO2-USA synthesis data set quickly and easily.  The code has been written for the R and Matlab programming languages:
+
 R: https://github.com/loganemitchell/co2usa_data_synthesis/blob/master/co2usa_load_netCDF.r
+
 Matlab: https://github.com/loganemitchell/co2usa_data_synthesis/blob/master/co2usa_load_netCDF.m
 
 The data files are in netCDF and text format.  NetCDF files can be viewed with the Panoply data viewer developed by NASA (https://www.giss.nasa.gov/tools/panoply/).  The text files are created from the netCDF files and therefore their content is identical.
