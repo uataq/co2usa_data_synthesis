@@ -7,6 +7,7 @@ hyperlinks = webread(['https://daac.ornl.gov/orders/',download_token,'/download_
 hyperlinks = regexp(hyperlinks,'<a href=".*?.nc">','match'); hyperlinks = replace(hyperlinks,{'<a href="','">'},'');
 for i = 1:length(hyperlinks)
     filename = extractAfter(hyperlinks{i},'/data/');
+    fprintf('Downloading %s...\n',filename)
     outfilename = websave(fullfile(download_location,filename),hyperlinks{i});
 end
 fprintf('Done downloading data from the ORNL DAAC\n')
