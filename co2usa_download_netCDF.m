@@ -17,7 +17,7 @@
 % and the following code is one additional option for you to download the
 % data.
 % 
-% Step 6: Copy your download token in the email from the ORNL DAAC and past it below:
+% Step 6: Copy your download token in the email from the ORNL DAAC and paste it below:
 % For example: 'aun26r81235cr3h4c3v9y1g32t22646g'
 download_token = '<your_ORNL_download_token>';
 

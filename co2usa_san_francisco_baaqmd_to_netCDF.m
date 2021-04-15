@@ -1,12 +1,21 @@
-clear all
-close all
+% clear all
+% close all
 set(0,'DefaultFigureWindowStyle','docked')
+
+%% Outstanding questions:
+
+fprintf('THE INLET HEIGHTS ARE NOT KNOWN.\n')
+
+
 
 %% netCDF creation documentation
 
 % Following the Climate Forecasting conventions for netCDF files documented here:
 % http://cfconventions.org/
 % http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html
+% 
+% Also following the Attribute Convention for Data Discovery version 1.3
+% https://wiki.esipfed.org/Attribute_Convention_for_Data_Discovery_1-3
 % 
 % Variables must have a standard_name, a long_name, or both.
 % A standard_name is the name used to identify the physical quantity. A standard name contains no whitespace and is case sensitive.
@@ -22,25 +31,25 @@ set(0,'DefaultFigureWindowStyle','docked')
 
 %% Creation date
 
-date_created_now = datestr(now,'yyyy-mm-dd');
-date_created_str = datestr(datenum(2018,02,01),'yyyy-mm-dd');
-%date_created_SLC_CO2 = datestr(datenum(2017,07,11),'yyyy-mm-dd');
+% date_created: The date on which this version of the data was created. Recommended. 
+date_created_now = datetime(now,'ConvertFrom','datenum','TimeZone','America/Denver'); date_created_now.TimeZone = 'UTC';
+date_created_str = datestr(date_created_now,'yyyy-mm-ddThh:MM:ssZ');
 
+% date_issued: The date on which this data (including all modifications) was formally issued (i.e., made available to a wider audience). Suggested.
 date_issued_now = datestr(now,'yyyy-mm-dd');
 date_issued = datetime(2019,07,01);
-date_issued_str = datestr(date_issued,'yyyy-mm-dd');
+date_issued_str = datestr(date_issued,'yyyy-mm-ddThh:MM:ssZ');
 
 % Working folders
-currentFolder = pwd;
-readFolder = fullfile(currentFolder(1:regexp(currentFolder,'gcloud.utah.edu')+14),'data','co2-usa','data_input');
-writeFolder = fullfile(currentFolder(1:regexp(currentFolder,'gcloud.utah.edu')+14),'data','co2-usa','synthesis_output');
-
+if ~exist('currentFolder','var'); currentFolder = pwd; end
+if ~exist('readFolder','var'); readFolder = fullfile(currentFolder(1:regexp(currentFolder,'gcloud.utah.edu')+14),'data','co2-usa','data_input'); end
+if ~exist('writeFolder','var');  writeFolder = fullfile(currentFolder(1:regexp(currentFolder,'gcloud.utah.edu')+14),'data','co2-usa','synthesis_output'); end
 
 %% City & provider information:
 
 city = 'san_francisco_baaqmd';
 city_long_name = 'San Francisco';
-city_url = 'http://www.baaqmd.gov/research-and-data/air-quality-measurement/ghg-measurement/ghg-data';
+city_url = 'https://www.baaqmd.gov/about-air-quality/air-quality-measurement/ghg-measurement';
 
 % http://www.baaqmd.gov/research-and-data/air-quality-measurement/ghg-measurement/ghg-data
 i=1;
@@ -73,7 +82,8 @@ site.reference = 'http://www.baaqmd.gov/~/media/files/planning-and-research/ghg-
 site.groups = {}; % List of the site "code_species_inletHt"
 site.species = {}; % List of the "species"
 site.date_issued = date_issued;
-site.date_issued_str = datestr(site.date_issued,'yyyy-mm-dd');
+site.date_issued_str = datestr(site.date_issued,'yyyy-mm-ddThh:MM:ssZ');
+site.date_created_str = date_created_str;
 
 i = 1;
 site.codes{1,i} = 'BBY';
@@ -85,7 +95,7 @@ site.(site.codes{i}).time_zone = 'America/Los_Angeles'; % use timezones to find 
 site.(site.codes{i}).inlet_height = {0};
 for j = 1:length(site.(site.codes{i}).inlet_height); site.(site.codes{i}).inlet_height_long_name{1,j} = [num2str(site.(site.codes{i}).inlet_height{1,j}),'m']; end
 site.(site.codes{i}).species = {'co2','ch4','co'};
-site.(site.codes{i}).species_long_name = {'carbon_dioxide','methane','carbon_monoxide'};
+site.(site.codes{i}).species_standard_name = {'carbon_dioxide','methane','carbon_monoxide'};
 site.(site.codes{i}).species_units = {'micromol mol-1','nanomol mol-1','nanomol mol-1'};
 site.(site.codes{i}).species_units_long_name = {'ppm','ppb','ppb'};
 site.(site.codes{i}).instrument = {'Picarro G2401','Picarro G2401','Picarro G2401'};
@@ -94,7 +104,7 @@ site.(site.codes{i}).in_lat = 38.318756;
 site.(site.codes{i}).in_lon = -123.072528;
 site.(site.codes{i}).in_elevation = 21;
 site.(site.codes{i}).date_issued = datetime(2018,07,01);
-site.(site.codes{i}).date_issued_str = datestr(site.(site.codes{i}).date_issued,'yyyy-mm-dd');
+site.(site.codes{i}).date_issued_str = datestr(site.(site.codes{i}).date_issued,'yyyy-mm-ddThh:MM:ssZ');
 site.date_issued = max([site.date_issued,site.(site.codes{i}).date_issued]);
 
 i = i+1;
@@ -107,7 +117,7 @@ site.(site.codes{i}).time_zone = 'America/Los_Angeles'; % use timezones to find 
 site.(site.codes{i}).inlet_height = {0};
 for j = 1:length(site.(site.codes{i}).inlet_height); site.(site.codes{i}).inlet_height_long_name{1,j} = [num2str(site.(site.codes{i}).inlet_height{1,j}),'m']; end
 site.(site.codes{i}).species = {'co2','ch4','co'};
-site.(site.codes{i}).species_long_name = {'carbon_dioxide','methane','carbon_monoxide'};
+site.(site.codes{i}).species_standard_name = {'carbon_dioxide','methane','carbon_monoxide'};
 site.(site.codes{i}).species_units = {'micromol mol-1','nanomol mol-1','nanomol mol-1'};
 site.(site.codes{i}).species_units_long_name = {'ppm','ppb','ppb'};
 site.(site.codes{i}).instrument = {'Picarro G2401','Picarro G2401','Picarro G2401'};
@@ -116,7 +126,7 @@ site.(site.codes{i}).in_lat = 38.006311;
 site.(site.codes{i}).in_lon = -121.641918;
 site.(site.codes{i}).in_elevation = -2;
 site.(site.codes{i}).date_issued = datetime(2018,07,01);
-site.(site.codes{i}).date_issued_str = datestr(site.(site.codes{i}).date_issued,'yyyy-mm-dd');
+site.(site.codes{i}).date_issued_str = datestr(site.(site.codes{i}).date_issued,'yyyy-mm-ddThh:MM:ssZ');
 site.date_issued = max([site.date_issued,site.(site.codes{i}).date_issued]);
 
 i = i+1;
@@ -129,7 +139,7 @@ site.(site.codes{i}).time_zone = 'America/Los_Angeles'; % use timezones to find 
 site.(site.codes{i}).inlet_height = {0};
 for j = 1:length(site.(site.codes{i}).inlet_height); site.(site.codes{i}).inlet_height_long_name{1,j} = [num2str(site.(site.codes{i}).inlet_height{1,j}),'m']; end
 site.(site.codes{i}).species = {'co2','ch4','co'};
-site.(site.codes{i}).species_long_name = {'carbon_dioxide','methane','carbon_monoxide'};
+site.(site.codes{i}).species_standard_name = {'carbon_dioxide','methane','carbon_monoxide'};
 site.(site.codes{i}).species_units = {'micromol mol-1','nanomol mol-1','nanomol mol-1'};
 site.(site.codes{i}).species_units_long_name = {'ppm','ppb','ppb'};
 site.(site.codes{i}).instrument = {'Picarro G2401','Picarro G2401','Picarro G2401'};
@@ -138,7 +148,7 @@ site.(site.codes{i}).in_lat = 37.687526;
 site.(site.codes{i}).in_lon = -121.784217;
 site.(site.codes{i}).in_elevation = 137;
 site.(site.codes{i}).date_issued = datetime(2018,07,01);
-site.(site.codes{i}).date_issued_str = datestr(site.(site.codes{i}).date_issued,'yyyy-mm-dd');
+site.(site.codes{i}).date_issued_str = datestr(site.(site.codes{i}).date_issued,'yyyy-mm-ddThh:MM:ssZ');
 site.date_issued = max([site.date_issued,site.(site.codes{i}).date_issued]);
 
 i = i+1;
@@ -151,7 +161,7 @@ site.(site.codes{i}).time_zone = 'America/Los_Angeles'; % use timezones to find 
 site.(site.codes{i}).inlet_height = {0};
 for j = 1:length(site.(site.codes{i}).inlet_height); site.(site.codes{i}).inlet_height_long_name{1,j} = [num2str(site.(site.codes{i}).inlet_height{1,j}),'m']; end
 site.(site.codes{i}).species = {'co2','ch4','co'};
-site.(site.codes{i}).species_long_name = {'carbon_dioxide','methane','carbon_monoxide'};
+site.(site.codes{i}).species_standard_name = {'carbon_dioxide','methane','carbon_monoxide'};
 site.(site.codes{i}).species_units = {'micromol mol-1','nanomol mol-1','nanomol mol-1'};
 site.(site.codes{i}).species_units_long_name = {'ppm','ppb','ppb'};
 site.(site.codes{i}).instrument = {'Picarro G2401','Picarro G2401','Picarro G2401'};
@@ -160,7 +170,7 @@ site.(site.codes{i}).in_lat = 37.079379;
 site.(site.codes{i}).in_lon = -121.600031;
 site.(site.codes{i}).in_elevation = 86;
 site.(site.codes{i}).date_issued = datetime(2018,07,01);
-site.(site.codes{i}).date_issued_str = datestr(site.(site.codes{i}).date_issued,'yyyy-mm-dd');
+site.(site.codes{i}).date_issued_str = datestr(site.(site.codes{i}).date_issued,'yyyy-mm-ddThh:MM:ssZ');
 site.date_issued = max([site.date_issued,site.(site.codes{i}).date_issued]);
 
 % I wasn't able to find any data online from Patterson Pass.
@@ -174,7 +184,7 @@ site.date_issued = max([site.date_issued,site.(site.codes{i}).date_issued]);
 % site.(site.codes{i}).inlet_height = {0};
 % for j = 1:length(site.(site.codes{i}).inlet_height); site.(site.codes{i}).inlet_height_long_name{1,j} = [num2str(site.(site.codes{i}).inlet_height{1,j}),'m']; end
 % site.(site.codes{i}).species = {'co2','ch4','co'};
-% site.(site.codes{i}).species_long_name = {'carbon_dioxide','methane','carbon_monoxide'};
+% site.(site.codes{i}).species_standard_name = {'carbon_dioxide','methane','carbon_monoxide'};
 % site.(site.codes{i}).species_units = {'micromol mol-1','nanomol mol-1','nanomol mol-1'};
 % site.(site.codes{i}).species_units_long_name = {'ppm','ppb','ppb'};
 % site.(site.codes{i}).instrument = {'Picarro G2401','Picarro G2401','Picarro G2401'};
@@ -183,10 +193,10 @@ site.date_issued = max([site.date_issued,site.(site.codes{i}).date_issued]);
 % site.(site.codes{i}).in_lon = -121.631916;
 % site.(site.codes{i}).in_elevation = 526;
 % site.(site.codes{i}).date_issued = datetime(2018,07,01);
-% site.(site.codes{i}).date_issued_str = datestr(site.(site.codes{i}).date_issued,'yyyy-mm-dd');
+% site.(site.codes{i}).date_issued_str = datestr(site.(site.codes{i}).date_issued,'yyyy-mm-ddThh:MM:ssZ');
 % site.date_issued = max([site.date_issued,site.(site.codes{i}).date_issued]);
 
-site.date_issued_str = datestr(site.date_issued,'yyyy-mm-dd');
+site.date_issued_str = datestr(site.date_issued,'yyyy-mm-ddThh:MM:ssZ');
 
 
 %% Loading the data
@@ -330,11 +340,11 @@ site.species_list = strip(site.species_list); % Removes the last space
 
 for j = 1:length(site.species)
     if strcmp(site.species{j,1},'co2')
-        site.species_long_name{j,1} = 'carbon dioxide';
+        site.species_standard_name{j,1} = 'carbon dioxide';
     elseif strcmp(site.species{j,1},'ch4')
-        site.species_long_name{j,1} = 'methane';
+        site.species_standard_name{j,1} = 'methane';
     elseif strcmp(site.species{j,1},'co')
-        site.species_long_name{j,1} = 'carbon monoxide';
+        site.species_standard_name{j,1} = 'carbon monoxide';
     end
 end
 

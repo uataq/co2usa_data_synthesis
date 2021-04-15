@@ -1,5 +1,5 @@
-clear all
-close all
+% clear all
+% close all
 set(0,'DefaultFigureWindowStyle','docked')
 
 %% netCDF creation documentation
@@ -8,6 +8,9 @@ set(0,'DefaultFigureWindowStyle','docked')
 % http://cfconventions.org/
 % http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html
 % 
+% Also following the Attribute Convention for Data Discovery version 1.3
+% https://wiki.esipfed.org/Attribute_Convention_for_Data_Discovery_1-3
+%
 % Variables must have a standard_name, a long_name, or both.
 % A standard_name is the name used to identify the physical quantity. A standard name contains no whitespace and is case sensitive.
 % A long_name has an ad hoc, human readable format.
@@ -22,19 +25,19 @@ set(0,'DefaultFigureWindowStyle','docked')
 
 %% Creation date
 
-date_created_now = datestr(now,'yyyy-mm-dd');
-date_created_str = datestr(datenum(2019,07,09),'yyyy-mm-dd');
-%date_created_SLC_CO2 = datestr(datenum(2017,07,11),'yyyy-mm-dd');
+% date_created: The date on which this version of the data was created. Recommended. 
+date_created_now = datetime(now,'ConvertFrom','datenum','TimeZone','America/Denver'); date_created_now.TimeZone = 'UTC';
+date_created_str = datestr(date_created_now,'yyyy-mm-ddThh:MM:ssZ');
 
+% date_issued: The date on which this data (including all modifications) was formally issued (i.e., made available to a wider audience). Suggested.
 date_issued_now = datestr(now,'yyyy-mm-dd');
 date_issued = datetime(2019,07,09);
-date_issued_str = datestr(date_issued,'yyyy-mm-dd');
+date_issued_str = datestr(date_issued,'yyyy-mm-ddThh:MM:ssZ');
 
 % Working folders
-currentFolder = pwd;
-readFolder = fullfile(currentFolder(1:regexp(currentFolder,'gcloud.utah.edu')+14),'data','co2-usa','data_input');
-writeFolder = fullfile(currentFolder(1:regexp(currentFolder,'gcloud.utah.edu')+14),'data','co2-usa','synthesis_output');
-
+if ~exist('currentFolder','var'); currentFolder = pwd; end
+if ~exist('readFolder','var'); readFolder = fullfile(currentFolder(1:regexp(currentFolder,'gcloud.utah.edu')+14),'data','co2-usa','data_input'); end
+if ~exist('writeFolder','var');  writeFolder = fullfile(currentFolder(1:regexp(currentFolder,'gcloud.utah.edu')+14),'data','co2-usa','synthesis_output'); end
 
 %% City & provider information:
 
@@ -85,7 +88,7 @@ site.(site.codes{i}).time_zone = 'America/New_York';
 site.(site.codes{i}).inlet_height_long_name = {'background'};
 site.(site.codes{i}).inlet_height = {0};
 site.(site.codes{i}).species = {'co2','ch4'};
-site.(site.codes{i}).species_long_name = {'carbon_dioxide','methane'};
+site.(site.codes{i}).species_standard_name = {'carbon_dioxide','methane'};
 site.(site.codes{i}).species_units = {'micromol mol-1','nanomol mol-1'};
 site.(site.codes{i}).species_units_long_name = {'ppm','ppb'};
 site.(site.codes{i}).instrument = {'modeled','modeled'};
@@ -194,6 +197,7 @@ site.(site.codes{i}).([sptxt,'_',intxt,'_inlet_height']) = ones(length(site.(sit
 
 site.date_issued = date_issued;
 site.date_issued_str = date_issued_str;
+site.date_created_str = date_created_str;
 
 site.reference = ['McKain K, Down A, Racit S M, Budney J, Hutyra L R, Floerchinger C, Herndon S C, Nehrkorn T, Zahniser M S, Jackson R B, Phillips N, and Wofsy S. (2015) Methane emissions from natural gas infrastructure and use in the urban region of Boston, Massachusetts. Proc Natl Acad Sci U.S.A. 112(7):1941-6.; ',...
  'Sargent, Maryann, Yanina Barrera, Thomas Nehrkorn, Lucy R. Hutyra, Conor K. Gately, Taylor Jones, Kathryn McKain, et al. Anthropogenic and Biogenic CO2 Fluxes in the Boston Urban Region. Proceedings of the National Academy of Sciences 115, no. 29 (July 17, 2018): 7491–96. https://doi.org/10.1073/pnas.1803715115.'];
@@ -210,14 +214,29 @@ site.species_list = strip(site.species_list); % Removes the last space
 
 for j = 1:length(site.species)
     if strcmp(site.species{j,1},'co2')
-        site.species_long_name{j,1} = 'carbon dioxide';
+        site.species_standard_name{j,1} = 'carbon dioxide';
     elseif strcmp(site.species{j,1},'ch4')
-        site.species_long_name{j,1} = 'methane';
+        site.species_standard_name{j,1} = 'methane';
     elseif strcmp(site.species{j,1},'co')
-        site.species_long_name{j,1} = 'carbon monoxide';
+        site.species_standard_name{j,1} = 'carbon monoxide';
     end
 end
 
+%% Temporary code to truncate all sites to Dec 31, 2019 for the 4/21 ORNL DAAC archive
+
+for i = 1:length(site.codes)
+    for sp = 1:length(site.(site.codes{i}).species) % only doing CO2 for now.
+        sptxt = site.(site.codes{i}).species{sp};
+        for inlet = 1:length(site.(site.codes{i}).inlet_height_long_name)
+            intxt = site.(site.codes{i}).inlet_height_long_name{inlet};
+            mask = site.(site.codes{i}).([sptxt,'_',intxt,'_time'])<datetime(2020,1,1); % Mask for data before 2020-01-01
+            fields = {'','_std','_n','_unc','_time','_lat','_lon','_elevation','_inlet_height'};
+            for j = 1:length(fields)
+                site.(site.codes{i}).([sptxt,'_',intxt,fields{j}]) = site.(site.codes{i}).([sptxt,'_',intxt,fields{j}])(mask); % Apply the mask
+            end
+        end
+    end
+end
 
 %% Creating the netCDF file
 

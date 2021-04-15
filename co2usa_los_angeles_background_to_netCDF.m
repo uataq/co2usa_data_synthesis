@@ -31,7 +31,7 @@ date_created_str = datestr(date_created_now,'yyyy-mm-ddThh:MM:ssZ');
 
 % date_issued: The date on which this data (including all modifications) was formally issued (i.e., made available to a wider audience). Suggested.
 date_issued_now = datestr(now,'yyyy-mm-dd');
-date_issued = datetime(2019,07,01);
+date_issued = datetime(2020,07,21);
 date_issued_str = datestr(date_issued,'yyyy-mm-ddThh:MM:ssZ');
 
 % Working folders
@@ -41,48 +41,29 @@ if ~exist('writeFolder','var');  writeFolder = fullfile(currentFolder(1:regexp(c
 
 %% City & provider information:
 
-city = 'indianapolis';
-city_long_name = 'Indianapolis';
-city_url = 'http://sites.psu.edu/influx/';
+city = 'los_angeles';
+city_long_name = 'Los Angeles';
+city_url = 'https://megacities.jpl.nasa.gov/';
 
-% http://www.datacommons.psu.edu/commonswizard/MetadataDisplay.aspx?Dataset=6150
-% ftp://data1.commons.psu.edu/pub/commons/meteorology/influx/influx-tower-data/
+provider(1).name = 'Kristal Verhulst';
+provider(1).address1 = 'Jet Propulsion Laboratory M/S 233-300';
+provider(1).address2 = '4800 Oak Grove Drive';
+provider(1).address3 = 'Pasadena, CA 91109';
+provider(1).country = 'United States';
+provider(1).city = city_long_name;
+provider(1).affiliation = 'NASA Jet Propulsion Laboratory (JPL)';
+provider(1).email = 'Kristal.R.Verhulst@jpl.nasa.gov';
+provider(1).parameter = 'Provider has contributed measurements for: ';
 
-i=1;
-provider(i).name = 'Natasha L. Miles';
-provider(i).address1 = 'Penn State Department of Meteorology and Atmospheric Science';
-provider(i).address2 = '412 Walker Building';
-provider(i).address3 = 'University Park, PA 16802';
-provider(i).country = 'United States';
-provider(i).city = city_long_name;
-provider(i).affiliation = 'Penn State Department of Meteorology and Atmospheric Science';
-provider(i).email = 'nmiles@psu.edu';
-provider(i).parameter = 'Provider has contributed measurements for: ';
-%http://www.met.psu.edu/people/nlm136
-
-i=2;
-provider(i).name = 'Kenneth J. Davis';
-provider(i).address1 = 'Penn State Department of Meteorology and Atmospheric Science';
-provider(i).address2 = '512 Walker Building';
-provider(i).address3 = 'University Park, PA 16802';
-provider(i).country = 'United States';
-provider(i).city = city_long_name;
-provider(i).affiliation = 'Penn State Department of Meteorology and Atmospheric Science';
-provider(i).email = 'kjd10@psu.edu';
-provider(i).parameter = 'Provider has contributed measurements for: ';
-%http://www.met.psu.edu/people/kjd10
-
-i=3;
-provider(i).name = 'Scott J. Richardson';
-provider(i).address1 = 'Penn State Department of Meteorology and Atmospheric Science';
-provider(i).address2 = '414 Walker Building';
-provider(i).address3 = 'University Park, PA 16802';
-provider(i).country = 'United States';
-provider(i).city = city_long_name;
-provider(i).affiliation = 'Penn State Department of Meteorology and Atmospheric Science';
-provider(i).email = 'srichardson@psu.edu';
-provider(i).parameter = 'Provider has contributed measurements for: ';
-%http://www.met.psu.edu/people/sjr17
+provider(2).name = 'Riley Duren';
+provider(2).address1 = 'Jet Propulsion Laboratory';
+provider(2).address2 = '4800 Oak Grove Drive';
+provider(2).address3 = 'Pasadena, CA 91109';
+provider(2).country = 'United States';
+provider(2).city = city_long_name;
+provider(2).affiliation = 'NASA Jet Propulsion Laboratory (JPL)';
+provider(2).email = 'Riley.M.Duren@jpl.nasa.gov';
+provider(2).parameter = 'Provider has contributed measurements for: ';
 
 %% Site meta data
 
@@ -104,52 +85,65 @@ site.(site.codes{i}).name = 'background';
 site.(site.codes{i}).long_name = 'background';
 
 site.(site.codes{i}).country = 'United States';
-site.(site.codes{i}).time_zone = 'America/Indianapolis';
+site.(site.codes{i}).time_zone = 'America/Los_Angeles'; % use timezones to find out the available time zone designations.
 site.(site.codes{i}).inlet_height_long_name = {'background'};
 site.(site.codes{i}).inlet_height = {0};
 site.(site.codes{i}).species = {'co2','ch4','co'};
 site.(site.codes{i}).species_standard_name = {'carbon_dioxide','methane','carbon_monoxide'};
 site.(site.codes{i}).species_units = {'micromol mol-1','nanomol mol-1','nanomol mol-1'};
 site.(site.codes{i}).species_units_long_name = {'ppm','ppb','ppb'};
-site.(site.codes{i}).instrument = {'upwind_tower','upwind_tower','upwind_tower'};
+site.(site.codes{i}).instrument = {'smooth_curve','smooth_curve','smooth_curve'};
 site.(site.codes{i}).calibration_scale = {'WMO CO2 X2007','WMO CH4 X2004A','WMO CO X2014A'};
-site.(site.codes{i}).in_lat = 39.7685;
-site.(site.codes{i}).in_lon = -86.1581;
-site.(site.codes{i}).in_elevation = 223;
+site.(site.codes{i}).in_lat = 34.0522;
+site.(site.codes{i}).in_lon = -118.2437;
+site.(site.codes{i}).in_elevation = 94;
 site.(site.codes{i}).date_issued = date_issued;
 site.(site.codes{i}).date_issued_str = date_issued_str;
 
-fn = dir(fullfile(readFolder,city,'background','INFLUX_backgrounds_2013_2017.dat'));
+version_folder = 'v20200721';
+fn = dir(fullfile(readFolder,city,version_folder,'background_estimates_20200721','SCI_BG_smooth_curve20200721_edit.csv'));
 
 fid = fopen(fullfile(fn.folder,fn.name));
-formatSpec = '%f%f%f%f%f%f%f%f'; % Yr,Mn,Dy,Hr,sp
+formatSpec = '%s%f%f%f%f%f%f%f';
 header_lines = 1;
-read_dat = textscan(fid,formatSpec,'HeaderLines',header_lines,'Delimiter',',\t','CollectOutput',true,'TreatAsEmpty','NaN');
+read_dat = textscan(fid,formatSpec,'HeaderLines',header_lines,'Delimiter',',','CollectOutput',true,'TreatAsEmpty','NaN');
 fclose(fid);
 
 for sp = 1:length(site.(site.codes{i}).species)
     sptxt = site.(site.codes{i}).species{sp};
     inlet = 1; intxt = site.(site.codes{i}).inlet_height_long_name{inlet};
-    if strcmp(sptxt,'co2'); col.species = 6; end
-    if strcmp(sptxt,'ch4'); col.species = 7; end
-    if strcmp(sptxt,'co'); col.species = 8; end
-                
-    site.(site.codes{i}).([sptxt,'_',intxt]) = read_dat{1,1}(:,col.species);
-    site.(site.codes{i}).([sptxt,'_',intxt])(isnan(site.(site.codes{i}).([sptxt,'_',intxt]))) = -9999.0;
-    site.(site.codes{i}).([sptxt,'_',intxt,'_time']) = datetime(ones(length(read_dat{1,1}),1)*2013,ones(length(read_dat{1,1}),1),read_dat{1,1}(:,2),read_dat{1,1}(:,5),zeros(length(read_dat{1,1}),1),zeros(length(read_dat{1,1}),1));
+    if strcmp(sptxt,'co2'); col.species = 2; col.uncertainty = 3; end
+    if strcmp(sptxt,'ch4'); col.species = 4; col.uncertainty = 5; end
+    if strcmp(sptxt,'co'); col.species = 6; col.uncertainty = 7; end
+    
+    site.(site.codes{i}).([sptxt,'_',intxt,'_time']) = datetime(read_dat{1,1},'InputFormat','dd-MMM-yyyy HH:mm:ss');
+    site.(site.codes{i}).([sptxt,'_',intxt]) = read_dat{1,2}(:,col.species);
     site.(site.codes{i}).([sptxt,'_',intxt,'_std']) = ones(length(read_dat{1,1}),1)*-9999.0;
     site.(site.codes{i}).([sptxt,'_',intxt,'_n']) = ones(length(read_dat{1,1}),1)*-9999.0;
-    site.(site.codes{i}).([sptxt,'_',intxt,'_unc']) = ones(length(read_dat{1,1}),1)*-9999.0;
+    site.(site.codes{i}).([sptxt,'_',intxt,'_unc']) = read_dat{1,2}(:,col.uncertainty);
+    
+    % Removes the leading and trailing NaNs
+    data_range_ind = find(~isnan(site.(site.codes{i}).([sptxt,'_',intxt])),1,'first'):find(~isnan(site.(site.codes{i}).([sptxt,'_',intxt])),1,'last');
+    site.(site.codes{i}).([sptxt,'_',intxt]) = site.(site.codes{i}).([sptxt,'_',intxt])(data_range_ind);
+    site.(site.codes{i}).([sptxt,'_',intxt,'_std']) = site.(site.codes{i}).([sptxt,'_',intxt,'_std'])(data_range_ind);
+    site.(site.codes{i}).([sptxt,'_',intxt,'_n']) = site.(site.codes{i}).([sptxt,'_',intxt,'_n'])(data_range_ind);
+    site.(site.codes{i}).([sptxt,'_',intxt,'_unc']) = site.(site.codes{i}).([sptxt,'_',intxt,'_unc'])(data_range_ind);
+    site.(site.codes{i}).([sptxt,'_',intxt,'_time']) = site.(site.codes{i}).([sptxt,'_',intxt,'_time'])(data_range_ind);
+    clear data_range_ind
+    
+    site.(site.codes{i}).([sptxt,'_',intxt])(isnan(site.(site.codes{i}).([sptxt,'_',intxt]))) = -9999.0;
+    site.(site.codes{i}).([sptxt,'_',intxt,'_unc'])(isnan(site.(site.codes{i}).([sptxt,'_',intxt,'_unc']))) = -9999.0;
+    
     site.(site.codes{i}).([sptxt,'_',intxt,'_lat']) = repmat(site.(site.codes{i}).in_lat,length(site.(site.codes{i}).([sptxt,'_',intxt])),1);
     site.(site.codes{i}).([sptxt,'_',intxt,'_lon']) = repmat(site.(site.codes{i}).in_lon,length(site.(site.codes{i}).([sptxt,'_',intxt])),1);
     site.(site.codes{i}).([sptxt,'_',intxt,'_elevation']) = repmat(site.(site.codes{i}).in_elevation,length(site.(site.codes{i}).([sptxt,'_',intxt])),1);
-    site.(site.codes{i}).([sptxt,'_',intxt,'_inlet_height']) = ones(length(read_dat{1,1}),1)*-9999.0;
+    site.(site.codes{i}).([sptxt,'_',intxt,'_inlet_height']) = ones(length(site.(site.codes{i}).([sptxt,'_',intxt])),1)*-9999.0;
     
     site.groups = [site.groups; {[sptxt,'_',site.(site.codes{i}).name]}];
     site.species = [site.species; {sptxt}];
 end
 
-site.reference = 'Richardson, Scott J., Natasha L. Miles, Kenneth J. Davis, Thomas Lauvaux, Douglas K. Martins, Jocelyn C. Turnbull, Kathryn McKain, Colm Sweeney, and Maria Obiminda L. Cambaliza. Tower Measurement Network of In-Situ CO2, CH4, and CO in Support of the Indianapolis FLUX (INFLUX) Experiment. Elem Sci Anth 5, no. 0 (October 19, 2017). https://doi.org/10.1525/elementa.140.';
+site.reference = 'Verhulst, Kristal R., Anna Karion, Jooil Kim, Peter K. Salameh, Ralph F. Keeling, Sally Newman, John Miller, et al. Carbon Dioxide and Methane Measurements from the Los Angeles Megacity Carbon Project – Part 1: Calibration, Urban Enhancements, and Uncertainty Estimates. Atmospheric Chemistry and Physics 17, no. 13 (July 7, 2017): 8313–41. https://doi.org/10.5194/acp-17-8313-2017.';
 
 fprintf('---- %-6s loading complete ----\n\n',site.codes{i})
 

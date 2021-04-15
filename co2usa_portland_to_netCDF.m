@@ -1,5 +1,5 @@
-clear all
-close all
+% clear all
+% close all
 set(0,'DefaultFigureWindowStyle','docked')
 
 %% Outstanding questions:
@@ -11,6 +11,9 @@ fprintf('No outstanding questions as of 2019/07/30:\n')
 % Following the Climate Forecasting conventions for netCDF files documented here:
 % http://cfconventions.org/
 % http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html
+% 
+% Also following the Attribute Convention for Data Discovery version 1.3
+% https://wiki.esipfed.org/Attribute_Convention_for_Data_Discovery_1-3
 % 
 % Variables must have a standard_name, a long_name, or both.
 % A standard_name is the name used to identify the physical quantity. A standard name contains no whitespace and is case sensitive.
@@ -26,19 +29,19 @@ fprintf('No outstanding questions as of 2019/07/30:\n')
 
 %% Creation date
 
-date_created_now = datestr(now,'yyyy-mm-dd');
-date_created_str = datestr(datenum(2019,07,30),'yyyy-mm-dd');
-%date_created_SLC_CO2 = datestr(datenum(2017,07,11),'yyyy-mm-dd');
+% date_created: The date on which this version of the data was created. Recommended. 
+date_created_now = datetime(now,'ConvertFrom','datenum','TimeZone','America/Denver'); date_created_now.TimeZone = 'UTC';
+date_created_str = datestr(date_created_now,'yyyy-mm-ddThh:MM:ssZ');
 
+% date_issued: The date on which this data (including all modifications) was formally issued (i.e., made available to a wider audience). Suggested.
 date_issued_now = datestr(now,'yyyy-mm-dd');
 date_issued = datetime(2019,07,30);
-date_issued_str = datestr(date_issued,'yyyy-mm-dd');
+date_issued_str = datestr(date_issued,'yyyy-mm-ddThh:MM:ssZ');
 
 % Working folders
-currentFolder = pwd;
-readFolder = fullfile(currentFolder(1:regexp(currentFolder,'gcloud.utah.edu')+14),'data','co2-usa','data_input');
-writeFolder = fullfile(currentFolder(1:regexp(currentFolder,'gcloud.utah.edu')+14),'data','co2-usa','synthesis_output');
-
+if ~exist('currentFolder','var'); currentFolder = pwd; end
+if ~exist('readFolder','var'); readFolder = fullfile(currentFolder(1:regexp(currentFolder,'gcloud.utah.edu')+14),'data','co2-usa','data_input'); end
+if ~exist('writeFolder','var');  writeFolder = fullfile(currentFolder(1:regexp(currentFolder,'gcloud.utah.edu')+14),'data','co2-usa','synthesis_output'); end
 
 %% City & provider information:
 
@@ -66,6 +69,7 @@ site.groups = {}; % List of the site "code_species_inletHt"
 site.species = {}; % List of the "species"
 site.date_issued = date_issued;
 site.date_issued_str = date_issued_str;
+site.date_created_str = date_created_str;
 
 i = 1;
 site.codes{1,i} = 'PSU';
@@ -77,7 +81,7 @@ site.(site.codes{i}).time_zone = 'America/Los_Angeles'; % use timezones to find 
 site.(site.codes{i}).inlet_height = {21}; 
 for j = 1:length(site.(site.codes{i}).inlet_height); site.(site.codes{i}).inlet_height_long_name{1,j} = [num2str(site.(site.codes{i}).inlet_height{1,j}),'m']; end
 site.(site.codes{i}).species = {'co2'};
-site.(site.codes{i}).species_long_name = {'carbon_dioxide'};
+site.(site.codes{i}).species_standard_name = {'carbon_dioxide'};
 site.(site.codes{i}).species_units = {'micromol mol-1'};
 site.(site.codes{i}).species_units_long_name = {'ppm'};
 site.(site.codes{i}).instrument = {'LiCor 840'};
@@ -86,7 +90,7 @@ site.(site.codes{i}).in_lat = 45.5132;
 site.(site.codes{i}).in_lon = -122.6864;
 site.(site.codes{i}).in_elevation = 63;
 site.(site.codes{i}).date_issued = datetime(2018,10,01);
-site.(site.codes{i}).date_issued_str = datestr(site.(site.codes{i}).date_issued,'yyyy-mm-dd');
+site.(site.codes{i}).date_issued_str = datestr(site.(site.codes{i}).date_issued,'yyyy-mm-ddThh:MM:ssZ');
 site.date_issued = max([site.date_issued,site.(site.codes{i}).date_issued]);
 
 i = i+1;
@@ -99,7 +103,7 @@ site.(site.codes{i}).time_zone = 'America/Los_Angeles'; % use timezones to find 
 site.(site.codes{i}).inlet_height = {9};
 for j = 1:length(site.(site.codes{i}).inlet_height); site.(site.codes{i}).inlet_height_long_name{1,j} = [num2str(site.(site.codes{i}).inlet_height{1,j}),'m']; end
 site.(site.codes{i}).species = {'co2'};
-site.(site.codes{i}).species_long_name = {'carbon_dioxide'};
+site.(site.codes{i}).species_standard_name = {'carbon_dioxide'};
 site.(site.codes{i}).species_units = {'micromol mol-1'};
 site.(site.codes{i}).species_units_long_name = {'ppm'};
 site.(site.codes{i}).instrument = {'LiCor 840'};
@@ -108,7 +112,7 @@ site.(site.codes{i}).in_lat = 45.4966;
 site.(site.codes{i}).in_lon = -122.6029;
 site.(site.codes{i}).in_elevation = 75;
 site.(site.codes{i}).date_issued = datetime(2018,10,01);
-site.(site.codes{i}).date_issued_str = datestr(site.(site.codes{i}).date_issued,'yyyy-mm-dd');
+site.(site.codes{i}).date_issued_str = datestr(site.(site.codes{i}).date_issued,'yyyy-mm-ddThh:MM:ssZ');
 site.date_issued = max([site.date_issued,site.(site.codes{i}).date_issued]);
 
 i = i+1;
@@ -121,7 +125,7 @@ site.(site.codes{i}).time_zone = 'America/Los_Angeles'; % use timezones to find 
 site.(site.codes{i}).inlet_height = {7};
 for j = 1:length(site.(site.codes{i}).inlet_height); site.(site.codes{i}).inlet_height_long_name{1,j} = [num2str(site.(site.codes{i}).inlet_height{1,j}),'m']; end
 site.(site.codes{i}).species = {'co2'};
-site.(site.codes{i}).species_long_name = {'carbon_dioxide'};
+site.(site.codes{i}).species_standard_name = {'carbon_dioxide'};
 site.(site.codes{i}).species_units = {'micromol mol-1'};
 site.(site.codes{i}).species_units_long_name = {'ppm'};
 site.(site.codes{i}).instrument = {'LiCor 840'};
@@ -130,10 +134,10 @@ site.(site.codes{i}).in_lat = 45.7685;
 site.(site.codes{i}).in_lon = -122.7721;
 site.(site.codes{i}).in_elevation = 6;
 site.(site.codes{i}).date_issued = datetime(2018,10,01);
-site.(site.codes{i}).date_issued_str = datestr(site.(site.codes{i}).date_issued,'yyyy-mm-dd');
+site.(site.codes{i}).date_issued_str = datestr(site.(site.codes{i}).date_issued,'yyyy-mm-ddThh:MM:ssZ');
 site.date_issued = max([site.date_issued,site.(site.codes{i}).date_issued]);
 
-site.date_issued_str = datestr(site.date_issued,'yyyy-mm-dd');
+site.date_issued_str = datestr(site.date_issued,'yyyy-mm-ddThh:MM:ssZ');
 
 
 %% Loading the data
@@ -239,11 +243,11 @@ site.species_list = strip(site.species_list); % Removes the last space
 
 for j = 1:length(site.species)
     if strcmp(site.species{j,1},'co2')
-        site.species_long_name{j,1} = 'carbon dioxide';
+        site.species_standard_name{j,1} = 'carbon dioxide';
     elseif strcmp(site.species{j,1},'ch4')
-        site.species_long_name{j,1} = 'methane';
+        site.species_standard_name{j,1} = 'methane';
     elseif strcmp(site.species{j,1},'co')
-        site.species_long_name{j,1} = 'carbon monoxide';
+        site.species_standard_name{j,1} = 'carbon monoxide';
     end
 end
 

@@ -4,17 +4,26 @@ set(0,'DefaultFigureWindowStyle','docked')
 
 cities = {
     %'boston'
-    %'indianapolis'
+    'indianapolis'
     %'los_angeles'
     %'northeast_corridor'
     %'portland'
     %'salt_lake_city'
-    'san_francisco_beacon'
+    %'san_francisco_beacon'
     %'san_francisco_baaqmd'
     };
 
+species_to_load = {'co2'
+    %'ch4'
+    %'co'
+    };
+
 species = 'co2';
-eval('co2usa_load_netCDF')
+
+currentFolder = pwd;
+readFolder = fullfile(currentFolder(1:regexp(currentFolder,'gcloud.utah.edu')+14),'data','co2-usa','synthesis_output','netCDF_formatted_files');
+save_overview_image = 'n';
+co2_usa = co2usa_load_netCDF(cities,species_to_load,readFolder,save_overview_image);
 
 %% Geographic mean of the city lat/lon:
 
@@ -24,31 +33,30 @@ for ii = 1:size(cities,1)
     % Uppercase city name:
     city_long_name = replace(city,'_',' '); city_long_name([1,regexp(city_long_name,' ')+1]) = upper(city_long_name([1,regexp(city_long_name,' ')+1]));
     
-    unique_site_codes = unique(co2_usa.(city).site_codes(~strcmp(co2_usa.(city).site_codes,'')));
+    site_codes = fieldnames(co2_usa.(city)); site_codes = site_codes(contains(site_codes,[species,'_']));
+    unique_site_codes = unique(site_codes);
+    unique_site_codes = unique_site_codes(~strcmp(unique_site_codes,[species,'_background'])); % Don't include the "background"
+    str_parts = split(unique_site_codes,'_',2);
+    
+    % For this application, I only care about unique sites, so I'm just going to use the first site/inlet. 
+    [~,ia] = unique(str_parts(:,2));
+    unique_site_codes = unique_site_codes(ia,:);
+
     city_lats = nan(size(unique_site_codes,1),1);
     city_lons = nan(size(unique_site_codes,1),1);
     
     for usc_i = 1:length(unique_site_codes) % Loops through each site
-        site_i = regexpi(co2_usa.(city).site_names,unique_site_codes{usc_i}); % Array of all of the inlets at each site.
-        for jj = 1:length(site_i); if isempty(site_i{jj}); site_i{jj} = 0; end; end % Replaces all the empty values with 0.
-        site_i = logical(cell2mat(site_i));
-        
-        % For this application, I only care about unique sites, so I'm just going to use the first site/inlet. 
-        site_i = find(site_i,1,'first');
-        
         % Location of city sites
-        site = co2_usa.(city).site_names{site_i,1};
-        i_lat = strcmp({co2_usa.(city).(site).Attributes.Name},'site_latitude');
-        i_lon = strcmp({co2_usa.(city).(site).Attributes.Name},'site_longitude');
-        
-        city_lats(usc_i,1) = str2double(co2_usa.(city).(site).Attributes(i_lat).Value);
-        city_lons(usc_i,1) = str2double(co2_usa.(city).(site).Attributes(i_lon).Value);
+        site = unique_site_codes{usc_i,1};
+        city_lats(usc_i,1) = str2double(co2_usa.(city).(site).global_attributes.('site_latitude'));
+        city_lons(usc_i,1) = str2double(co2_usa.(city).(site).global_attributes.('site_longitude'));
         fprintf('%s-%s: %0.4f %0.4f\n',city,site,city_lats(usc_i,1),city_lons(usc_i,1))
     end
     fprintf('%s overall average:\n%0.4f %0.4f\n',city,mean(city_lats),mean(city_lons))
     
     plt.station_map = 'y';
     if strcmp(plt.station_map,'y')
+        readFolder = fullfile(currentFolder(1:regexp(currentFolder,'gcloud.utah.edu')+14),'data','co2-usa','synthesis_output');
         basemap_fn = dir(fullfile(readFolder,'maps',[city,'_basemap*.jpg']));
         plt.update_basemap = 'n';
         if or(strcmp(plt.update_basemap,'y'),isempty(basemap_fn))

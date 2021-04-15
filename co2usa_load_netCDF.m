@@ -200,8 +200,9 @@ xAX.FontSize = 25; yAX.FontSize = 25; yl.FontSize = 30; yl.FontWeight = 'Bold';
 %ax = gca; t1 = ax.XLim(1); t2 = ax.XLim(2); datetick('x','yyyy')
 
 if strcmp(save_overview_image,'y')
-    writeFolder = fullfile(currentFolder(1:regexp(currentFolder,'gcloud.utah.edu')+14),'data','co2-usa','synthesis_output');
-    export_fig(fullfile(writeFolder,city,[city,'_img_all_sites_',species,'.jpg']),'-r300','-p0.01',fx(ii+species_index*100))
+    %writeFolder = fullfile(currentFolder(1:regexp(currentFolder,'gcloud.utah.edu')+14),'data','co2-usa','synthesis_output',city);
+    writeFolder = '';
+    export_fig(fullfile(writeFolder,[city,'_img_all_sites_',species,'.jpg']),'-r200','-p0.01',fx(ii+species_index*100))
 %    export_fig(fullfile(readFolder,city,[city,'_img_all_sites_',species,'_',[datestr(t1,'yyyymmdd'),'-',datestr(t2,'yyyymmdd')],'.jpg']),'-r300','-p0.01',fx(ii))
 end
 

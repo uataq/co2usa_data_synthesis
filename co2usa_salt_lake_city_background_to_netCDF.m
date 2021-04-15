@@ -1,5 +1,5 @@
-clear all
-close all
+% clear all
+% close all
 set(0,'DefaultFigureWindowStyle','docked')
 
 %% netCDF creation documentation
@@ -7,6 +7,9 @@ set(0,'DefaultFigureWindowStyle','docked')
 % Following the Climate Forecasting conventions for netCDF files documented here:
 % http://cfconventions.org/
 % http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html
+% 
+% Also following the Attribute Convention for Data Discovery version 1.3
+% https://wiki.esipfed.org/Attribute_Convention_for_Data_Discovery_1-3
 % 
 % Variables must have a standard_name, a long_name, or both.
 % A standard_name is the name used to identify the physical quantity. A standard name contains no whitespace and is case sensitive.
@@ -22,19 +25,19 @@ set(0,'DefaultFigureWindowStyle','docked')
 
 %% Creation date
 
-date_created_now = datestr(now,'yyyy-mm-dd');
-date_created_str = datestr(datenum(2018,07,01),'yyyy-mm-dd');
-%date_created_SLC_CO2 = datestr(datenum(2017,07,11),'yyyy-mm-dd');
+% date_created: The date on which this version of the data was created. Recommended. 
+date_created_now = datetime(now,'ConvertFrom','datenum','TimeZone','America/Denver'); date_created_now.TimeZone = 'UTC';
+date_created_str = datestr(date_created_now,'yyyy-mm-ddThh:MM:ssZ');
 
+% date_issued: The date on which this data (including all modifications) was formally issued (i.e., made available to a wider audience). Suggested.
 date_issued_now = datestr(now,'yyyy-mm-dd');
-date_issued = datetime(2019,07,01);
-date_issued_str = datestr(date_issued,'yyyy-mm-dd');
+date_issued = datetime(2021,02,22);
+date_issued_str = datestr(date_issued,'yyyy-mm-ddThh:MM:ssZ');
 
 % Working folders
-currentFolder = pwd;
-readFolder = fullfile(currentFolder(1:regexp(currentFolder,'gcloud.utah.edu')+14),'data','co2-usa','data_input');
-writeFolder = fullfile(currentFolder(1:regexp(currentFolder,'gcloud.utah.edu')+14),'data','co2-usa','synthesis_output');
-
+if ~exist('currentFolder','var'); currentFolder = pwd; end
+if ~exist('readFolder','var'); readFolder = fullfile(currentFolder(1:regexp(currentFolder,'gcloud.utah.edu')+14),'data','co2-usa','data_input'); end
+if ~exist('writeFolder','var');  writeFolder = fullfile(currentFolder(1:regexp(currentFolder,'gcloud.utah.edu')+14),'data','co2-usa','synthesis_output'); end
 
 %% City & provider information:
 
@@ -53,14 +56,14 @@ provider(i).affiliation = 'University of Utah';
 provider(i).email = 'John.Lin@utah.edu';
 provider(i).parameter = 'Provider has contributed measurements for: ';
 i = 2;
-provider(i).name = 'Logan Mitchell';
-provider(i).address1 = 'Department of Atmospheric Sciences';
-provider(i).address2 = '135 S 1460 E, room 819';
+provider(i).name = 'David Bowling';
+provider(i).address1 = 'School of Biological Sciences';
+provider(i).address2 = '257 S. 1400 E.';
 provider(i).address3 = 'Salt Lake City, UT 84112';
 provider(i).country = 'United States';
 provider(i).city = city_long_name;
 provider(i).affiliation = 'University of Utah';
-provider(i).email = 'Logan.Mitchell@utah.edu';
+provider(i).email = 'David.Bowling@utah.edu';
 provider(i).parameter = 'Provider has contributed measurements for: ';
 
 %% Site meta data
@@ -72,8 +75,8 @@ site.groups = {}; % List of the site "code_species_inletHt"
 site.species = {}; % List of the "species"
 site.codes = {}; % List of the site "codes"
 site.date_issued = date_issued;
-site.date_issued_str = datestr(site.date_issued,'yyyy-mm-dd');
-
+site.date_issued_str = datestr(site.date_issued,'yyyy-mm-ddThh:MM:ssZ');
+site.date_created_str = date_created_str;
 
 i = 1;
 site.codes{1,i} = 'background';
@@ -87,7 +90,7 @@ site.(site.codes{i}).time_zone = 'America/Denver';
 site.(site.codes{i}).inlet_height_long_name = {'background'};
 site.(site.codes{i}).inlet_height = {0};
 site.(site.codes{i}).species = {'co2'};
-site.(site.codes{i}).species_long_name = {'carbon_dioxide'};
+site.(site.codes{i}).species_standard_name = {'carbon_dioxide'};
 site.(site.codes{i}).species_units = {'micromol mol-1'};
 site.(site.codes{i}).species_units_long_name = {'ppm'};
 site.(site.codes{i}).instrument = {'modeled'};
@@ -107,7 +110,7 @@ site.species = [site.species; {sptxt}];
 load(fullfile(currentFolder(1:regexp(currentFolder,'gcloud.utah.edu')+14),'code','SLC CO2','Data','data_background.mat'))
 
 site.(site.codes{i}).([sptxt,'_',intxt]) = bg.co2; % species mixing ratio
-site.(site.codes{i}).([sptxt,'_',intxt,'_time']) = datetime(bg.t,'ConvertFrom','datenum'); ...
+site.(site.codes{i}).([sptxt,'_',intxt,'_time']) = datetime(bg.dtUTC,'ConvertFrom','datenum'); ...
 
 % Note: The first several years of BG come from CarbonTracker which has values on the half hour. This floors the hour.
 site.(site.codes{i}).([sptxt,'_',intxt,'_time']).Minute = 0; 
@@ -127,11 +130,27 @@ site.(site.codes{i}).([sptxt,'_',intxt,'_elevation']) = repmat(site.(site.codes{
 site.(site.codes{i}).([sptxt,'_',intxt,'_inlet_height']) = ones(length(site.(site.codes{i}).([sptxt,'_',intxt])),1)*-9999.0;
 
 site.date_issued = date_issued; % This date will be updated with the most recent date in the files below.
-site.date_issued_str = datestr(site.date_issued,'yyyy-mm-dd');
+site.date_issued_str = datestr(site.date_issued,'yyyy-mm-ddThh:MM:ssZ');
 
 fprintf('---- %-6s complete ----\n\n',site.codes{i})
 
-% Identify the netCDF files to create based on species.
+%% Temporary code to truncate all sites to Dec 31, 2019 for the 4/21 ORNL DAAC archive
+
+for i = 1:length(site.codes)
+    for sp = 1:length(site.(site.codes{i}).species) % only doing CO2 for now.
+        sptxt = site.(site.codes{i}).species{sp};
+        for inlet = 1:length(site.(site.codes{i}).inlet_height_long_name)
+            intxt = site.(site.codes{i}).inlet_height_long_name{inlet};
+            mask = site.(site.codes{i}).([sptxt,'_',intxt,'_time'])<datetime(2020,1,1); % Mask for data before 2020-01-01
+            fields = {'','_std','_n','_unc','_time','_lat','_lon','_elevation','_inlet_height'};
+            for j = 1:length(fields)
+                site.(site.codes{i}).([sptxt,'_',intxt,fields{j}]) = site.(site.codes{i}).([sptxt,'_',intxt,fields{j}])(mask); % Apply the mask
+            end
+        end
+    end
+end
+
+%% Identify the netCDF files to create based on species.
 site.unique_species = unique(site.species);
 site.species_list = [];
 for species_ind = 1:length(site.unique_species)
@@ -141,11 +160,11 @@ site.species_list = strip(site.species_list); % Removes the last space
 
 for j = 1:length(site.species)
     if strcmp(site.species{j,1},'co2')
-        site.species_long_name{j,1} = 'carbon dioxide';
+        site.species_standard_name{j,1} = 'carbon dioxide';
     elseif strcmp(site.species{j,1},'ch4')
-        site.species_long_name{j,1} = 'methane';
+        site.species_standard_name{j,1} = 'methane';
     elseif strcmp(site.species{j,1},'co')
-        site.species_long_name{j,1} = 'carbon monoxide';
+        site.species_standard_name{j,1} = 'carbon monoxide';
     end
 end
 

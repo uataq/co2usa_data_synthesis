@@ -18,13 +18,12 @@ else
     city = 'san_francisco_baaqmd';
 end
 
-currentFolder = pwd;
-readFolder = fullfile(currentFolder(1:regexp(currentFolder,'gcloud.utah.edu')+14),'data','co2-usa','synthesis_output',city,'netCDF_formatted_files');
-writeFolder = fullfile(currentFolder(1:regexp(currentFolder,'gcloud.utah.edu')+14),'data','co2-usa','synthesis_output',city,'txt_formatted_files');
+if ~exist('currentFolder','var'); currentFolder = pwd; end
+if ~exist('readFolder','var'); readFolder = fullfile(currentFolder(1:regexp(currentFolder,'gcloud.utah.edu')+14),'data','co2-usa','synthesis_output','netCDF_formatted_files'); end
+if ~exist('writeFolder','var');  writeFolder = fullfile(currentFolder(1:regexp(currentFolder,'gcloud.utah.edu')+14),'data','co2-usa','synthesis_output','txt_formatted_files'); end
 
-if ~exist(writeFolder,'dir'); mkdir(writeFolder); end
-
-all_files = dir(fullfile(readFolder,'*.nc'));
+%if ~exist(writeFolder,'dir'); mkdir(writeFolder); end
+all_files = dir(fullfile(readFolder,[city,'*.nc']));
 
 for fni = 1:length(all_files) % Loops through all of the netCDF files in the folder
 
