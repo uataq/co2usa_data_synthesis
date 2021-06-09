@@ -4,9 +4,7 @@ set(0,'DefaultFigureWindowStyle','docked')
 
 %% Outstanding questions:
 
-fprintf('Questions as of 2020/08/04:\n')
-fprintf('- City URL\n')
-fprintf('- Reference paper\n')
+fprintf('No questions as of 2021-05-03\n')
 
 %% netCDF creation documentation
 
@@ -49,7 +47,7 @@ if ~exist('writeFolder','var');  writeFolder = fullfile(currentFolder(1:regexp(c
 
 city = 'toronto';
 city_long_name = 'Toronto';
-city_url = '';
+city_url = 'https://www.canada.ca/en/environment-climate-change/services/climate-change/greenhouse-gases-aerosols-monitoring.html';
 
 provider(1).name = 'Felix Vogel';
 provider(1).address1 = 'Environment and Climate Change Canada';
@@ -59,13 +57,15 @@ provider(1).country = 'Canada';
 provider(1).city = city_long_name;
 provider(1).affiliation = 'Environment and Climate Change Canada';
 provider(1).email = 'felix.vogel@canada.ca';
+provider(1).orcid = 'https://orcid.org/0000-0002-2548-3390';
 provider(1).parameter = 'Provider has contributed measurements for: ';
 
 %% Site meta data
 
 clear site % start fresh
 
-site.reference = '';
+site.reference = ['Vogel, F. R., M. Ishizawa, E. Chan, D. Chan, S. Hammer, I. Levin, and D. E. J. Worthy. “Regional Non-CO2 Greenhouse Gas Fluxes Inferred from Atmospheric Measurements in Ontario, Canada.” Journal of Integrative Environmental Sciences 9, no. sup1 (November 1, 2012): 41–55. https://doi.org/10.1080/1943815X.2012.691884.;',...
+    'Pugliese, Stephanie C., Jennifer G. Murphy, Felix R. Vogel, Michael D. Moran, Junhua Zhang, Qiong Zheng, Craig A. Stroud, Shuzhan Ren, Douglas Worthy, and Gregoire Broquet. “High-Resolution Quantification of Atmospheric CO2 Mixing Ratios in the Greater Toronto Area, Canada.” Atmospheric Chemistry and Physics 18, no. 5 (March 8, 2018): 3387–3401. https://doi.org/10.5194/acp-18-3387-2018.'];
 
 site.groups = {}; % List of the site "code_species_inletHt"
 site.species = {}; % List of the "species"
@@ -190,7 +190,8 @@ for i = 1:length(site.codes)
             if strcmp(sptxt,'ch4'); col.species = 6; col.std = 7; end
             if strcmp(sptxt,'co'); col.species = 10; col.std = 11; end
             
-            site.(site.codes{i}).([sptxt,'_',intxt,'_time']) = datetime(read_dat{1,1}(:,3),ones(size(read_dat{1,1}(:,3),1),1),read_dat{1,1}(:,4),read_dat{1,1}(:,5),zeros(size(read_dat{1,1}(:,3),1),1),zeros(size(read_dat{1,1}(:,3),1),1));
+            % Subtract 1 hour from the time to account for floored data in this archive vs ceil data reported from Toronto. 
+            site.(site.codes{i}).([sptxt,'_',intxt,'_time']) = datetime(read_dat{1,1}(:,3),ones(size(read_dat{1,1}(:,3),1),1),read_dat{1,1}(:,4),read_dat{1,1}(:,5),zeros(size(read_dat{1,1}(:,3),1),1),zeros(size(read_dat{1,1}(:,3),1),1))-hours(1);
             site.(site.codes{i}).([sptxt,'_',intxt]) = read_dat{1,1}(:,col.species);
             site.(site.codes{i}).([sptxt,'_',intxt,'_std']) = read_dat{1,1}(:,col.std);
             site.(site.codes{i}).([sptxt,'_',intxt,'_n']) = ones(length(read_dat{1,1}),1)*-9999.0;
