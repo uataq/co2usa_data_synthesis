@@ -57,6 +57,7 @@ provider(1).country = 'United States';
 provider(1).city = city_long_name;
 provider(1).affiliation = 'Portland State University';
 provider(1).email = 'arice@pdx.edu';
+provider(1).orcid = '';
 provider(1).parameter = 'Provider has contributed measurements for: ';
 
 %% Site meta data

@@ -3,14 +3,15 @@ close all
 set(0,'DefaultFigureWindowStyle','docked')
 
 cities = {
-    %'boston'
+    'boston'
     'indianapolis'
-    %'los_angeles'
-    %'northeast_corridor'
-    %'portland'
-    %'salt_lake_city'
-    %'san_francisco_beacon'
-    %'san_francisco_baaqmd'
+    'los_angeles'
+    'portland'
+    'salt_lake_city'
+    'san_francisco_beacon'
+    'san_francisco_baaqmd'
+    'toronto'
+    'washington_dc_baltimore'
     };
 
 species_to_load = {'co2'

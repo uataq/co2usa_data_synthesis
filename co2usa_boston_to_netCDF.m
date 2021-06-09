@@ -57,19 +57,21 @@ provider(i).address2 = '20 Oxford St';
 provider(i).address3 = 'Cambridge, MA 02138';
 provider(i).country = 'United States';
 provider(i).city = city_long_name;
-provider(i).affiliation = 'Harvard University School of Engineering and Applied Sciences';
+provider(i).affiliation = 'Harvard University';
 provider(i).email = 'mracine@fas.harvard.edu';
+provider(i).orcid = 'https://orcid.org/0000-0001-9602-3108';
 provider(i).parameter = 'Provider has contributed measurements for: ';
 
 i = 2;
-provider(i).name = 'Steven Wofsy';
+provider(i).name = 'Steven C. Wofsy';
 provider(i).address1 = 'Harvard University School of Engineering and Applied Sciences';
 provider(i).address2 = '20 Oxford St';
 provider(i).address3 = 'Cambridge, MA 02138';
 provider(i).country = 'United States';
 provider(i).city = city_long_name;
-provider(i).affiliation = 'Harvard University School of Engineering and Applied Sciences';
+provider(i).affiliation = 'Harvard University';
 provider(i).email = 'wofsy@g.harvard.edu';
+provider(i).orcid = 'https://orcid.org/0000-0002-3133-2089';
 provider(i).parameter = 'Provider has contributed measurements for: ';
 
 %% Site meta data
@@ -628,7 +630,8 @@ for i = 1:length(site.codes)
     intxt = site.(site.codes{i}).inlet_height_long_name{1};
     figure(i); clf;
     for j = 1:length(site.(site.codes{i}).species)
-        sptxt = site.(site.codes{i}).species{j}; pltxt = [sptxt,'_',intxt,'_std'];
+        sptxt = site.(site.codes{i}).species{j}; 
+        pltxt = [sptxt,'_',intxt];
         mask = true(size(site.(site.codes{i}).(pltxt))); mask(site.(site.codes{i}).(pltxt)==-9999) = false;
         if sum(mask)==0; mask(mask==false) = true; end % if they're all false, make them true so the plotting works. Will show up as -9999 line.
         ax(i,j) = subplot(length(site.(site.codes{i}).species),1,j);

@@ -31,7 +31,7 @@ date_created_str = datestr(date_created_now,'yyyy-mm-ddThh:MM:ssZ');
 
 % date_issued: The date on which this data (including all modifications) was formally issued (i.e., made available to a wider audience). Suggested.
 date_issued_now = datestr(now,'yyyy-mm-dd');
-date_issued = datetime(2021,03,30);
+date_issued = datetime(2021,05,03);
 date_issued_str = datestr(date_issued,'yyyy-mm-ddThh:MM:ssZ');
 
 % Working folders
@@ -46,40 +46,43 @@ city_long_name = 'Los Angeles';
 city_url = 'https://megacities.jpl.nasa.gov/';
 
 i=1;
-provider(i).name = 'Kristal Verhulst';
-provider(i).address1 = 'Jet Propulsion Laboratory M/S 233-300';
-provider(i).address2 = '4800 Oak Grove Drive';
-provider(i).address3 = 'Pasadena, CA 91109';
+provider(i).name = 'Jooil Kim';
+provider(i).address1 = 'Scripps Institution of Oceanography';
+provider(i).address2 = '9500 Gilman Dr #0244';
+provider(i).address3 = 'La Jolla, CA 92093-0244';
 provider(i).country = 'United States';
 provider(i).city = city_long_name;
-provider(i).affiliation = 'NASA Jet Propulsion Laboratory (JPL)';
+provider(i).affiliation = 'Scripps Institution of Oceanography';
 provider(i).email = 'jjkim@ucsd.edu';
+provider(i).orcid = 'https://orcid.org/0000-0002-2610-4882';
 provider(i).parameter = 'Provider has contributed measurements for: ';
 
-i=2;
-provider(i).name = 'Kristal Verhulst';
+i=i+1;
+provider(i).name = 'Kristal R. Verhulst';
 provider(i).address1 = 'Jet Propulsion Laboratory M/S 233-300';
 provider(i).address2 = '4800 Oak Grove Drive';
 provider(i).address3 = 'Pasadena, CA 91109';
 provider(i).country = 'United States';
 provider(i).city = city_long_name;
-provider(i).affiliation = 'NASA Jet Propulsion Laboratory (JPL)';
+provider(i).affiliation = 'Jet Propulsion Laboratory, California Institute of Technology';
 provider(i).email = 'Kristal.R.Verhulst@jpl.nasa.gov';
+provider(i).orcid = 'https://orcid.org/0000-0001-5678-9678';
 provider(i).parameter = 'Provider has contributed measurements for: ';
 
-i=3;
-provider(i).name = 'Charles Miller';
+i=i+1;
+provider(i).name = 'Charles E. Miller';
 provider(i).address1 = 'Jet Propulsion Laboratory M/S 183-501';
 provider(i).address2 = '4800 Oak Grove Drive';
 provider(i).address3 = 'Pasadena, CA 91109';
 provider(i).country = 'United States';
 provider(i).city = city_long_name;
-provider(i).affiliation = 'NASA Jet Propulsion Laboratory (JPL)';
+provider(i).affiliation = 'Jet Propulsion Laboratory, California Institute of Technology';
 provider(i).email = 'Charles.E.Miller@jpl.nasa.gov';
+provider(i).orcid = 'https://orcid.org/0000-0002-9380-4838';
 provider(i).parameter = 'Provider has contributed measurements for: ';
 
-i=4;
-provider(i).name = 'Ray Weiss';
+i=i+1;
+provider(i).name = 'Ray F. Weiss';
 provider(i).address1 = 'Scripps Institution of Oceanography';
 provider(i).address2 = '9500 Gilman Dr #0244';
 provider(i).address3 = 'La Jolla, CA 92093-0244';
@@ -87,10 +90,11 @@ provider(i).country = 'United States';
 provider(i).city = city_long_name;
 provider(i).affiliation = 'Scripps Institution of Oceanography';
 provider(i).email = 'rfweiss@uscd.edu';
+provider(i).orcid = 'https://orcid.org/0000-0001-9551-7739';
 provider(i).parameter = 'Provider has contributed measurements for: ';
 
-i=5;
-provider(i).name = 'Ralph Keeling';
+i=i+1;
+provider(i).name = 'Ralph F. Keeling';
 provider(i).address1 = 'Scripps Institution of Oceanography';
 provider(i).address2 = '9500 Gilman Dr #0244';
 provider(i).address3 = 'La Jolla, CA 92093-0244';
@@ -98,17 +102,19 @@ provider(i).country = 'United States';
 provider(i).city = city_long_name;
 provider(i).affiliation = 'Scripps Institution of Oceanography';
 provider(i).email = 'rkeeling@uscd.edu';
+provider(i).orcid = 'https://orcid.org/0000-0002-9749-2253';
 provider(i).parameter = 'Provider has contributed measurements for: ';
 
-i=6;
+i=i+1;
 provider(i).name = 'Steve Prinzivalli';
-provider(i).address1 = 'Earth Networks';
+provider(i).address1 = 'Earth Networks Inc.';
 provider(i).address2 = '12410 Milestone Center Dr., Suite 300';
 provider(i).address3 = 'Germantown, MD 20876';
 provider(i).country = 'United States';
 provider(i).city = city_long_name;
-provider(i).affiliation = 'Earth Networks';
+provider(i).affiliation = 'Earth Networks Inc.';
 provider(i).email = 'sprinzivalli@earthnetworks.com';
+provider(i).orcid = '';
 provider(i).parameter = 'Provider has contributed measurements for: ';
 
 %% Site meta data
@@ -123,7 +129,7 @@ site.date_issued = date_issued;
 site.date_issued_str = date_issued_str;
 site.date_created_str = date_created_str;
 
-version_folder = 'v20210330';
+version_folder = 'v20210503';
 
 fn = dir(fullfile(readFolder,city,version_folder,'LAM_sites.csv'));
 fid = fopen(fullfile(fn.folder,fn.name));
@@ -203,7 +209,9 @@ for i = 1:length(site.codes)
                 fn = fullfile(site.(site.codes{i}).([sptxt,'_',intxt,'_files'])(fni).folder,site.(site.codes{i}).([sptxt,'_',intxt,'_files'])(fni).name);
                 
                 if isempty(fn); fprintf('No file %s.\nContinuing onto the next file.\n',fn); keyboard; end
-                in_format = '%{yyyy-MM-dd HH:mm:ss}D%f%f%f%f%f%s%s%f%f%f%f%f%f%f%f%f%f%f%f%s';
+                %in_format = '%{yyyy-MM-dd HH:mm:ss}D%f%f%f%f%f%s%s%f%f%f%f%f%f%f%f%f%f%f%f%s';
+                in_format = '%{yyyy-MM-dd''T''HH''Z}D%f%f%f%f%s%s%s%f%f%f%f%f%f%f%f%f%f%f%f%s';
+                
                 fid = fopen(fn);
                 read_dat = textscan(fid,in_format,'HeaderLines',1,'Delimiter',',','CollectOutput',true,'TreatAsEmpty','NaN');
                 fclose(fid);
@@ -291,6 +299,26 @@ for i = 1:length(site.codes)
             end
         end
     end
+end
+
+%% Optional plots to spot check the data.
+
+%i = 4;
+%site.(site.codes{i}).species
+clear('ax')
+for i = 1:length(site.codes)
+    intxt = site.(site.codes{i}).inlet_height_long_name{1};
+    figure(i); clf;
+    for j = 1:length(site.(site.codes{i}).species)
+        sptxt = site.(site.codes{i}).species{j}; 
+        pltxt = [sptxt,'_',intxt];
+        mask = true(size(site.(site.codes{i}).(pltxt))); mask(site.(site.codes{i}).(pltxt)==-9999) = false;
+        if sum(mask)==0; mask(mask==false) = true; end % if they're all false, make them true so the plotting works. Will show up as -9999 line.
+        ax(i,j) = subplot(length(site.(site.codes{i}).species),1,j);
+        plot(site.(site.codes{i}).([sptxt,'_',intxt,'_time'])(mask),site.(site.codes{i}).(pltxt)(mask))
+        grid on; ylabel(replace(pltxt,'_',' ')); title(site.codes{i})
+    end
+    linkaxes(ax(i,:),'x')
 end
 
 %% Identify the netCDF files to create based on species.

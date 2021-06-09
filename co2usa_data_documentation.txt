@@ -2,8 +2,8 @@ CO2 Urban Synthesis and Analysis (CO2-USA) Data Synthesis
 
 This data product contains hourly urban greenhouse gas measurements for cities in the CO2-USA network.  Greenhouse gases included in this product are carbon dioxide (CO2), methane (CH4), and carbon monoxide (CO).
 
-Version: 2019-09-09
-Prepared by: Logan Mitchell
+Version: 2021-05-17
+Prepared by: Logan E. Mitchell
 
 ------------------------------------------------------------------------------------------------
 CONTENTS
@@ -41,15 +41,17 @@ These cooperative data products are made freely available to the public and scie
 ------------------------------------------------------------------------------------------------
 3.	Cities included in this data product
 
-Boston
-Indianapolis
-Los Angeles
-Portland
-Salt Lake City
-San Francisco BEACON
-San Francisco BAAQMD
+Boston, USA
+Indianapolis, USA
+Los Angeles, USA
+Portland, USA
+Salt Lake City, USA
+San Francisco, USA (BEACO2N)
+San Francisco, USA (BAAQMD)
+Toronto, Canada
+Washington D.C./Baltimore, USA
 
-Contact information for the data providers and references to published paper are included in the data file for each city.
+Contact information for the data providers and references to published papers are included in the data files for each city.
 
 ------------------------------------------------------------------------------------------------
 4.	Data format

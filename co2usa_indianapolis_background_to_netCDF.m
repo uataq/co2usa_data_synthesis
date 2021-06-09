@@ -50,37 +50,40 @@ city_url = 'http://sites.psu.edu/influx/';
 
 i=1;
 provider(i).name = 'Natasha L. Miles';
-provider(i).address1 = 'Penn State Department of Meteorology and Atmospheric Science';
+provider(i).address1 = 'Department of Meteorology and Atmospheric Science';
 provider(i).address2 = '412 Walker Building';
 provider(i).address3 = 'University Park, PA 16802';
 provider(i).country = 'United States';
 provider(i).city = city_long_name;
-provider(i).affiliation = 'Penn State Department of Meteorology and Atmospheric Science';
+provider(i).affiliation = 'The Pennsylvania State University';
 provider(i).email = 'nmiles@psu.edu';
+provider(i).orcid = 'https://orcid.org/0000-0003-4266-2726';
 provider(i).parameter = 'Provider has contributed measurements for: ';
 %http://www.met.psu.edu/people/nlm136
 
 i=2;
 provider(i).name = 'Kenneth J. Davis';
-provider(i).address1 = 'Penn State Department of Meteorology and Atmospheric Science';
+provider(i).address1 = 'Department of Meteorology and Atmospheric Science';
 provider(i).address2 = '512 Walker Building';
 provider(i).address3 = 'University Park, PA 16802';
 provider(i).country = 'United States';
 provider(i).city = city_long_name;
-provider(i).affiliation = 'Penn State Department of Meteorology and Atmospheric Science';
+provider(i).affiliation = 'The Pennsylvania State University';
 provider(i).email = 'kjd10@psu.edu';
+provider(i).orcid = 'https://orcid.org/0000-0002-1992-8381';
 provider(i).parameter = 'Provider has contributed measurements for: ';
 %http://www.met.psu.edu/people/kjd10
 
 i=3;
 provider(i).name = 'Scott J. Richardson';
-provider(i).address1 = 'Penn State Department of Meteorology and Atmospheric Science';
+provider(i).address1 = 'Department of Meteorology and Atmospheric Science';
 provider(i).address2 = '414 Walker Building';
 provider(i).address3 = 'University Park, PA 16802';
 provider(i).country = 'United States';
 provider(i).city = city_long_name;
-provider(i).affiliation = 'Penn State Department of Meteorology and Atmospheric Science';
+provider(i).affiliation = 'The Pennsylvania State University';
 provider(i).email = 'srichardson@psu.edu';
+provider(i).orcid = '';
 provider(i).parameter = 'Provider has contributed measurements for: ';
 %http://www.met.psu.edu/people/sjr17
 

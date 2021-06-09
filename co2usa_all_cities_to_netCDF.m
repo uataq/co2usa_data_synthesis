@@ -36,17 +36,6 @@ eval('co2usa_los_angeles_to_netCDF')
 %eval('co2usa_los_angeles_background_to_netCDF')
 eval('co2usa_netCDF2txt')
 
-%% Northeast Corridor
-clear all
-close all
-currentFolder = pwd;
-writeFolder = fullfile(currentFolder(1:regexp(currentFolder,'gcloud.utah.edu')+14),'data','co2-usa','synthesis_output_ornl_new');
-delete(fullfile(writeFolder,'netCDF_formatted_files','northeast_corridor*.nc'))
-delete(fullfile(writeFolder,'txt_formatted_files','northeast_corridor*.txt'))
-eval('co2usa_northeast_corridor_to_netCDF')
-%eval('co2usa_northeast_corridor_background_to_netCDF')
-eval('co2usa_netCDF2txt')
-
 %% Portland
 clear all
 close all
@@ -80,8 +69,7 @@ eval('co2usa_san_francisco_baaqmd_to_netCDF')
 %eval('co2usa_san_francisco_baaqmd_background_to_netCDF')
 eval('co2usa_netCDF2txt')
 
-
-%% San Francisco BEACON
+%% San Francisco BEACO2N
 clear all
 close all
 currentFolder = pwd;
@@ -103,8 +91,19 @@ eval('co2usa_toronto_to_netCDF')
 %eval('co2usa_toronto_background_to_netCDF')
 eval('co2usa_netCDF2txt')
 
+%% Washington DC-Baltimore (Northeast Corridor)
+clear all
+close all
+currentFolder = pwd;
+writeFolder = fullfile(currentFolder(1:regexp(currentFolder,'gcloud.utah.edu')+14),'data','co2-usa','synthesis_output_ornl_new');
+delete(fullfile(writeFolder,'netCDF_formatted_files','washington_dc_baltimore*.nc'))
+delete(fullfile(writeFolder,'txt_formatted_files','washington_dc_baltimore*.txt'))
+eval('co2usa_washington_dc_baltimore_to_netCDF')
+%eval('co2usa_washington_dc_baltimore_background_to_netCDF')
+eval('co2usa_netCDF2txt')
+
 %%
-return
+%return
 
 %% Package up each city in a zip file:
 
@@ -119,12 +118,12 @@ cities = {
     'boston'
     'indianapolis'
     'los_angeles'
-    'northeast_corridor'
     'portland'
     'salt_lake_city'
     'san_francisco_beacon'
     'san_francisco_baaqmd'
     'toronto'
+    'washington_dc_baltimore'
     };
 t_city = tic;
 

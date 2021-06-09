@@ -44,29 +44,19 @@ if ~exist('writeFolder','var');  writeFolder = fullfile(currentFolder(1:regexp(c
 %% City & provider information:
 
 city = 'san_francisco_beacon';
-city_long_name = 'San Francisco Beacon';
+city_long_name = 'San Francisco (BEACO2N)';
 city_url = 'http://beacon.berkeley.edu/';
 
 i = 1;
-provider(i).name = 'Ronald Cohen';
+provider(i).name = 'Ronald C. Cohen';
 provider(i).address1 = 'Berkeley College of Chemistry';
 provider(i).address2 = '420 Latimer Hall';
 provider(i).address3 = 'Berkeley, CA 94720-1460';
 provider(i).country = 'United States';
 provider(i).city = city_long_name;
-provider(i).affiliation = 'Berkeley College of Chemistry';
+provider(i).affiliation = 'Berkeley';
 provider(i).email = 'rccohen@berkeley.edu';
-provider(i).parameter = 'Provider has contributed measurements for: ';
-
-i = 2;
-provider(i).name = 'Alexis Shusterman';
-provider(i).address1 = 'Berkeley College of Chemistry';
-provider(i).address2 = '420 Latimer Hall';
-provider(i).address3 = 'Berkeley, CA 94720-1460';
-provider(i).country = 'United States';
-provider(i).city = city_long_name;
-provider(i).affiliation = 'Berkeley College of Chemistry';
-provider(i).email = 'shusterman.alexis@berkeley.edu';
+provider(i).orcid = 'https://orcid.org/0000-0001-6617-7691';
 provider(i).parameter = 'Provider has contributed measurements for: ';
 
 %% Site meta data

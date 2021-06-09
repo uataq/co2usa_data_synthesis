@@ -52,19 +52,21 @@ provider(i).address2 = '20 Oxford St';
 provider(i).address3 = 'Cambridge, MA 02138';
 provider(i).country = 'United States';
 provider(i).city = city_long_name;
-provider(i).affiliation = 'Harvard University School of Engineering and Applied Sciences';
+provider(i).affiliation = 'Harvard University';
 provider(i).email = 'mracine@fas.harvard.edu';
+provider(i).orcid = 'https://orcid.org/0000-0001-9602-3108';
 provider(i).parameter = 'Provider has contributed measurements for: ';
 
 i = 2;
-provider(i).name = 'Steven Wofsy';
+provider(i).name = 'Steven C. Wofsy';
 provider(i).address1 = 'Harvard University School of Engineering and Applied Sciences';
 provider(i).address2 = '20 Oxford St';
 provider(i).address3 = 'Cambridge, MA 02138';
 provider(i).country = 'United States';
 provider(i).city = city_long_name;
-provider(i).affiliation = 'Harvard University School of Engineering and Applied Sciences';
+provider(i).affiliation = 'Harvard University';
 provider(i).email = 'wofsy@g.harvard.edu';
+provider(i).orcid = 'https://orcid.org/0000-0002-3133-2089';
 provider(i).parameter = 'Provider has contributed measurements for: ';
 
 

@@ -4,9 +4,8 @@ set(0,'DefaultFigureWindowStyle','docked')
 
 %% Outstanding questions:
 
-fprintf('THE INLET HEIGHTS ARE NOT KNOWN.\n')
-
-
+fprintf('No Outstanding questions.\n')
+fprintf('Sally Newman estimated that the inlet heights are between 5-10m, so we agreed to set them to 8m. (email from 2019-08-27).\n')
 
 %% netCDF creation documentation
 
@@ -48,7 +47,7 @@ if ~exist('writeFolder','var');  writeFolder = fullfile(currentFolder(1:regexp(c
 %% City & provider information:
 
 city = 'san_francisco_baaqmd';
-city_long_name = 'San Francisco';
+city_long_name = 'San Francisco (BAAQMD)';
 city_url = 'https://www.baaqmd.gov/about-air-quality/air-quality-measurement/ghg-measurement';
 
 % http://www.baaqmd.gov/research-and-data/air-quality-measurement/ghg-measurement/ghg-data
@@ -59,8 +58,9 @@ provider(i).address2 = '375 Beale Street Suite 600';
 provider(i).address3 = 'San Francisco, CA 94105';
 provider(i).country = 'United States';
 provider(i).city = city_long_name;
-provider(i).affiliation = 'BAAQMD';
+provider(i).affiliation = 'Bay Area Air Quality Management District (BAAQMD)';
 provider(i).email = 'snewman@baaqmd.gov';
+provider(i).orcid = 'https://orcid.org/0000-0003-0710-995X';
 provider(i).parameter = 'Provider has contributed measurements for: ';
 i=2;
 provider(i).name = 'Abhinav Guha';
@@ -69,8 +69,9 @@ provider(i).address2 = '375 Beale Street Suite 600';
 provider(i).address3 = 'San Francisco, CA 94105';
 provider(i).country = 'United States';
 provider(i).city = city_long_name;
-provider(i).affiliation = 'BAAQMD';
+provider(i).affiliation = 'Bay Area Air Quality Management District (BAAQMD)';
 provider(i).email = 'aguha@baaqmd.gov';
+provider(i).orcid = 'https://orcid.org/0000-0001-7748-1971';
 provider(i).parameter = 'Provider has contributed measurements for: ';
 
 %% Site meta data
@@ -92,7 +93,7 @@ site.(site.codes{i}).long_name = 'Bodega Bay';
 site.(site.codes{i}).code = 'BBY';
 site.(site.codes{i}).country = 'United States';
 site.(site.codes{i}).time_zone = 'America/Los_Angeles'; % use timezones to find out the available time zone designations.
-site.(site.codes{i}).inlet_height = {0};
+site.(site.codes{i}).inlet_height = {8};
 for j = 1:length(site.(site.codes{i}).inlet_height); site.(site.codes{i}).inlet_height_long_name{1,j} = [num2str(site.(site.codes{i}).inlet_height{1,j}),'m']; end
 site.(site.codes{i}).species = {'co2','ch4','co'};
 site.(site.codes{i}).species_standard_name = {'carbon_dioxide','methane','carbon_monoxide'};
@@ -114,7 +115,7 @@ site.(site.codes{i}).long_name = 'Bethel Island';
 site.(site.codes{i}).code = 'BIS';
 site.(site.codes{i}).country = 'United States';
 site.(site.codes{i}).time_zone = 'America/Los_Angeles'; % use timezones to find out the available time zone designations.
-site.(site.codes{i}).inlet_height = {0};
+site.(site.codes{i}).inlet_height = {8};
 for j = 1:length(site.(site.codes{i}).inlet_height); site.(site.codes{i}).inlet_height_long_name{1,j} = [num2str(site.(site.codes{i}).inlet_height{1,j}),'m']; end
 site.(site.codes{i}).species = {'co2','ch4','co'};
 site.(site.codes{i}).species_standard_name = {'carbon_dioxide','methane','carbon_monoxide'};
@@ -136,7 +137,7 @@ site.(site.codes{i}).long_name = 'Livermore';
 site.(site.codes{i}).code = 'LIV';
 site.(site.codes{i}).country = 'United States';
 site.(site.codes{i}).time_zone = 'America/Los_Angeles'; % use timezones to find out the available time zone designations.
-site.(site.codes{i}).inlet_height = {0};
+site.(site.codes{i}).inlet_height = {8};
 for j = 1:length(site.(site.codes{i}).inlet_height); site.(site.codes{i}).inlet_height_long_name{1,j} = [num2str(site.(site.codes{i}).inlet_height{1,j}),'m']; end
 site.(site.codes{i}).species = {'co2','ch4','co'};
 site.(site.codes{i}).species_standard_name = {'carbon_dioxide','methane','carbon_monoxide'};
@@ -158,7 +159,7 @@ site.(site.codes{i}).long_name = 'San Martin';
 site.(site.codes{i}).code = 'SMT';
 site.(site.codes{i}).country = 'United States';
 site.(site.codes{i}).time_zone = 'America/Los_Angeles'; % use timezones to find out the available time zone designations.
-site.(site.codes{i}).inlet_height = {0};
+site.(site.codes{i}).inlet_height = {8};
 for j = 1:length(site.(site.codes{i}).inlet_height); site.(site.codes{i}).inlet_height_long_name{1,j} = [num2str(site.(site.codes{i}).inlet_height{1,j}),'m']; end
 site.(site.codes{i}).species = {'co2','ch4','co'};
 site.(site.codes{i}).species_standard_name = {'carbon_dioxide','methane','carbon_monoxide'};

@@ -6,19 +6,19 @@ cities = {
     'boston'
     'indianapolis'
     'los_angeles'
-    'northeast_corridor'
     'portland'
     'salt_lake_city'
     'san_francisco_beacon'
     'san_francisco_baaqmd'
     'toronto'
+    'washington_dc_baltimore'
     };
 
 % This station count script is set up to only process one species at a time.
 species_to_load = {
-    %'co2'
+    'co2'
     %'ch4'
-    'co'
+    %'co'
     };
 
 species = species_to_load{1};
@@ -115,7 +115,7 @@ end
 % 
 %% 
 
-export_station_count = 'n';
+export_station_count = 'y';
 if strcmp(export_station_count,'y')
     fprintf('Exporting the station count data to an xls.\n')
     flat = nan(n_months,size(cities,1)*2);
@@ -191,5 +191,9 @@ end
 
 fprintf('Total sample time in the CO2-USA data set for %s are: %0.0f years from %0.0f sites with %0.0f inlets.\n',...
     species,round(total_sample_time/(24*365)),total_number_of_sites,total_number_of_inlets)
+
+%%
+
+
 
 

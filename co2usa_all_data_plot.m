@@ -3,7 +3,6 @@ close all
 set(0,'DefaultFigureWindowStyle','normal')
 
 cities = {
-    'northeast_corridor'
     'boston'
     'indianapolis'
     'los_angeles'
@@ -12,6 +11,7 @@ cities = {
     'san_francisco_baaqmd'
     'san_francisco_beacon'
     'toronto'
+    'washington_dc_baltimore'
     };
 
 species_to_load = {'co2'
@@ -29,7 +29,7 @@ co2_usa = co2usa_load_netCDF(cities,species_to_load,readFolder,save_overview_ima
 
 %%
 
-plt.save_overview_image = 'n';
+plt.save_overview_image = 'y';
 
 clear('fx')
 %cities = fieldnames(co2_usa);
@@ -92,7 +92,7 @@ for ii = 1:size(cities,1)
     % Uppercase city name:
     city_long_name = replace(city,'_',' '); city_long_name([1,regexp(city_long_name,' ')+1]) = upper(city_long_name([1,regexp(city_long_name,' ')+1]));
     % Custon city long names:
-    if strcmp(city,'northeast_corridor'); city_long_name = 'Baltimore/Washington D.C.'; end
+    if strcmp(city,'washington_dc_baltimore'); city_long_name = {'Washington D.C.','& Baltimore'}; end
     if strcmp(city,'san_francisco_baaqmd'); city_long_name = {'San Francisco','BAAQMD'}; end
     if strcmp(city,'san_francisco_beacon'); city_long_name = {'San Francisco','BEACO_2N'}; end
     
@@ -119,8 +119,15 @@ for ii = 1:size(cities,1)
     t = annotation('textbox',[ax(ii).Position(1)+0.005,sum(ax(ii).Position([2,4]))-0.005,0,0],'String',city_long_name,'FitBoxToText','on','VerticalAlignment','top','FontWeight','bold','BackgroundColor',[1,1,1],'Margin',2);
     
     %if ii>1; ax(ii).YLim = [ax(ii).YLim(1),ax(ii).YLim(2)-1]; end
-    if ii~=size(cities,1)
+    if and(species_index<3,and(ii~=size(cities,1),ii~=1))
         ax(ii).XTickLabel = {};
+    elseif and(species_index==3,and(ii~=8,ii~=1))
+        ax(ii).XTickLabel = {};
+    end
+    if ii==1 
+        ax(ii).XAxisLocation = 'top';
+        %ax(ii).XLabel.String = species_display_name;
+        ylabel(species_display_name);
     end
     
     %if ii==round(size(cities,1)/2) 
@@ -129,13 +136,20 @@ for ii = 1:size(cities,1)
         % Add a text box of the species on the plot:
         %t2 = annotation('textbox',[sum(ax(ii).Position([1,3]))-0.005,sum(ax(ii).Position([2,4]))-0.019,0,0],'String',[species_display_name,' (',units_label_abbr,')'],'FitBoxToText','on','VerticalAlignment','middle','HorizontalAlignment','right','FontWeight','bold','FontSize',8,'BackgroundColor',[1,1,1],'Margin',2);
     end
+    ax(ii).Box = 'on';
 end % end of cities loop
 linkaxes(ax,'x')
-ax(ii).XLim = plt.xlim;
+if species_index <3
+    ax(ii).XLim = plt.xlim;
+else
+    ax(8).XLim = plt.xlim;
+end
 
 if species_index == 1
-    ax(end).XTickLabel = cell(10,1);
-    ax(end).XTickLabel(2:2:10) = num2cell(2004:4:2020)';
+    for ii=[1,9]
+        ax(ii).XTickLabel = cell(10,1);
+        ax(ii).XTickLabel(2:2:10) = num2cell(2004:4:2020)';
+    end
 end
 
 end % end of species loop
@@ -144,7 +158,6 @@ for ii = 1:9
     p(ii,2).marginleft = 14;
     p(ii,3).marginleft = 12;
 end
-
 
 if strcmp(plt.save_overview_image,'y')
     writeFolder = fullfile(currentFolder(1:regexp(currentFolder,'gcloud.utah.edu')+14),'data','co2-usa','synthesis_output');

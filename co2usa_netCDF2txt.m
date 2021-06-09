@@ -4,11 +4,13 @@ if exist('city','var')
     % script, remove all the variables except for 'city'.
     vars = whos;
     for j = 1:length(vars)
-        if ~any(strcmp(vars(j).name,{'city'}))
+        if ~any(strcmp(vars(j).name,{'city','currentFolder','readFolder','writeFolder'}))
             clear(vars(j).name)
         end
     end
     clear('vars','j')
+    readFolder = fullfile(writeFolder,'netCDF_formatted_files');
+    writeFolder = fullfile(writeFolder,'txt_formatted_files');
 else
     % If this script is being executed by itself, clear the workspace and
     % start fresh.  Manually select which city you would like to process.
@@ -16,14 +18,15 @@ else
     %city = 'los_angeles';
     %city = 'indianapolis';
     city = 'san_francisco_baaqmd';
+    currentFolder = pwd;
+    readFolder = fullfile(currentFolder(1:regexp(currentFolder,'gcloud.utah.edu')+14),'data','co2-usa','synthesis_output','netCDF_formatted_files');
+    writeFolder = fullfile(currentFolder(1:regexp(currentFolder,'gcloud.utah.edu')+14),'data','co2-usa','synthesis_output','txt_formatted_files');
 end
-
-if ~exist('currentFolder','var'); currentFolder = pwd; end
-if ~exist('readFolder','var'); readFolder = fullfile(currentFolder(1:regexp(currentFolder,'gcloud.utah.edu')+14),'data','co2-usa','synthesis_output','netCDF_formatted_files'); end
-if ~exist('writeFolder','var');  writeFolder = fullfile(currentFolder(1:regexp(currentFolder,'gcloud.utah.edu')+14),'data','co2-usa','synthesis_output','txt_formatted_files'); end
 
 %if ~exist(writeFolder,'dir'); mkdir(writeFolder); end
 all_files = dir(fullfile(readFolder,[city,'*.nc']));
+
+fprintf('Converting netCDF files to text and saving to: %s\n',writeFolder);
 
 for fni = 1:length(all_files) % Loops through all of the netCDF files in the folder
 
@@ -160,7 +163,7 @@ status = fclose(fid);
 if status
     disp('Problem closing file.');
 end
-fprintf('netCDF file converted to text and saved to: %s\n',filepath);
+fprintf('netCDF file converted to text and saved to: %s\n',filename);
 
 end
 

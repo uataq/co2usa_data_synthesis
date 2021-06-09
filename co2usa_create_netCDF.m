@@ -27,14 +27,14 @@ n.ncid = netcdf.create(fnStr,'NETCDF4'); % Open the netCDF file
 %% Assign the Global attributes
 
 if strcmp(site_code,'background')
-    varid = netcdf.getConstant('GLOBAL'); netcdf.putAtt(n.ncid,varid,'title',['Hourly background atmospheric ',site.species_standard_name{site_group_i},' (',upper(sptxt),') mixing ratios.']);
-    varid = netcdf.getConstant('GLOBAL'); netcdf.putAtt(n.ncid,varid,'summary',['Hourly background atmospheric ',upper(sptxt),' mole fraction mixing ratios from ',city_long_name,' reported in the literature by the data provider. Please see the references for further information and appropriate usage.']);
+    varid = netcdf.getConstant('GLOBAL'); netcdf.putAtt(n.ncid,varid,'title',['Hourly background atmospheric ',site.species_standard_name{site_group_i},' (',upper(sptxt),') mole fractions.']);
+    varid = netcdf.getConstant('GLOBAL'); netcdf.putAtt(n.ncid,varid,'summary',['Hourly background atmospheric ',upper(sptxt),' mole fraction mole fractions from ',city_long_name,' reported in the literature by the data provider. Please see the references for further information and appropriate usage.']);
 else
-    varid = netcdf.getConstant('GLOBAL'); netcdf.putAtt(n.ncid,varid,'title',['Hourly averaged atmospheric ',site.species_standard_name{site_group_i},' (',upper(sptxt),') measurements from the ',intxt,' inlet at the ',site.(site_code).code,' site in ',city_long_name,'.']);
+    varid = netcdf.getConstant('GLOBAL'); netcdf.putAtt(n.ncid,varid,'title',['Hourly averaged atmospheric ',site.species_standard_name{site_group_i},' (',upper(sptxt),') mole fraction measurements from the ',intxt,' inlet at the ',site.(site_code).code,' site in ',city_long_name,'.']);
     varid = netcdf.getConstant('GLOBAL'); netcdf.putAtt(n.ncid,varid,'summary',['Hourly averaged atmospheric ',upper(sptxt),' mole fraction measurements from monitoring sites in ',city_long_name,'.']);
 end
 varid = netcdf.getConstant('GLOBAL'); netcdf.putAtt(n.ncid,varid,'keywords','carbon dioxide, methane, carbon monoxide, urban, greenhouse gas');
-varid = netcdf.getConstant('GLOBAL'); netcdf.putAtt(n.ncid,varid,'comment',['Observations represent the hourly average ',upper(sptxt),' mole fraction with the time stamp representing the floored hour. For example: data from 08:00 to 08:59 were averaged and have the time stamp of 08:00.']);
+varid = netcdf.getConstant('GLOBAL'); netcdf.putAtt(n.ncid,varid,'comment',['Observations represent the hourly average ',upper(sptxt),' mole fraction with the time stamp representing the floored hour. For example: data from 08:00 to 08:59 were averaged and have the time stamp of 08:00 UTC.']);
 varid = netcdf.getConstant('GLOBAL'); netcdf.putAtt(n.ncid,varid,'references',site.reference);
 if strcmp(site_code,'background')
     varid = netcdf.getConstant('GLOBAL'); netcdf.putAtt(n.ncid,varid,'source','Varies by data provider. Please see the references.');
@@ -89,6 +89,7 @@ for i = 1:length(provider)
     %varid = netcdf.getConstant('GLOBAL'); netcdf.putAtt(n.ncid,varid,['provider_',num2str(i),'_city'],provider(i).city); % this is redundant to the netcdf file. 
     varid = netcdf.getConstant('GLOBAL'); netcdf.putAtt(n.ncid,varid,['provider_',num2str(i),'_affiliation'],provider(i).affiliation);
     varid = netcdf.getConstant('GLOBAL'); netcdf.putAtt(n.ncid,varid,['provider_',num2str(i),'_email'],provider(i).email);
+    varid = netcdf.getConstant('GLOBAL'); netcdf.putAtt(n.ncid,varid,['provider_',num2str(i),'_orcid'],provider(i).orcid);
     if isfield(provider,'parameter'); varid = netcdf.getConstant('GLOBAL'); netcdf.putAtt(n.ncid,varid,['provider_',num2str(i),'_parameter'],[provider(i).parameter,site.species_list]); end
 end
 
@@ -100,6 +101,7 @@ varid = netcdf.getConstant('GLOBAL'); netcdf.putAtt(n.ncid,varid,'compilation_or
 varid = netcdf.getConstant('GLOBAL'); netcdf.putAtt(n.ncid,varid,'compilation_originator_country','United States');
 varid = netcdf.getConstant('GLOBAL'); netcdf.putAtt(n.ncid,varid,'compilation_originator_affiliation','University of Utah');
 varid = netcdf.getConstant('GLOBAL'); netcdf.putAtt(n.ncid,varid,'compilation_originator_email','Logan.Mitchell@utah.edu');
+varid = netcdf.getConstant('GLOBAL'); netcdf.putAtt(n.ncid,varid,'compilation_originator_orcid','https://orcid.org/0000-0002-8749-954X');
 
 % netCDF compilation details:
 varid = netcdf.getConstant('GLOBAL'); netcdf.putAtt(n.ncid,varid,'id','https://doi.org/10.3334/ORNLDAAC/1743');
@@ -227,7 +229,7 @@ end
 % varid = netcdf.getConstant('GLOBAL'); netcdf.putAtt(n.ncid,varid,'title',['Hourly averaged atmospheric ',site.unique_species_standard_name{species_ind},' (',upper(species),') measurements in ',city_long_name,'.']);
 % varid = netcdf.getConstant('GLOBAL'); netcdf.putAtt(n.ncid,varid,'summary',['Hourly averaged atmospheric ',upper(species),' measurements from ',num2str(sum(strcmp(site.species,species))),' monitoring sites in ',city_long_name,'.']);
 % varid = netcdf.getConstant('GLOBAL'); netcdf.putAtt(n.ncid,varid,'keywords','carbon dioxide, methane, carbon monoxide, urban, greenhouse gas');
-% varid = netcdf.getConstant('GLOBAL'); netcdf.putAtt(n.ncid,varid,'comment',['Observations represent the hourly average ',upper(species),' mole fraction with the time stamp representing the floored hour. For example: data from 08:00 to 08:59 were averaged and have the time stamp of 08:00.']);
+% varid = netcdf.getConstant('GLOBAL'); netcdf.putAtt(n.ncid,varid,'comment',['Observations represent the hourly average ',upper(species),' mole fraction with the time stamp representing the floored hour. For example: data from 08:00 to 08:59 were averaged and have the time stamp of 08:00 UTC.']);
 % varid = netcdf.getConstant('GLOBAL'); netcdf.putAtt(n.ncid,varid,'references',site.reference);
 % varid = netcdf.getConstant('GLOBAL'); netcdf.putAtt(n.ncid,varid,'source','spectroscopy');
 % varid = netcdf.getConstant('GLOBAL'); netcdf.putAtt(n.ncid,varid,'date_created',site.date_issued_str); % Indianapolis does not distinguish between date created and date issued.

@@ -45,25 +45,77 @@ city = 'los_angeles';
 city_long_name = 'Los Angeles';
 city_url = 'https://megacities.jpl.nasa.gov/';
 
-provider(1).name = 'Kristal Verhulst';
-provider(1).address1 = 'Jet Propulsion Laboratory M/S 233-300';
-provider(1).address2 = '4800 Oak Grove Drive';
-provider(1).address3 = 'Pasadena, CA 91109';
-provider(1).country = 'United States';
-provider(1).city = city_long_name;
-provider(1).affiliation = 'NASA Jet Propulsion Laboratory (JPL)';
-provider(1).email = 'Kristal.R.Verhulst@jpl.nasa.gov';
-provider(1).parameter = 'Provider has contributed measurements for: ';
+i=1;
+provider(i).name = 'Jooil Kim';
+provider(i).address1 = 'Scripps Institution of Oceanography';
+provider(i).address2 = '9500 Gilman Dr #0244';
+provider(i).address3 = 'La Jolla, CA 92093-0244';
+provider(i).country = 'United States';
+provider(i).city = city_long_name;
+provider(i).affiliation = 'Scripps Institution of Oceanography';
+provider(i).email = 'jjkim@ucsd.edu';
+provider(i).orcid = 'https://orcid.org/0000-0002-2610-4882';
+provider(i).parameter = 'Provider has contributed measurements for: ';
 
-provider(2).name = 'Riley Duren';
-provider(2).address1 = 'Jet Propulsion Laboratory';
-provider(2).address2 = '4800 Oak Grove Drive';
-provider(2).address3 = 'Pasadena, CA 91109';
-provider(2).country = 'United States';
-provider(2).city = city_long_name;
-provider(2).affiliation = 'NASA Jet Propulsion Laboratory (JPL)';
-provider(2).email = 'Riley.M.Duren@jpl.nasa.gov';
-provider(2).parameter = 'Provider has contributed measurements for: ';
+i=i+1;
+provider(i).name = 'Kristal R. Verhulst';
+provider(i).address1 = 'Jet Propulsion Laboratory M/S 233-300';
+provider(i).address2 = '4800 Oak Grove Drive';
+provider(i).address3 = 'Pasadena, CA 91109';
+provider(i).country = 'United States';
+provider(i).city = city_long_name;
+provider(i).affiliation = 'Jet Propulsion Laboratory, California Institute of Technology';
+provider(i).email = 'Kristal.R.Verhulst@jpl.nasa.gov';
+provider(i).orcid = 'https://orcid.org/0000-0001-5678-9678';
+provider(i).parameter = 'Provider has contributed measurements for: ';
+
+i=i+1;
+provider(i).name = 'Charles E. Miller';
+provider(i).address1 = 'Jet Propulsion Laboratory M/S 183-501';
+provider(i).address2 = '4800 Oak Grove Drive';
+provider(i).address3 = 'Pasadena, CA 91109';
+provider(i).country = 'United States';
+provider(i).city = city_long_name;
+provider(i).affiliation = 'Jet Propulsion Laboratory, California Institute of Technology';
+provider(i).email = 'Charles.E.Miller@jpl.nasa.gov';
+provider(i).orcid = 'https://orcid.org/0000-0002-9380-4838';
+provider(i).parameter = 'Provider has contributed measurements for: ';
+
+i=i+1;
+provider(i).name = 'Ray F. Weiss';
+provider(i).address1 = 'Scripps Institution of Oceanography';
+provider(i).address2 = '9500 Gilman Dr #0244';
+provider(i).address3 = 'La Jolla, CA 92093-0244';
+provider(i).country = 'United States';
+provider(i).city = city_long_name;
+provider(i).affiliation = 'Scripps Institution of Oceanography';
+provider(i).email = 'rfweiss@uscd.edu';
+provider(i).orcid = 'https://orcid.org/0000-0001-9551-7739';
+provider(i).parameter = 'Provider has contributed measurements for: ';
+
+i=i+1;
+provider(i).name = 'Ralph F. Keeling';
+provider(i).address1 = 'Scripps Institution of Oceanography';
+provider(i).address2 = '9500 Gilman Dr #0244';
+provider(i).address3 = 'La Jolla, CA 92093-0244';
+provider(i).country = 'United States';
+provider(i).city = city_long_name;
+provider(i).affiliation = 'Scripps Institution of Oceanography';
+provider(i).email = 'rkeeling@uscd.edu';
+provider(i).orcid = 'https://orcid.org/0000-0002-9749-2253';
+provider(i).parameter = 'Provider has contributed measurements for: ';
+
+i=i+1;
+provider(i).name = 'Steve Prinzivalli';
+provider(i).address1 = 'Earth Networks Inc.';
+provider(i).address2 = '12410 Milestone Center Dr., Suite 300';
+provider(i).address3 = 'Germantown, MD 20876';
+provider(i).country = 'United States';
+provider(i).city = city_long_name;
+provider(i).affiliation = 'Earth Networks Inc.';
+provider(i).email = 'sprinzivalli@earthnetworks.com';
+provider(i).orcid = '';
+provider(i).parameter = 'Provider has contributed measurements for: ';
 
 %% Site meta data
 

@@ -50,7 +50,7 @@ city_long_name = 'Salt Lake City';
 city_url = 'https://air.utah.edu/';
 
 i = 1;
-provider(i).name = 'John Lin';
+provider(i).name = 'John C. Lin';
 provider(i).address1 = 'Department of Atmospheric Sciences';
 provider(i).address2 = '135 S 1460 E, room 819';
 provider(i).address3 = 'Salt Lake City, UT 84112';
@@ -58,9 +58,10 @@ provider(i).country = 'United States';
 provider(i).city = city_long_name;
 provider(i).affiliation = 'University of Utah';
 provider(i).email = 'John.Lin@utah.edu';
+provider(i).orcid = 'https://orcid.org/0000-0003-2794-184X';
 provider(i).parameter = 'Provider has contributed measurements for: ';
 i = 2;
-provider(i).name = 'David Bowling';
+provider(i).name = 'David R. Bowling';
 provider(i).address1 = 'School of Biological Sciences';
 provider(i).address2 = '257 S. 1400 E.';
 provider(i).address3 = 'Salt Lake City, UT 84112';
@@ -68,6 +69,7 @@ provider(i).country = 'United States';
 provider(i).city = city_long_name;
 provider(i).affiliation = 'University of Utah';
 provider(i).email = 'David.Bowling@utah.edu';
+provider(i).orcid = 'https://orcid.org/0000-0002-3864-4042';
 provider(i).parameter = 'Provider has contributed measurements for: ';
 
 %% Site meta data
