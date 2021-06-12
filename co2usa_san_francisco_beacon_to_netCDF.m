@@ -54,7 +54,7 @@ provider(i).address2 = '420 Latimer Hall';
 provider(i).address3 = 'Berkeley, CA 94720-1460';
 provider(i).country = 'United States';
 provider(i).city = city_long_name;
-provider(i).affiliation = 'Berkeley';
+provider(i).affiliation = 'University of California Berkeley';
 provider(i).email = 'rccohen@berkeley.edu';
 provider(i).orcid = 'https://orcid.org/0000-0001-6617-7691';
 provider(i).parameter = 'Provider has contributed measurements for: ';
@@ -98,7 +98,7 @@ if strcmp(download_new_data,'y')
         t_end = t_end+days(1); % Make sure I'm 1 day past the end date to capture the last data points
         url = ['http://beacon.berkeley.edu/node/',num2str(latest_nodes_num(i,1)),'/measurements_all/csv?name=&interval=60&variables=co2_corrected_avg_t_drift_applied-level-2&start=',datestr(t_start,'yyyy-mm-dd'),'%2000:00:00&end=',datestr(t_end,'yyyy-mm-dd'),'%2000:00:00'];
         filename = fullfile(readFolder,city,version_folder,['node_id_',num2str(latest_nodes_num(i,1)),'_start_',datestr(t_start,'yyyy-mm-dd'),'_end_',datestr(t_end,'yyyy-mm-dd'),'_measurements.csv']);
-        options = weboptions('Timeout',20);
+        options = weboptions('Timeout',30);
         % Note: Sometimes there is an Internal Server Error in the downloading and you just need to start again.
         % This try/catch statement allows it to try 2x if it encounters an error, and that seems to work well.
         % Otherwise re-start the loop on the failed node (i).

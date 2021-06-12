@@ -111,6 +111,31 @@ site.species = [site.species; {sptxt}];
 
 load(fullfile(currentFolder(1:regexp(currentFolder,'gcloud.utah.edu')+14),'code','SLC CO2','Data','data_background.mat'))
 
+% Note: the CO2-USA data set has data set to the floored hour, but CT has
+% time stamps on the half hour.  This sets all of the CT data to be on the
+% hour, then interpolates to find the correct concentration at the new
+% times.  Lastly, it removes any duplicates (from times when there was a
+% HDP & CT data point with the same hour)
+
+mask = strcmp(bg.source,'CT2019B'); % mask for CT data
+bg2 = bg;
+bg2.dtUTC(mask).Minute = 0; % Set CT minute to 0
+
+bg2.co2(mask) = interp1(datenum(bg.dtUTC),bg.co2,datenum(bg2.dtUTC(mask))); % Interpolates CT data
+
+[~,ia,~] = unique(bg2.dtUTC); % Finds duplicates
+
+bg2.dtUTC = bg2.dtUTC(ia); % Removes duplicates
+bg2.co2 = bg2.co2(ia); % Removes duplicates
+bg2.source = bg2.source(ia); % Removes duplicates
+
+% figure(100);clf; hold on
+% plot(bg.dtUTC,bg.co2,'.')
+% plot(bg2.dtUTC,bg2.co2,'.')
+% hold off
+
+bg = bg2;
+
 site.(site.codes{i}).([sptxt,'_',intxt]) = bg.co2; % species mixing ratio
 site.(site.codes{i}).([sptxt,'_',intxt,'_time']) = datetime(bg.dtUTC,'ConvertFrom','datenum'); ...
 

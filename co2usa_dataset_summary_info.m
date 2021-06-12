@@ -15,8 +15,8 @@ cities = {
     };
 
 species_to_load = {'co2'
-    %'ch4'
-    %'co'
+    'ch4'
+    'co'
     };
 
 currentFolder = pwd;
@@ -41,20 +41,21 @@ for ii = 1:size(cities,1)
         authors{count,1} = name_parts{end};
         authors{count,3} = co2_usa.(city).(site_codes{1}).global_attributes.(['provider_',num2str(j),'_affiliation']);
         authors{count,4} = co2_usa.(city).(site_codes{1}).global_attributes.(['provider_',num2str(j),'_email']);
+        authors{count,5} = co2_usa.(city).(site_codes{1}).global_attributes.(['provider_',num2str(j),'_orcid']);
         count = count+1;
     end
 end
 
 % List of all CO2-USA authors/affiliation/email alphabetized by last name
 authors = sortrows(authors,1); % Sort alphabetically
-authors = [{'Mitchell','Logan E. Mitchell','University of Utah','logan.mitchell@utah.edu'};...
-    {'Lin','John C. Lin','University of Utah','John.Lin@utah.edu'};...
-    {'Hutyra','Lucy R. Hutyra','Boston University','lrhutyra@bu.edu'}; authors]; % Add 3 primary authors
+authors = [{'Mitchell','Logan E. Mitchell','University of Utah','logan.mitchell@utah.edu','https://orcid.org/0000-0002-8749-954X'};...
+    {'Lin','John C. Lin','University of Utah','John.Lin@utah.edu','https://orcid.org/0000-0003-2794-184X'};...
+    {'Hutyra','Lucy R. Hutyra','Boston University','lrhutyra@bu.edu',''}; authors]; % Add 3 primary authors
 [~,ia,~] = unique(authors(:,1)); % find duplicates
 authors = authors(sortrows(ia),:); % remove duplicate while preserving author order (3 primary authors, alphabetically after that)
-
+fprintf('Data set author list:\n')
 for ii = 1:length(authors)
-    fprintf('%-25s %-70s %s\n',authors{ii,2},authors{ii,3},authors{ii,4})
+    fprintf('%-25s %-65s %-35s %s\n',authors{ii,2},authors{ii,3},authors{ii,4},authors{ii,5})
 end
 
 %% Overall dataset start and stop date
@@ -135,5 +136,25 @@ end
 fprintf('Total number of files in the dataset is %0.0f.\n',co2usa_total_files)
 fprintf('Total dataset file size is %0.0f MB.\n',(co2usa_nc_file_size+co2usa_text_file_size)/1000000)
 
+%% Check the data set for duplicate times
+
+for kk = 1:length(species_to_load)
+    species = species_to_load{kk};
+    for ii = 1:size(cities,1)
+        city = cities{ii,1};
+        site_codes = fieldnames(co2_usa.(city)); site_codes = site_codes(contains(site_codes,[species,'_']));
+        for usc_i = 1:length(site_codes) % Loops through each site
+            site = site_codes{usc_i};
+            [~,ia,~] = unique(co2_usa.(city).(site).time);
+            f2 = setdiff(1:numel(co2_usa.(city).(site).time),ia);
+            if ~isempty(f2)
+                fprintf('Duplicate times found in %s at %s on:\n',city,site)
+                for jj = 1:length(f2)
+                    fprintf('%s\n',co2_usa.(city).(site).time(f2(jj)))
+                end
+            end
+        end
+    end
+end
 
 
