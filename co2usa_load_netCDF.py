@@ -106,8 +106,7 @@ ax.set_ylabel(species,fontsize=15)
 plt.legend(fontsize=14)
 plt.grid(b=True,axis='both')
 
-
-
+plt.show()
 
 
 

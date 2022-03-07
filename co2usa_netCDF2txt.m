@@ -23,7 +23,9 @@ else
     writeFolder = fullfile(currentFolder(1:regexp(currentFolder,'gcloud.utah.edu')+14),'data','co2-usa','synthesis_output','txt_formatted_files');
 end
 
-%if ~exist(writeFolder,'dir'); mkdir(writeFolder); end
+% If the output directory doesn't exist, make it:
+if ~exist(writeFolder,'dir'); mkdir(writeFolder); end
+
 all_files = dir(fullfile(readFolder,[city,'*.nc']));
 
 fprintf('Converting netCDF files to text and saving to: %s\n',writeFolder);
